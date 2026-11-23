@@ -596,7 +596,7 @@ Módulo de dominio ──> Puerto (interfaz) ──> Adaptador real (Spring AI) 
 | `frontend` | Build multi-etapa Node → `nginx:alpine` | Sirve la SPA y hace *proxy* de `/api` |
 | `backend` | Build multi-etapa Maven → `eclipse-temurin:21-jre` | Usuario no root, *healthcheck* con Actuator |
 | `postgres` | `postgres:16-alpine` | Volumen persistente |
-| `minio` | `minio/minio` | Solo desarrollo; en producción, servicio gestionado |
+| `minio` | `cgr.dev/chainguard/minio` | Solo desarrollo; en producción, servicio gestionado. `minio/minio` ya no está en Docker Hub |
 | `mailpit` | `axllent/mailpit` | Solo desarrollo, captura de correos |
 
 Secretos mediante variables de entorno (`.env`, que no se sube), nunca en el repositorio. CI (GitHub Actions): build y tests.

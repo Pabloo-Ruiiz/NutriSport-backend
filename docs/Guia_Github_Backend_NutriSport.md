@@ -515,8 +515,10 @@ services:
       retries: 10
 
   minio:
-    image: minio/minio
+    # minio/minio ya no está en Docker Hub: imagen gratuita de Chainguard (MinIO compilado desde el código fuente, AGPLv3)
+    image: cgr.dev/chainguard/minio
     container_name: nutrisport-minio
+    user: "0"   # la imagen usa el usuario 65532 y no podría escribir en el volumen
     command: server /data --console-address ":9001"
     environment:
       MINIO_ROOT_USER: ${MINIO_USER}
@@ -2684,7 +2686,7 @@ Según docs/PROJECT_PROPOSAL.md §5.8 y §8.4, en com.nutrisport.almacenamiento:
 #### Prompt 18.3 · Tests
 
 ```text
-1. Modifica IntegracionBase para arrancar también un MinIOContainer ("minio/minio") estático compartido y registrar con @DynamicPropertySource app.almacenamiento.endpoint, endpoint-publico, access-key y secret-key.
+1. Modifica IntegracionBase para arrancar también un MinIOContainer estático compartido con DockerImageName.parse("cgr.dev/chainguard/minio").asCompatibleSubstituteFor("minio/minio") y .withCreateContainerCmdModifier(cmd -> cmd.withUser("0")) (la imagen minio/minio ya no existe en Docker Hub y la de Chainguard no puede escribir en /data sin root) y registrar con @DynamicPropertySource app.almacenamiento.endpoint, endpoint-publico, access-key y secret-key.
 2. almacenamiento.ProcesadorImagenesTest (unitario): un PNG de 3000×2000 generado en memoria → JPEG de 1024×683 y miniatura de 320 de ancho; el resultado empieza por FF D8 y no contiene la secuencia FF E1 (segmento EXIF); un texto con extensión .jpg → ArchivoNoValidoException.
 3. almacenamiento.AlmacenamientoServicioTest (IntegracionBase): guardar, obtener la URL prefirmada y descargarla con java.net.http.HttpClient (200 y mismos bytes), eliminar y comprobar 404/403 al descargar de nuevo.
 ```
