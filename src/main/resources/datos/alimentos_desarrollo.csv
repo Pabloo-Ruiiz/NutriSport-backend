@@ -1,0 +1,305 @@
+nombre;marca;categoria;preparacion;kcal100;proteinas100;carbohidratos100;azucares100;grasas100;saturadas100;fibra100;sal100;unidad_base;porciones;alergenos_contiene;alergenos_trazas;contiene_lactosa;apto_vegano;apto_vegetariano;apto_pescetariano
+Plátano;;Frutas;CRUDO;87.5;1.2;20.0;15.0;0.3;0.1;2.6;0.0;G;unidad mediana:120|unidad pequeña:90;;;false;true;true;true
+Manzana;;Frutas;CRUDO;50.2;0.3;11.8;10.4;0.2;0.0;2.4;0.0;G;unidad mediana:180;;;false;true;true;true
+Pera;;Frutas;CRUDO;50.5;0.4;12.0;9.8;0.1;0.0;3.1;0.0;G;unidad mediana:170;;;false;true;true;true
+Naranja;;Frutas;CRUDO;39.8;0.9;8.6;8.3;0.2;0.0;2.2;0.0;G;unidad mediana:200;;;false;true;true;true
+Mandarina;;Frutas;CRUDO;46.3;0.8;10.1;9.0;0.3;0.0;1.8;0.0;G;unidad mediana:80;;;false;true;true;true
+Fresas;;Frutas;CRUDO;28.3;0.7;5.7;4.9;0.3;0.0;2.0;0.0;G;taza:150|unidad:12;;;false;true;true;true
+Uvas;;Frutas;CRUDO;68.6;0.7;16.0;15.5;0.2;0.1;0.9;0.0;G;racimo pequeño:100;;;false;true;true;true
+Sandía;;Frutas;CRUDO;33.0;0.6;7.2;6.2;0.2;0.0;0.4;0.0;G;rodaja:300;;;false;true;true;true
+Melón;;Frutas;CRUDO;34.6;0.8;7.4;7.4;0.2;0.0;0.9;0.0;G;rodaja:250;;;false;true;true;true
+Kiwi;;Frutas;CRUDO;49.3;1.1;10.1;9.0;0.5;0.0;3.0;0.0;G;unidad mediana:75;;;false;true;true;true
+Piña;;Frutas;CRUDO;49.3;0.5;11.6;9.9;0.1;0.0;1.4;0.0;G;rodaja:100;;;false;true;true;true
+Melocotón;;Frutas;CRUDO;40.3;0.9;8.5;8.4;0.3;0.0;1.5;0.0;G;unidad mediana:150;;;false;true;true;true
+Cerezas;;Frutas;CRUDO;62.2;1.1;14.0;12.8;0.2;0.0;2.1;0.0;G;taza:140;;;false;true;true;true
+Mango;;Frutas;CRUDO;60.4;0.8;13.4;13.0;0.4;0.1;1.6;0.0;G;unidad mediana:300;;;false;true;true;true
+Aguacate;;Frutas;CRUDO;147.9;2.0;1.9;0.7;14.7;2.1;6.7;0.0;G;unidad mediana:150|media unidad:75;;;false;true;true;true
+Arándanos;;Frutas;CRUDO;53.9;0.7;12.1;10.0;0.3;0.0;2.4;0.0;G;taza:150;;;false;true;true;true
+Frambuesas;;Frutas;CRUDO;32.7;1.2;5.4;4.4;0.7;0.0;6.5;0.0;G;taza:125;;;false;true;true;true
+Higos;;Frutas;CRUDO;69.9;0.8;16.0;16.0;0.3;0.1;2.9;0.0;G;unidad:50;;;false;true;true;true
+Ciruela;;Frutas;CRUDO;45.5;0.7;10.0;9.9;0.3;0.0;1.4;0.0;G;unidad:65;;;false;true;true;true
+Limón;;Frutas;CRUDO;19.9;1.1;3.2;2.5;0.3;0.0;2.8;0.0;G;unidad:100;;;false;true;true;true
+Pomelo;;Frutas;CRUDO;36.5;0.8;8.1;7.0;0.1;0.0;1.6;0.0;G;media unidad:150;;;false;true;true;true
+Granada;;Frutas;CRUDO;76.4;1.7;14.7;13.7;1.2;0.1;4.0;0.0;G;unidad:250;;;false;true;true;true
+Dátiles secos;;Frutas;OTRA;277.6;2.5;66.0;63.0;0.4;0.0;6.7;0.0;G;unidad:8;;;false;true;true;true
+Pasas;;Frutas;OTRA;316.9;3.1;75.0;59.0;0.5;0.1;3.7;0.0;G;puñado:30;;SULFITOS;false;true;true;true
+Orejones de albaricoque;;Frutas;OTRA;238.1;3.4;55.0;53.0;0.5;0.0;7.3;0.0;G;unidad:8;SULFITOS;;false;true;true;true
+Compota de manzana sin azúcar añadido;;Frutas;COCIDO;45.7;0.2;11.0;10.0;0.1;0.0;1.2;0.0;G;tarrina:100;;;false;true;true;true
+Macedonia de frutas en almíbar;;Frutas;ENVASADO;66.5;0.4;16.0;15.0;0.1;0.0;1.0;0.0;G;lata pequeña:250;;;false;true;true;true
+Plátano maduro asado;;Frutas;HORNO;100.3;1.4;23.0;18.0;0.3;0.1;2.6;0.0;G;unidad mediana:110;;;false;true;true;true
+Tomate;;Verduras y hortalizas;CRUDO;19.4;0.9;3.5;2.6;0.2;0.0;1.2;0.0;G;unidad mediana:120;;;false;true;true;true
+Lechuga;;Verduras y hortalizas;CRUDO;13.4;1.4;1.5;1.2;0.2;0.0;1.3;0.0;G;plato:80;;;false;true;true;true
+Espinacas crudas;;Verduras y hortalizas;CRUDO;20.8;2.9;1.4;0.4;0.4;0.1;2.2;0.2;G;taza:30;;;false;true;true;true
+Espinacas cocidas;;Verduras y hortalizas;COCIDO;19.9;3.0;1.3;0.4;0.3;0.1;2.4;0.2;G;ración:180;;;false;true;true;true
+Brócoli crudo;;Verduras y hortalizas;CRUDO;30.8;2.8;4.0;1.7;0.4;0.1;2.6;0.1;G;taza:90;;;false;true;true;true
+Brócoli cocido;;Verduras y hortalizas;COCIDO;30.8;2.4;4.4;1.4;0.4;0.1;3.3;0.1;G;ración:200;;;false;true;true;true
+Zanahoria cruda;;Verduras y hortalizas;CRUDO;32.6;0.9;6.8;4.7;0.2;0.0;2.8;0.2;G;unidad mediana:70;;;false;true;true;true
+Zanahoria cocida;;Verduras y hortalizas;COCIDO;30.6;0.8;6.4;3.5;0.2;0.0;3.0;0.1;G;ración:150;;;false;true;true;true
+Cebolla;;Verduras y hortalizas;CRUDO;35.7;1.1;7.6;4.2;0.1;0.0;1.7;0.0;G;unidad mediana:110;;;false;true;true;true
+Pimiento rojo;;Verduras y hortalizas;CRUDO;25.1;1.0;4.6;4.2;0.3;0.1;2.1;0.0;G;unidad mediana:150;;;false;true;true;true
+Pimiento verde;;Verduras y hortalizas;CRUDO;17.0;0.9;2.9;2.4;0.2;0.1;1.7;0.0;G;unidad mediana:120;;;false;true;true;true
+Pimientos asados;;Verduras y hortalizas;HORNO;29.1;1.1;5.5;4.5;0.3;0.0;2.2;0.0;G;ración:100;;;false;true;true;true
+Calabacín crudo;;Verduras y hortalizas;CRUDO;16.3;1.2;2.2;1.7;0.3;0.1;1.0;0.0;G;unidad mediana:200;;;false;true;true;true
+Calabacín a la plancha;;Verduras y hortalizas;PLANCHA;19.2;1.3;2.6;2.0;0.4;0.1;1.2;0.0;G;ración:150;;;false;true;true;true
+Berenjena;;Verduras y hortalizas;CRUDO;17.8;1.0;3.0;2.4;0.2;0.0;3.0;0.0;G;unidad mediana:250;;;false;true;true;true
+Berenjena al horno;;Verduras y hortalizas;HORNO;17.8;0.8;3.2;2.5;0.2;0.0;2.5;0.0;G;ración:150;;;false;true;true;true
+Pepino;;Verduras y hortalizas;CRUDO;12.5;0.7;2.2;1.7;0.1;0.0;0.5;0.0;G;unidad mediana:200;;;false;true;true;true
+Champiñones crudos;;Verduras y hortalizas;CRUDO;17.1;3.1;0.5;0.3;0.3;0.0;1.0;0.0;G;taza:70;;;false;true;true;true
+Champiñones a la plancha;;Verduras y hortalizas;PLANCHA;21.3;3.6;0.6;0.4;0.5;0.1;2.0;0.0;G;ración:120;;;false;true;true;true
+Judías verdes cocidas;;Verduras y hortalizas;COCIDO;27.8;1.9;4.6;1.5;0.2;0.0;3.2;0.0;G;ración:200;;;false;true;true;true
+Alcachofa cocida;;Verduras y hortalizas;COCIDO;33.5;2.9;4.8;1.0;0.3;0.1;8.6;0.2;G;unidad:120;;;false;true;true;true
+Espárragos verdes a la plancha;;Verduras y hortalizas;PLANCHA;19.4;2.4;2.0;1.3;0.2;0.0;2.1;0.0;G;manojo:250;;;false;true;true;true
+Espárragos blancos en conserva;;Verduras y hortalizas;ENVASADO;17.5;1.8;1.9;1.0;0.3;0.0;1.4;0.9;G;unidad:20;;;false;true;true;true
+Coliflor cocida;;Verduras y hortalizas;COCIDO;21.7;1.8;2.5;1.4;0.5;0.1;2.3;0.0;G;ración:200;;;false;true;true;true
+Calabaza asada;;Verduras y hortalizas;HORNO;32.9;1.0;7.0;3.0;0.1;0.0;1.4;0.0;G;ración:200;;;false;true;true;true
+Patata cruda;;Verduras y hortalizas;CRUDO;71.7;2.0;15.7;0.8;0.1;0.0;2.2;0.0;G;unidad mediana:170;;;false;true;true;true
+Patata cocida;;Verduras y hortalizas;COCIDO;76.5;1.9;17.0;0.9;0.1;0.0;1.8;0.0;G;unidad mediana:150;;;false;true;true;true
+Patata al horno;;Verduras y hortalizas;HORNO;86.9;2.5;19.0;1.0;0.1;0.0;2.2;0.0;G;unidad mediana:150;;;false;true;true;true
+Patatas fritas caseras;;Verduras y hortalizas;FRITO;252.5;3.0;32.0;0.3;12.5;1.3;3.2;0.3;G;ración:150;;;false;true;true;true
+Boniato asado;;Verduras y hortalizas;HORNO;80.6;2.0;17.7;6.5;0.2;0.1;3.3;0.1;G;unidad mediana:200;;;false;true;true;true
+Boniato cocido;;Verduras y hortalizas;COCIDO;66.5;1.4;15.0;5.7;0.1;0.0;2.5;0.1;G;unidad mediana:200;;;false;true;true;true
+Maíz dulce en conserva;;Verduras y hortalizas;ENVASADO;82.4;2.9;15.0;4.5;1.2;0.2;2.4;0.5;G;lata escurrida:140;;;false;true;true;true
+Remolacha cocida;;Verduras y hortalizas;COCIDO;40.6;1.7;8.0;6.8;0.2;0.0;2.0;0.2;G;unidad:80;;;false;true;true;true
+Rúcula;;Verduras y hortalizas;CRUDO;25.1;2.6;2.1;2.0;0.7;0.1;1.6;0.0;G;puñado:20;;;false;true;true;true
+Repollo cocido;;Verduras y hortalizas;COCIDO;20.1;1.3;3.5;2.8;0.1;0.0;1.9;0.0;G;ración:150;;;false;true;true;true
+Puerro;;Verduras y hortalizas;CRUDO;57.9;1.5;12.3;3.9;0.3;0.0;1.8;0.0;G;unidad:90;;;false;true;true;true
+Ajo;;Verduras y hortalizas;CRUDO;154.1;6.4;31.0;1.0;0.5;0.1;2.1;0.0;G;diente:5;;;false;true;true;true
+Tomate triturado en conserva;;Verduras y hortalizas;ENVASADO;23.4;1.4;4.0;3.5;0.2;0.0;1.4;0.1;G;;;;false;true;true;true
+Aceitunas verdes;;Verduras y hortalizas;ENVASADO;141.0;1.0;0.5;0.0;15.0;2.0;3.3;3.0;G;unidad:4|puñado:30;;;false;true;true;true
+Gazpacho;;Verduras y hortalizas;ENVASADO;35.6;0.9;3.5;2.8;2.0;0.3;0.7;0.6;ML;vaso:250;;;false;true;true;true
+Apio;;Verduras y hortalizas;CRUDO;10.2;0.7;1.4;1.3;0.2;0.0;1.6;0.2;G;rama:40;APIO;;false;true;true;true
+Pechuga de pollo cruda;;Carnes;CRUDO;105.5;23.0;0.0;0.0;1.5;0.4;;0.2;G;filete:120|pechuga entera:250;;;false;false;false;false
+Pechuga de pollo a la plancha;;Carnes;PLANCHA;156.4;31.0;0.0;0.0;3.6;1.0;;0.2;G;filete:100;;;false;false;false;false
+Pechuga de pollo al horno;;Carnes;HORNO;151.5;30.0;0.0;0.0;3.5;1.0;;0.2;G;filete:100;;;false;false;false;false
+Pollo cocido desmenuzado;;Carnes;COCIDO;147.5;29.0;0.0;0.0;3.5;1.0;;0.2;G;taza:140;;;false;false;false;false
+Muslo de pollo asado sin piel;;Carnes;HORNO;176.0;26.0;0.0;0.0;8.0;2.2;;0.3;G;unidad:100;;;false;false;false;false
+Pollo asado con piel;;Carnes;HORNO;229.5;27.0;0.0;0.0;13.5;3.8;;0.3;G;cuarto de pollo:250;;;false;false;false;false
+Pechuga de pollo empanada frita;;Carnes;FRITO;244.0;20.0;14.0;1.0;12.0;1.8;0.8;0.9;G;filete:120;GLUTEN|HUEVOS;;false;false;false;false
+Pechuga de pavo a la plancha;;Carnes;PLANCHA;134.0;29.0;0.0;0.0;2.0;0.6;;0.2;G;filete:100;;;false;false;false;false
+Fiambre de pechuga de pavo;;Carnes;ENVASADO;91.5;18.0;1.5;1.0;1.5;0.5;;2.0;G;loncha:15;;LACTEOS;false;false;false;false
+Filete de ternera crudo;;Carnes;CRUDO;129.0;21.0;0.0;0.0;5.0;2.0;;0.2;G;filete:150;;;false;false;false;false
+Filete de ternera a la plancha;;Carnes;PLANCHA;179.0;29.0;0.0;0.0;7.0;2.8;;0.2;G;filete:150;;;false;false;false;false
+Carne picada de ternera cruda;;Carnes;CRUDO;184.0;19.0;0.0;0.0;12.0;5.0;;0.2;G;;;;false;false;false;false
+Hamburguesa de ternera a la plancha;;Carnes;PLANCHA;231.0;24.0;0.0;0.0;15.0;6.0;;0.8;G;unidad:120;;;false;false;false;false
+Lomo de cerdo a la plancha;;Carnes;PLANCHA;179.0;29.0;0.0;0.0;7.0;2.5;;0.2;G;filete:120;;;false;false;false;false
+Solomillo de cerdo asado;;Carnes;HORNO;144.0;27.0;0.0;0.0;4.0;1.4;;0.2;G;ración:150;;;false;false;false;false
+Costillas de cerdo asadas;;Carnes;HORNO;316.0;25.0;0.0;0.0;24.0;9.0;;0.3;G;ración:200;;;false;false;false;false
+Chuletas de cordero a la plancha;;Carnes;PLANCHA;280.0;25.0;0.0;0.0;20.0;9.0;;0.2;G;chuleta:60;;;false;false;false;false
+Conejo a la plancha;;Carnes;PLANCHA;167.0;26.0;0.0;0.0;7.0;2.3;;0.2;G;ración:150;;;false;false;false;false
+Hígado de ternera a la plancha;;Carnes;PLANCHA;169.0;26.0;5.0;0.0;5.0;1.7;;0.2;G;filete:100;;;false;false;false;false
+Jamón serrano;;Carnes;ENVASADO;228.0;30.0;0.0;0.0;12.0;4.0;;5.0;G;loncha:15;;;false;false;false;false
+Jamón cocido;;Carnes;ENVASADO;109.5;18.0;1.5;1.0;3.5;1.2;;2.3;G;loncha:20;;;false;false;false;false
+Lomo embuchado;;Carnes;ENVASADO;228.0;38.0;1.0;0.5;8.0;3.0;;4.5;G;loncha:10;;;false;false;false;false
+Chorizo;;Carnes;ENVASADO;415.0;23.0;2.0;1.0;35.0;13.0;;4.0;G;loncha:8;;;false;false;false;false
+Salchichas frescas de cerdo;;Carnes;CRUDO;287.0;14.0;1.5;0.5;25.0;9.0;;1.8;G;unidad:50;;;false;false;false;false
+Salmón crudo;;Pescados y mariscos;CRUDO;197.0;20.0;0.0;0.0;13.0;3.0;;0.1;G;filete:150;PESCADO;;false;false;false;true
+Salmón a la plancha;;Pescados y mariscos;PLANCHA;212.5;25.0;0.0;0.0;12.5;2.5;;0.2;G;filete:150;PESCADO;;false;false;false;true
+Salmón ahumado;;Pescados y mariscos;ENVASADO;156.0;21.0;0.0;0.0;8.0;1.5;;3.5;G;loncha:20;PESCADO;;false;false;false;true
+Merluza cruda;;Pescados y mariscos;CRUDO;84.2;17.0;0.0;0.0;1.8;0.4;;0.2;G;filete:150;PESCADO;;false;false;false;true
+Merluza a la plancha;;Pescados y mariscos;PLANCHA;103.8;21.0;0.0;0.0;2.2;0.5;;0.3;G;filete:150;PESCADO;;false;false;false;true
+Merluza al vapor;;Pescados y mariscos;COCIDO;94.0;19.0;0.0;0.0;2.0;0.4;;0.3;G;filete:150;PESCADO;;false;false;false;true
+Bacalao fresco al horno;;Pescados y mariscos;HORNO;100.1;23.0;0.0;0.0;0.9;0.2;;0.3;G;filete:150;PESCADO;;false;false;false;true
+Bacalao desalado;;Pescados y mariscos;CRUDO;78.3;18.0;0.0;0.0;0.7;0.1;;1.0;G;filete:150;PESCADO;;false;false;false;true
+Atún fresco a la plancha;;Pescados y mariscos;PLANCHA;129.5;29.0;0.0;0.0;1.5;0.4;;0.1;G;filete:150;PESCADO;;false;false;false;true
+Atún en conserva al natural;;Pescados y mariscos;ENVASADO;105.0;24.0;0.0;0.0;1.0;0.3;;1.0;G;lata escurrida:56;PESCADO;;false;false;false;true
+Atún en aceite de oliva escurrido;;Pescados y mariscos;ENVASADO;176.0;26.0;0.0;0.0;8.0;1.3;;1.0;G;lata escurrida:52;PESCADO;;false;false;false;true
+Sardinas en aceite;;Pescados y mariscos;ENVASADO;199.5;24.0;0.0;0.0;11.5;3.0;;1.0;G;lata escurrida:85;PESCADO;;false;false;false;true
+Sardinas a la plancha;;Pescados y mariscos;PLANCHA;190.0;25.0;0.0;0.0;10.0;2.8;;0.3;G;unidad:40;PESCADO;;false;false;false;true
+Caballa a la plancha;;Pescados y mariscos;PLANCHA;231.0;24.0;0.0;0.0;15.0;3.5;;0.2;G;filete:120;PESCADO;;false;false;false;true
+Boquerones fritos;;Pescados y mariscos;FRITO;243.0;20.0;7.0;0.3;15.0;2.0;0.3;0.6;G;ración:150;PESCADO|GLUTEN;;false;false;false;true
+Dorada al horno;;Pescados y mariscos;HORNO;146.0;23.0;0.0;0.0;6.0;1.5;;0.2;G;unidad limpia:250;PESCADO;;false;false;false;true
+Lubina al horno;;Pescados y mariscos;HORNO;123.0;24.0;0.0;0.0;3.0;0.7;;0.2;G;unidad limpia:250;PESCADO;;false;false;false;true
+Rape a la plancha;;Pescados y mariscos;PLANCHA;93.5;20.0;0.0;0.0;1.5;0.3;;0.2;G;ración:150;PESCADO;;false;false;false;true
+Lenguado a la plancha;;Pescados y mariscos;PLANCHA;89.5;19.0;0.0;0.0;1.5;0.3;;0.3;G;filete:120;PESCADO;;false;false;false;true
+Trucha a la plancha;;Pescados y mariscos;PLANCHA;150.5;23.0;0.0;0.0;6.5;1.5;;0.2;G;unidad limpia:200;PESCADO;;false;false;false;true
+Gambas cocidas;;Pescados y mariscos;COCIDO;110.3;24.0;0.2;0.0;1.5;0.3;;0.8;G;ración:100;CRUSTACEOS;SULFITOS;false;false;false;true
+Gambas a la plancha;;Pescados y mariscos;PLANCHA;113.0;24.0;0.2;0.0;1.8;0.3;;1.0;G;ración:100;CRUSTACEOS;SULFITOS;false;false;false;true
+Langostinos cocidos;;Pescados y mariscos;COCIDO;99.7;22.0;0.0;0.0;1.3;0.3;;1.0;G;unidad:20;CRUSTACEOS;SULFITOS;false;false;false;true
+Mejillones cocidos;;Pescados y mariscos;COCIDO;136.5;20.0;4.0;0.0;4.5;0.9;;0.9;G;ración:100;MOLUSCOS;;false;false;false;true
+Almejas al vapor;;Pescados y mariscos;COCIDO;138.0;25.0;5.0;0.0;2.0;0.2;;1.2;G;ración:100;MOLUSCOS;;false;false;false;true
+Calamares a la plancha;;Pescados y mariscos;PLANCHA;97.5;18.0;3.0;0.0;1.5;0.4;;0.4;G;ración:150;MOLUSCOS;;false;false;false;true
+Calamares a la romana;;Pescados y mariscos;FRITO;210.0;15.0;15.0;0.5;10.0;1.5;0.5;0.8;G;ración:150;MOLUSCOS|GLUTEN|HUEVOS;;false;false;false;true
+Pulpo cocido;;Pescados y mariscos;COCIDO;135.6;25.0;4.4;0.0;2.0;0.5;;1.0;G;ración:150;MOLUSCOS;;false;false;false;true
+Sepia a la plancha;;Pescados y mariscos;PLANCHA;95.0;20.0;1.5;0.0;1.0;0.2;;0.8;G;ración:150;MOLUSCOS;;false;false;false;true
+Surimi;;Pescados y mariscos;ENVASADO;98.1;7.5;15.0;5.0;0.9;0.2;0.5;1.7;G;barrita:17;PESCADO|GLUTEN|HUEVOS;CRUSTACEOS;false;false;false;true
+Huevo crudo;;Huevos;CRUDO;138.7;12.6;0.7;0.4;9.5;2.8;;0.4;G;unidad mediana:55|unidad grande:63;HUEVOS;;false;false;true;true
+Huevo cocido;;Huevos;COCIDO;138.3;12.6;0.6;0.6;9.5;2.9;;0.3;G;unidad mediana:50;HUEVOS;;false;false;true;true
+Huevo frito;;Huevos;FRITO;190.8;13.6;0.8;0.4;14.8;4.0;;0.5;G;unidad:60;HUEVOS;;false;false;true;true
+Huevo a la plancha;;Huevos;PLANCHA;153.8;13.0;0.7;0.4;11.0;3.0;;0.4;G;unidad:52;HUEVOS;;false;false;true;true
+Huevos revueltos con leche;;Huevos;OTRA;145.0;10.0;1.5;1.3;11.0;3.4;;0.4;G;ración:120;HUEVOS|LACTEOS;;true;false;true;true
+Clara de huevo;;Huevos;CRUDO;48.2;10.9;0.7;0.7;0.2;0.0;;0.4;G;unidad:33;HUEVOS;;false;false;true;true
+Claras de huevo pasteurizadas;;Huevos;ENVASADO;46.6;10.5;0.7;0.6;0.2;0.0;;0.4;G;vaso:250;HUEVOS;;false;false;true;true
+Clara de huevo a la plancha;;Huevos;PLANCHA;51.0;11.5;0.8;0.7;0.2;0.0;;0.4;G;ración:100;HUEVOS;;false;false;true;true
+Yema de huevo;;Huevos;CRUDO;309.4;16.0;0.6;0.6;27.0;9.6;;0.1;G;unidad:17;HUEVOS;;false;false;true;true
+Tortilla francesa;;Huevos;PLANCHA;159.7;11.0;0.8;0.5;12.5;3.0;;0.5;G;unidad de dos huevos:120;HUEVOS;;false;false;true;true
+Tortilla de patatas;;Huevos;OTRA;185.5;6.5;14.0;1.0;11.5;2.0;1.3;0.6;G;pincho:120|ración:200;HUEVOS;;false;false;true;true
+Leche entera;;Lácteos y alternativas;ENVASADO;63.6;3.1;4.7;4.7;3.6;2.3;;0.1;ML;vaso:250|taza:200;LACTEOS;;true;false;true;true
+Leche semidesnatada;;Lácteos y alternativas;ENVASADO;46.4;3.2;4.8;4.8;1.6;1.0;;0.1;ML;vaso:250|taza:200;LACTEOS;;true;false;true;true
+Leche desnatada;;Lácteos y alternativas;ENVASADO;35.0;3.4;4.9;4.9;0.2;0.1;;0.1;ML;vaso:250|taza:200;LACTEOS;;true;false;true;true
+Leche entera sin lactosa;;Lácteos y alternativas;ENVASADO;63.6;3.1;4.7;4.7;3.6;2.3;;0.1;ML;vaso:250|taza:200;LACTEOS;;false;false;true;true
+Leche semidesnatada sin lactosa;;Lácteos y alternativas;ENVASADO;45.5;3.2;4.8;4.8;1.5;1.0;;0.1;ML;vaso:250|taza:200;LACTEOS;;false;false;true;true
+Leche desnatada sin lactosa;;Lácteos y alternativas;ENVASADO;35.5;3.4;4.8;4.8;0.3;0.1;;0.1;ML;vaso:250|taza:200;LACTEOS;;false;false;true;true
+Yogur natural;;Lácteos y alternativas;ENVASADO;60.6;3.8;4.6;4.6;3.0;2.0;;0.1;G;unidad:125;LACTEOS;;true;false;true;true
+Yogur natural desnatado;;Lácteos y alternativas;ENVASADO;40.9;4.3;5.7;5.7;0.1;0.1;;0.1;G;unidad:125;LACTEOS;;true;false;true;true
+Yogur natural sin lactosa;;Lácteos y alternativas;ENVASADO;60.6;3.8;4.6;4.6;3.0;2.0;;0.1;G;unidad:125;LACTEOS;;false;false;true;true
+Yogur griego;;Lácteos y alternativas;ENVASADO;120.4;3.6;4.0;4.0;10.0;6.5;;0.1;G;unidad:125;LACTEOS;;true;false;true;true
+Yogur griego sin lactosa;;Lácteos y alternativas;ENVASADO;115.9;3.6;4.0;4.0;9.5;6.2;;0.1;G;unidad:125;LACTEOS;;false;false;true;true
+Skyr natural;;Lácteos y alternativas;ENVASADO;57.8;10.0;4.0;4.0;0.2;0.1;;0.1;G;unidad:150;LACTEOS;;true;false;true;true
+Kéfir de leche;;Lácteos y alternativas;ENVASADO;58.2;3.4;4.4;4.4;3.0;2.0;;0.1;G;vaso:200;LACTEOS;;true;false;true;true
+Queso fresco de Burgos;;Lácteos y alternativas;ENVASADO;177.0;12.0;3.0;3.0;13.0;9.0;;1.0;G;tarrina:250|porción:60;LACTEOS;;true;false;true;true
+Queso fresco de Burgos sin lactosa;;Lácteos y alternativas;ENVASADO;168.0;12.0;3.0;3.0;12.0;8.5;;1.0;G;tarrina:250|porción:60;LACTEOS;;false;false;true;true
+Queso fresco batido 0 %;;Lácteos y alternativas;ENVASADO;47.8;8.0;3.5;3.5;0.2;0.1;;0.1;G;cucharada:30|tarrina:250;LACTEOS;;true;false;true;true
+Requesón;;Lácteos y alternativas;ENVASADO;98.5;11.0;3.5;3.5;4.5;2.9;;0.4;G;porción:60;LACTEOS;;true;false;true;true
+Queso cottage;;Lácteos y alternativas;ENVASADO;98.3;11.5;3.4;2.7;4.3;2.7;;0.9;G;cucharada:30|tarrina:200;LACTEOS;;true;false;true;true
+Queso manchego curado;;Lácteos y alternativas;ENVASADO;445.0;32.0;0.5;0.5;35.0;22.0;;1.8;G;loncha:15|taco:30;LACTEOS;;true;false;true;true
+Queso semicurado;;Lácteos y alternativas;ENVASADO;376.0;26.0;0.5;0.5;30.0;19.0;;1.5;G;loncha:15|taco:30;LACTEOS;;true;false;true;true
+Queso semicurado sin lactosa;;Lácteos y alternativas;ENVASADO;376.0;26.0;0.5;0.5;30.0;19.0;;1.5;G;loncha:15|taco:30;LACTEOS;;false;false;true;true
+Queso mozzarella;;Lácteos y alternativas;ENVASADO;233.8;18.0;2.2;1.0;17.0;11.5;;0.6;G;bola:125;LACTEOS;;true;false;true;true
+Queso parmesano;;Lácteos y alternativas;ENVASADO;392.0;35.0;0.0;0.0;28.0;18.0;;1.6;G;cucharada rallado:10;LACTEOS;;true;false;true;true
+Queso en lonchas para sándwich;;Lácteos y alternativas;ENVASADO;331.0;21.0;1.0;0.5;27.0;17.0;;1.8;G;loncha:20;LACTEOS;;true;false;true;true
+Rulo de queso de cabra;;Lácteos y alternativas;ENVASADO;301.0;18.0;1.0;1.0;25.0;17.0;;1.5;G;rodaja:30;LACTEOS;;true;false;true;true
+Nata para cocinar;;Lácteos y alternativas;ENVASADO;186.0;2.5;3.5;3.5;18.0;11.5;;0.1;ML;cucharada:15;LACTEOS;;true;false;true;true
+Natillas;;Lácteos y alternativas;ENVASADO;108.6;3.4;17.0;15.0;3.0;1.9;0.2;0.2;G;unidad:125;LACTEOS|HUEVOS;;true;false;true;true
+Flan de huevo;;Lácteos y alternativas;ENVASADO;129.5;4.5;20.0;18.5;3.5;1.8;;0.2;G;unidad:100;LACTEOS|HUEVOS;;true;false;true;true
+Bebida de soja sin azúcar;;Lácteos y alternativas;ENVASADO;30.2;3.3;0.2;0.1;1.8;0.3;0.6;0.1;ML;vaso:250;SOJA;;false;true;true;true
+Bebida de avena;;Lácteos y alternativas;ENVASADO;43.9;1.0;6.6;3.3;1.5;0.2;0.8;0.1;ML;vaso:250;GLUTEN;;false;true;true;true
+Bebida de almendra sin azúcar;;Lácteos y alternativas;ENVASADO;13.1;0.5;0.3;0.0;1.1;0.1;0.3;0.1;ML;vaso:250;FRUTOS_DE_CASCARA;;false;true;true;true
+Bebida de arroz;;Lácteos y alternativas;ENVASADO;47.0;0.1;9.4;4.0;1.0;0.1;0.1;0.1;ML;vaso:250;;;false;true;true;true
+Postre de soja natural;;Lácteos y alternativas;ENVASADO;44.7;4.0;2.0;1.0;2.3;0.4;0.6;0.1;G;unidad:125;SOJA;;false;true;true;true
+Arroz blanco crudo;;Cereales y derivados;CRUDO;345.4;7.0;78.0;0.1;0.6;0.2;1.3;0.0;G;ración cruda:80;;;false;true;true;true
+Arroz blanco cocido;;Cereales y derivados;COCIDO;125.5;2.7;28.0;0.1;0.3;0.1;0.4;0.0;G;taza:160|ración:200;;;false;true;true;true
+Arroz integral crudo;;Cereales y derivados;CRUDO;342.3;7.5;72.0;0.8;2.7;0.5;3.5;0.0;G;ración cruda:80;;;false;true;true;true
+Arroz integral cocido;;Cereales y derivados;COCIDO;110.5;2.6;23.0;0.3;0.9;0.2;1.8;0.0;G;taza:160|ración:200;;;false;true;true;true
+Arroz basmati cocido;;Cereales y derivados;COCIDO;131.6;3.0;29.0;0.1;0.4;0.1;0.6;0.0;G;taza:160|ración:200;;;false;true;true;true
+Pasta cruda;;Cereales y derivados;CRUDO;347.5;12.5;71.0;3.0;1.5;0.3;3.0;0.0;G;ración cruda:80;GLUTEN;HUEVOS;false;true;true;true
+Pasta cocida;;Cereales y derivados;COCIDO;151.3;5.8;30.0;0.6;0.9;0.2;1.8;0.0;G;plato:200;GLUTEN;HUEVOS;false;true;true;true
+Pasta integral cocida;;Cereales y derivados;COCIDO;135.0;5.5;26.0;0.8;1.0;0.2;3.9;0.0;G;plato:200;GLUTEN;HUEVOS;false;true;true;true
+Espaguetis cocidos;;Cereales y derivados;COCIDO;153.3;5.8;30.5;0.6;0.9;0.2;1.8;0.0;G;plato:200;GLUTEN;HUEVOS;false;true;true;true
+Pasta sin gluten cocida;;Cereales y derivados;COCIDO;142.4;2.8;31.0;0.3;0.8;0.2;1.0;0.0;G;plato:200;;;false;true;true;true
+Cuscús cocido;;Cereales y derivados;COCIDO;105.0;3.8;22.0;0.1;0.2;0.0;1.4;0.0;G;taza:160;GLUTEN;;false;true;true;true
+Quinoa cruda;;Cereales y derivados;CRUDO;338.0;14.0;57.0;0.0;6.0;0.7;7.0;0.0;G;ración cruda:60;;;false;true;true;true
+Quinoa cocida;;Cereales y derivados;COCIDO;108.7;4.4;18.5;0.9;1.9;0.2;2.8;0.0;G;taza:185;;;false;true;true;true
+Copos de avena;;Cereales y derivados;CRUDO;351.8;13.5;58.7;1.0;7.0;1.2;10.0;0.0;G;taza:80|cucharada:10;GLUTEN;;false;true;true;true
+Gachas de avena con agua;;Cereales y derivados;COCIDO;64.6;2.5;10.5;0.3;1.4;0.2;1.7;0.0;G;cuenco:250;GLUTEN;;false;true;true;true
+Pan blanco de barra;;Cereales y derivados;HORNO;254.4;9.0;51.0;3.0;1.6;0.3;3.5;1.3;G;rebanada:30|barra entera:250;GLUTEN;;false;true;true;true
+Pan integral;;Cereales y derivados;HORNO;231.0;10.0;41.0;4.0;3.0;0.5;7.0;1.2;G;rebanada:30;GLUTEN;SESAMO;false;true;true;true
+Pan de molde blanco;;Cereales y derivados;ENVASADO;251.5;8.0;47.0;5.5;3.5;0.7;3.5;1.1;G;rebanada:25;GLUTEN;SOJA|SESAMO;false;true;true;true
+Pan de molde integral;;Cereales y derivados;ENVASADO;232.5;10.0;38.0;4.0;4.5;0.8;7.0;1.1;G;rebanada:25;GLUTEN;SOJA|SESAMO;false;true;true;true
+Pan de centeno;;Cereales y derivados;HORNO;217.3;8.5;42.0;3.0;1.7;0.3;6.0;1.3;G;rebanada:30;GLUTEN;;false;true;true;true
+Pan de pita;;Cereales y derivados;HORNO;266.8;9.0;55.0;1.5;1.2;0.2;2.2;1.3;G;unidad:60;GLUTEN;;false;true;true;true
+Pan sin gluten;;Cereales y derivados;ENVASADO;241.0;4.0;45.0;3.0;5.0;0.6;6.0;1.1;G;rebanada:30;;;false;true;true;true
+Pan tostado;;Cereales y derivados;ENVASADO;380.0;11.5;70.0;5.0;6.0;0.8;5.0;1.3;G;unidad:8;GLUTEN;SESAMO;false;true;true;true
+Pan rallado;;Cereales y derivados;ENVASADO;381.0;12.0;72.0;5.0;5.0;1.0;4.5;1.2;G;cucharada:10;GLUTEN;;false;true;true;true
+Tortitas de arroz;;Cereales y derivados;ENVASADO;379.0;8.0;80.0;0.5;3.0;0.6;3.0;0.0;G;unidad:8;;;false;true;true;true
+Tortitas de maíz;;Cereales y derivados;ENVASADO;379.5;8.0;79.0;0.5;3.5;0.5;4.0;0.1;G;unidad:8;;;false;true;true;true
+Tortilla de trigo;;Cereales y derivados;ENVASADO;297.5;8.5;49.0;3.0;7.5;3.0;3.0;1.2;G;unidad:60;GLUTEN;;false;true;true;true
+Copos de maíz;;Cereales y derivados;ENVASADO;372.1;7.0;84.0;8.0;0.9;0.2;3.0;1.1;G;taza:30;GLUTEN;;false;true;true;true
+Muesli sin azúcar añadido;;Cereales y derivados;ENVASADO;343.0;10.0;60.0;15.0;7.0;1.2;8.0;0.1;G;ración:50;GLUTEN|FRUTOS_DE_CASCARA;;false;true;true;true
+Granola;;Cereales y derivados;ENVASADO;428.0;9.0;62.0;20.0;16.0;3.5;6.0;0.3;G;ración:50;GLUTEN|FRUTOS_DE_CASCARA;;false;false;true;true
+Harina de trigo;;Cereales y derivados;CRUDO;341.0;10.0;73.0;0.3;1.0;0.2;3.0;0.0;G;cucharada:10;GLUTEN;;false;true;true;true
+Harina de avena;;Cereales y derivados;CRUDO;355.0;13.0;60.0;1.0;7.0;1.2;9.0;0.0;G;cacito:40;GLUTEN;;false;true;true;true
+Galletas tipo María;;Cereales y derivados;ENVASADO;436.0;7.0;75.0;22.0;12.0;5.5;2.5;0.6;G;unidad:6;GLUTEN;LACTEOS|FRUTOS_DE_CASCARA|SOJA;false;false;true;true
+Cruasán;;Cereales y derivados;HORNO;401.0;8.0;45.0;11.0;21.0;12.0;2.5;0.9;G;unidad:60;GLUTEN|LACTEOS|HUEVOS;;true;false;true;true
+Palomitas de maíz sin mantequilla;;Cereales y derivados;OTRA;340.5;12.0;63.0;0.9;4.5;0.6;14.5;0.0;G;cuenco:30;;;false;true;true;true
+Lentejas crudas;;Legumbres;CRUDO;297.9;24.0;48.0;2.0;1.1;0.2;11.0;0.0;G;ración cruda:70;;;false;true;true;true
+Lentejas cocidas;;Legumbres;COCIDO;104.8;9.0;16.3;1.8;0.4;0.1;7.9;0.0;G;plato:250|ración:200;;;false;true;true;true
+Lentejas cocidas en conserva;;Legumbres;ENVASADO;82.5;7.5;12.0;0.8;0.5;0.1;5.0;0.5;G;bote escurrido:250;;;false;true;true;true
+Lentejas estofadas con chorizo;;Legumbres;COCIDO;129.0;8.0;13.0;1.5;5.0;1.7;5.0;0.8;G;plato:300;;APIO;false;false;false;false
+Garbanzos crudos;;Legumbres;CRUDO;334.0;20.0;50.0;4.8;6.0;0.6;15.0;0.1;G;ración cruda:70;;;false;true;true;true
+Garbanzos cocidos;;Legumbres;COCIDO;139.0;8.9;20.0;4.8;2.6;0.3;7.6;0.0;G;plato:250|ración:200;;;false;true;true;true
+Garbanzos cocidos en conserva;;Legumbres;ENVASADO;102.5;7.0;13.0;0.5;2.5;0.3;5.0;0.6;G;bote escurrido:250;;;false;true;true;true
+Alubias blancas cocidas;;Legumbres;COCIDO;100.5;9.0;15.0;0.3;0.5;0.1;6.3;0.0;G;plato:250;;;false;true;true;true
+Alubias blancas en conserva;;Legumbres;ENVASADO;78.5;6.5;12.0;0.6;0.5;0.1;6.0;0.6;G;bote escurrido:250;;;false;true;true;true
+Alubias rojas cocidas;;Legumbres;COCIDO;103.3;8.7;16.0;0.3;0.5;0.1;6.4;0.0;G;plato:250;;;false;true;true;true
+Guisantes cocidos;;Legumbres;COCIDO;63.2;5.4;9.5;5.9;0.4;0.1;5.5;0.0;G;ración:150;;;false;true;true;true
+Habas cocidas;;Legumbres;COCIDO;82.0;7.6;12.0;1.8;0.4;0.1;5.4;0.0;G;ración:150;;;false;true;true;true
+Edamame cocido;;Legumbres;COCIDO;109.2;11.9;3.7;2.2;5.2;0.6;5.2;0.0;G;ración:100;SOJA;;false;true;true;true
+Soja texturizada;;Legumbres;CRUDO;265.0;50.0;14.0;7.0;1.0;0.1;18.0;0.0;G;ración seca:50;SOJA;;false;true;true;true
+Tofu firme;;Legumbres;ENVASADO;122.3;12.5;1.2;0.6;7.5;1.1;1.0;0.0;G;bloque:200|ración:100;SOJA;;false;true;true;true
+Tofu a la plancha;;Legumbres;PLANCHA;147.0;15.0;1.5;0.7;9.0;1.3;1.2;0.0;G;ración:100;SOJA;;false;true;true;true
+Hummus;;Legumbres;ENVASADO;227.0;7.5;11.0;0.3;17.0;2.0;6.0;0.9;G;cucharada:30;SESAMO;;false;true;true;true
+Altramuces en salmuera;;Legumbres;ENVASADO;106.1;16.0;4.0;0.5;2.9;0.3;4.8;2.0;G;puñado:40;ALTRAMUCES;;false;true;true;true
+Almendras crudas;;Frutos secos;CRUDO;570.4;21.0;9.1;4.4;50.0;3.8;12.5;0.0;G;puñado:30;FRUTOS_DE_CASCARA;;false;true;true;true
+Almendras tostadas;;Frutos secos;HORNO;588.0;21.0;9.0;4.9;52.0;4.0;11.0;0.0;G;puñado:30;FRUTOS_DE_CASCARA;;false;true;true;true
+Nueces;;Frutos secos;CRUDO;673.8;15.2;7.0;2.6;65.0;6.1;6.7;0.0;G;puñado:30|unidad:5;FRUTOS_DE_CASCARA;;false;true;true;true
+Avellanas;;Frutos secos;CRUDO;637.0;15.0;7.0;4.3;61.0;4.5;9.7;0.0;G;puñado:30;FRUTOS_DE_CASCARA;;false;true;true;true
+Anacardos;;Frutos secos;HORNO;588.0;18.0;30.0;5.9;44.0;7.8;3.3;0.0;G;puñado:30;FRUTOS_DE_CASCARA;;false;true;true;true
+Pistachos tostados;;Frutos secos;HORNO;557.0;20.0;18.0;7.7;45.0;5.6;10.0;1.0;G;puñado:30;FRUTOS_DE_CASCARA;;false;true;true;true
+Cacahuetes tostados;;Frutos secos;HORNO;595.0;25.0;13.5;4.2;49.0;6.9;8.0;0.0;G;puñado:30;CACAHUETES;FRUTOS_DE_CASCARA;false;true;true;true
+Crema de cacahuete;;Frutos secos;ENVASADO;602.0;25.0;13.0;4.0;50.0;9.0;7.0;0.0;G;cucharada:15;CACAHUETES;FRUTOS_DE_CASCARA;false;true;true;true
+Crema de almendras;;Frutos secos;ENVASADO;615.0;21.0;9.0;4.4;55.0;4.2;10.0;0.0;G;cucharada:15;FRUTOS_DE_CASCARA;CACAHUETES;false;true;true;true
+Mezcla de frutos secos naturales;;Frutos secos;CRUDO;596.0;20.0;12.0;4.0;52.0;6.0;8.0;0.0;G;puñado:30;FRUTOS_DE_CASCARA|CACAHUETES;;false;true;true;true
+Pipas de girasol peladas;;Frutos secos;HORNO;588.6;21.0;11.4;2.6;51.0;4.5;8.6;0.0;G;puñado:30;;;false;true;true;true
+Pipas de calabaza;;Frutos secos;HORNO;581.0;30.0;5.0;1.4;49.0;8.7;6.0;0.0;G;puñado:30;;;false;true;true;true
+Semillas de chía;;Frutos secos;CRUDO;379.0;17.0;8.0;0.0;31.0;3.3;34.0;0.0;G;cucharada:12;;;false;true;true;true
+Semillas de lino;;Frutos secos;CRUDO;456.4;18.0;1.6;1.6;42.0;3.7;27.0;0.0;G;cucharada:10;;;false;true;true;true
+Semillas de sésamo;;Frutos secos;CRUDO;570.0;18.0;12.0;0.3;50.0;7.0;12.0;0.0;G;cucharada:9;SESAMO;;false;true;true;true
+Coco rallado;;Frutos secos;OTRA;640.6;6.9;7.0;6.4;65.0;57.0;16.0;0.0;G;cucharada:7;;;false;true;true;true
+Castañas asadas;;Frutos secos;HORNO;224.6;3.2;48.0;10.6;2.2;0.4;5.1;0.0;G;unidad:10;;;false;true;true;true
+Aceite de oliva virgen extra;;Aceites y grasas;ENVASADO;899.1;0.0;0.0;0.0;99.9;14.0;;0.0;G;cucharada:10|cucharadita:4;;;false;true;true;true
+Aceite de oliva;;Aceites y grasas;ENVASADO;899.1;0.0;0.0;0.0;99.9;14.0;;0.0;G;cucharada:10|cucharadita:4;;;false;true;true;true
+Aceite de girasol;;Aceites y grasas;ENVASADO;899.1;0.0;0.0;0.0;99.9;10.0;;0.0;G;cucharada:10|cucharadita:4;;;false;true;true;true
+Aceite de coco;;Aceites y grasas;ENVASADO;899.1;0.0;0.0;0.0;99.9;87.0;;0.0;G;cucharada:10|cucharadita:4;;;false;true;true;true
+Mantequilla;;Aceites y grasas;ENVASADO;743.2;0.7;0.6;0.6;82.0;52.0;;0.0;G;porción:10;LACTEOS;;true;false;true;true
+Mantequilla sin lactosa;;Aceites y grasas;ENVASADO;743.2;0.7;0.6;0.6;82.0;52.0;;0.0;G;porción:10;LACTEOS;;false;false;true;true
+Margarina vegetal;;Aceites y grasas;ENVASADO;632.8;0.2;0.5;0.5;70.0;25.0;;1.0;G;porción:10;;LACTEOS;false;true;true;true
+Mayonesa;;Aceites y grasas;ENVASADO;686.2;1.3;1.5;1.0;75.0;6.0;;1.4;G;cucharada:15;HUEVOS;MOSTAZA;false;false;true;true
+Manteca de cerdo;;Aceites y grasas;ENVASADO;899.1;0.0;0.0;0.0;99.9;39.0;;0.0;G;cucharada:12;;;false;false;false;false
+Agua mineral;;Bebidas;ENVASADO;0.0;0.0;0.0;0.0;0.0;0.0;;0.0;ML;vaso:250|botella:500;;;false;true;true;true
+Café solo;;Bebidas;OTRA;1.6;0.1;0.3;0.0;0.0;0.0;;0.0;ML;taza:50;;;false;true;true;true
+Café con leche semidesnatada;;Bebidas;OTRA;24.0;1.7;2.5;2.5;0.8;0.5;;0.1;ML;taza:200;LACTEOS;;true;false;true;true
+Café con bebida de avena;;Bebidas;OTRA;23.6;0.6;3.5;1.8;0.8;0.1;0.4;0.1;ML;taza:200;GLUTEN;;false;true;true;true
+Té o infusión sin azúcar;;Bebidas;OTRA;0.8;0.0;0.2;0.0;0.0;0.0;;0.0;ML;taza:250;;;false;true;true;true
+Zumo de naranja natural;;Bebidas;CRUDO;44.6;0.7;10.0;8.4;0.2;0.0;0.2;0.0;ML;vaso:200;;;false;true;true;true
+Zumo de manzana envasado;;Bebidas;ENVASADO;45.3;0.1;11.0;10.0;0.1;0.0;0.1;0.0;ML;vaso:200|brick:200;;;false;true;true;true
+Zumo de tomate;;Bebidas;ENVASADO;16.1;0.8;3.0;2.6;0.1;0.0;0.4;0.5;ML;vaso:200;;APIO;false;true;true;true
+Bebida isotónica;;Bebidas;ENVASADO;24.0;0.0;6.0;5.5;0.0;0.0;;0.3;ML;botella:500;;;false;true;true;true
+Refresco de cola;;Bebidas;ENVASADO;42.4;0.0;10.6;10.6;0.0;0.0;;0.0;ML;lata:330;;;false;true;true;true
+Refresco de cola sin azúcar;;Bebidas;ENVASADO;0.0;0.0;0.0;0.0;0.0;0.0;;0.0;ML;lata:330;;;false;true;true;true
+Bebida energética;;Bebidas;ENVASADO;44.0;0.0;11.0;11.0;0.0;0.0;;0.2;ML;lata:250;;;false;true;true;true
+Cerveza sin alcohol;;Bebidas;ENVASADO;19.2;0.3;4.5;3.0;0.0;0.0;;0.0;ML;caña:200|lata:330;GLUTEN;;false;true;true;true
+Batido de cacao;;Bebidas;ENVASADO;66.3;3.2;10.0;9.5;1.5;1.0;0.3;0.1;ML;brick:200;LACTEOS;;true;false;true;true
+Horchata de chufa;;Bebidas;ENVASADO;72.5;0.5;12.0;11.0;2.5;0.4;0.2;0.0;ML;vaso:250;;;false;true;true;true
+Agua de coco;;Bebidas;ENVASADO;17.4;0.2;3.7;3.0;0.2;0.2;;0.1;ML;brick:330;;;false;true;true;true
+Guisantes congelados;;Congelados;CRUDO;63.2;5.4;9.5;5.0;0.4;0.1;5.7;0.0;G;ración:150;;;false;true;true;true
+Menestra de verduras congelada;;Congelados;CRUDO;42.0;2.6;7.0;3.0;0.4;0.1;4.0;0.1;G;ración:200;;;false;true;true;true
+Espinacas congeladas;;Congelados;CRUDO;19.4;2.9;0.6;0.4;0.6;0.1;2.9;0.2;G;ración:200;;;false;true;true;true
+Brócoli congelado;;Congelados;CRUDO;28.8;2.8;3.5;1.5;0.4;0.1;3.0;0.0;G;ración:200;;;false;true;true;true
+Frutos rojos congelados;;Congelados;CRUDO;35.2;0.9;7.0;6.0;0.4;0.0;4.0;0.0;G;taza:140;;;false;true;true;true
+Salmón congelado;;Congelados;CRUDO;197.0;20.0;0.0;0.0;13.0;3.0;;0.1;G;filete:125;PESCADO;;false;false;false;true
+Langostinos congelados crudos;;Congelados;CRUDO;89.0;20.0;0.0;0.0;1.0;0.2;;1.0;G;ración:100;CRUSTACEOS;SULFITOS;false;false;false;true
+Varitas de merluza empanadas;;Congelados;HORNO;205.0;12.0;19.0;1.5;9.0;0.9;1.0;0.9;G;unidad:30;PESCADO|GLUTEN;LACTEOS|HUEVOS;false;false;false;true
+Pizza margarita congelada;;Congelados;HORNO;241.0;10.0;30.0;3.5;9.0;4.0;2.0;1.2;G;porción:100|pizza entera:350;GLUTEN|LACTEOS;SOJA;true;false;true;true
+Croquetas de jamón;;Congelados;FRITO;224.0;7.0;22.0;2.0;12.0;2.5;1.0;1.3;G;unidad:30;GLUTEN|LACTEOS|HUEVOS;;true;false;false;false
+Patatas prefritas al horno;;Congelados;HORNO;161.0;3.0;26.0;0.5;5.0;0.5;3.0;0.5;G;ración:150;;;false;true;true;true
+Helado de vainilla;;Congelados;ENVASADO;205.0;3.5;23.0;21.0;11.0;7.0;0.5;0.2;G;bola:60;LACTEOS|HUEVOS;;true;false;true;true
+Proteína de suero en polvo;;Suplementos y preparados;ENVASADO;390.0;78.0;6.0;5.0;6.0;3.5;;0.5;G;cacito:30;LACTEOS;SOJA|GLUTEN;true;false;true;true
+Proteína de suero aislada;;Suplementos y preparados;ENVASADO;369.0;88.0;2.0;1.5;1.0;0.6;;0.6;G;cacito:30;LACTEOS;SOJA;true;false;true;true
+Caseína micelar en polvo;;Suplementos y preparados;ENVASADO;357.5;80.0;6.0;4.0;1.5;1.0;;0.4;G;cacito:30;LACTEOS;;true;false;true;true
+Proteína de guisante en polvo;;Suplementos y preparados;ENVASADO;386.0;80.0;3.0;0.5;6.0;1.0;4.0;1.5;G;cacito:30;;;false;true;true;true
+Batido de proteínas listo para beber;;Suplementos y preparados;ENVASADO;47.2;7.0;3.0;2.5;0.8;0.5;;0.2;ML;botella:330;LACTEOS;;true;false;true;true
+Barrita de proteínas;;Suplementos y preparados;ENVASADO;360.0;33.0;30.0;4.0;12.0;6.0;10.0;0.6;G;unidad:60;LACTEOS|SOJA;FRUTOS_DE_CASCARA|CACAHUETES|GLUTEN;true;false;true;true
+Barrita de cereales;;Suplementos y preparados;ENVASADO;386.0;6.0;68.0;30.0;10.0;4.5;5.0;0.4;G;unidad:25;GLUTEN;FRUTOS_DE_CASCARA|LACTEOS;false;false;true;true
+Gel energético;;Suplementos y preparados;ENVASADO;280.0;0.0;70.0;20.0;0.0;0.0;;0.3;G;sobre:40;;;false;true;true;true
+Maltodextrina en polvo;;Suplementos y preparados;ENVASADO;380.0;0.0;95.0;5.0;0.0;0.0;;0.0;G;cacito:30;;;false;true;true;true
+Bebida de recuperación en polvo;;Suplementos y preparados;ENVASADO;355.0;20.0;62.0;30.0;3.0;1.5;;1.0;G;cacito:50;LACTEOS;SOJA;true;false;true;true
+Crema de arroz en polvo;;Suplementos y preparados;ENVASADO;357.0;7.0;80.0;0.5;1.0;0.3;1.5;0.0;G;cacito:40;;;false;true;true;true
+Creatina monohidrato;;Suplementos y preparados;ENVASADO;0.0;0.0;0.0;0.0;0.0;0.0;;0.0;G;cacito:5;;;false;true;true;true
+Miel;;Otros;ENVASADO;321.6;0.4;80.0;80.0;0.0;0.0;0.2;0.0;G;cucharada:20|cucharadita:7;;;false;false;true;true
+Azúcar blanco;;Otros;ENVASADO;400.0;0.0;100.0;100.0;0.0;0.0;;0.0;G;cucharadita:5|sobre:8;;;false;true;true;true
+Chocolate negro 70 %;;Otros;ENVASADO;546.0;8.0;34.0;28.0;42.0;25.0;11.0;0.0;G;onza:10;;LACTEOS|FRUTOS_DE_CASCARA;false;true;true;true
+Cacao puro en polvo;;Otros;ENVASADO;321.0;20.0;13.0;1.0;21.0;12.5;30.0;0.1;G;cucharada:10;;LACTEOS;false;true;true;true
+Crema de cacao con avellanas;;Otros;ENVASADO;531.0;6.0;57.0;56.0;31.0;10.6;3.4;0.1;G;cucharada:15;FRUTOS_DE_CASCARA|LACTEOS|SOJA;;true;false;true;true
+Mermelada;;Otros;ENVASADO;242.5;0.4;60.0;55.0;0.1;0.0;1.0;0.0;G;cucharada:15;;;false;true;true;true
+Tomate frito;;Otros;ENVASADO;82.0;1.5;10.0;7.0;4.0;0.5;1.5;1.3;G;cucharada:15;;;false;true;true;true
+Kétchup;;Otros;ENVASADO;105.7;1.2;25.0;22.0;0.1;0.0;0.3;2.5;G;cucharada:15;;;false;true;true;true
+Mostaza;;Otros;ENVASADO;72.0;5.0;4.0;3.0;4.0;0.3;3.0;5.0;G;cucharadita:5;MOSTAZA;;false;true;true;true
+Salsa de soja;;Otros;ENVASADO;52.9;8.0;5.0;1.5;0.1;0.0;0.8;14.5;ML;cucharada:15;SOJA|GLUTEN;;false;true;true;true
+Vinagre de vino;;Otros;ENVASADO;2.4;0.0;0.6;0.4;0.0;0.0;;0.0;ML;cucharada:15;SULFITOS;;false;true;true;true
+Sal;;Otros;ENVASADO;0.0;0.0;0.0;0.0;0.0;0.0;;99.0;G;pizca:1|cucharadita:6;;;false;true;true;true
+Caldo de pollo envasado;;Otros;ENVASADO;6.3;0.6;0.3;0.2;0.3;0.1;;0.8;ML;taza:250;;APIO;false;false;false;false
+Caldo de verduras envasado;;Otros;ENVASADO;6.7;0.2;0.8;0.5;0.3;0.0;0.1;0.8;ML;taza:250;APIO;;false;true;true;true
+Guacamole;;Otros;ENVASADO;144.0;1.5;3.0;1.0;14.0;2.5;4.5;0.9;G;cucharada:30;;;false;true;true;true
+Patatas fritas de bolsa;;Otros;FRITO;521.0;6.0;50.0;0.5;33.0;3.0;4.0;1.2;G;bolsa pequeña:40;;;false;true;true;true
+Paella de marisco;;Otros;OTRA;144.0;7.0;20.0;0.5;4.0;0.8;0.7;0.6;G;plato:300;CRUSTACEOS|MOLUSCOS;PESCADO;false;false;false;true
+Levadura nutricional;;Otros;ENVASADO;316.0;45.0;25.0;0.0;4.0;0.6;20.0;0.1;G;cucharada:5;;;false;true;true;true

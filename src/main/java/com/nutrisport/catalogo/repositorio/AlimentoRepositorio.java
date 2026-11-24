@@ -1,6 +1,8 @@
 package com.nutrisport.catalogo.repositorio;
 
 import com.nutrisport.catalogo.entidad.Alimento;
+import com.nutrisport.catalogo.entidad.Preparacion;
+import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,6 +12,20 @@ import org.springframework.data.repository.query.Param;
 
 /** Acceso a la tabla {@code alimento}. */
 public interface AlimentoRepositorio extends JpaRepository<Alimento, UUID> {
+
+    /**
+     * Alimento público con ese nombre, marca y preparación (clave de la importación por CSV). Una
+     * marca nula solo coincide con otra nula. Nunca devuelve alimentos privados de usuarios.
+     */
+    @Query("""
+            select a from Alimento a
+             where a.visibilidad = com.nutrisport.catalogo.entidad.Visibilidad.PUBLICO
+               and a.nombre = :nombre
+               and a.preparacion = :preparacion
+               and ((:marca is null and a.marca is null) or a.marca = :marca)
+            """)
+    Optional<Alimento> buscarPublico(@Param("nombre") String nombre, @Param("marca") String marca,
+            @Param("preparacion") Preparacion preparacion);
 
     /**
      * Búsqueda tolerante a errores de escritura con pg_trgm entre los alimentos activos que el usuario
