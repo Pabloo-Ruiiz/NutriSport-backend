@@ -1,0 +1,30 @@
+# Artefactos de compilación y metadatos
+target/
+.git/
+.gitignore
+.gitattributes
+.github/
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# Documentación (no hace falta para construir la imagen)
+docs/
+*.md
+HELP.md
+LICENSE
+# Excepción: cualquier .md que forme parte de los recursos de la aplicación
+!src/**/*.md
+
+# Secretos y configuración local
+.env
+.env.*
+
+# Ficheros que no intervienen en la construcción
+docker-compose*.yml
+compose*.yml
+Dockerfile
+.dockerignore
+mvnw.cmd
