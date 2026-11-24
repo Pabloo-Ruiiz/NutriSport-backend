@@ -1,6 +1,7 @@
 package com.nutrisport.auth;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
@@ -22,12 +23,16 @@ import com.nutrisport.auth.seguridad.JwtServicio;
 import com.nutrisport.auth.seguridad.UsuarioAutenticado;
 import com.nutrisport.auth.servicio.PurgaCuentasTarea;
 import com.nutrisport.auth.web.CookieRefresh;
+import com.nutrisport.almacenamiento.AlmacenamientoServicio;
+import com.nutrisport.almacenamiento.ClavesAlmacenamiento;
+import com.nutrisport.comun.excepcion.ServicioNoDisponibleException;
 import com.nutrisport.comun.config.InicializadorAdmin;
 import com.nutrisport.comun.correo.CorreoServicio;
 import com.nutrisport.comun.limite.LimitadorPeticiones;
 import jakarta.servlet.http.Cookie;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import org.junit.jupiter.api.AfterEach;
@@ -65,6 +70,7 @@ class CuentaControllerTest extends IntegracionBase {
     private final PurgaCuentasTarea purgaCuentasTarea;
     private final JdbcTemplate jdbc;
     private final LimitadorPeticiones limitador;
+    private final AlmacenamientoServicio almacenamiento;
 
     @MockitoBean
     private CorreoServicio correoServicio;
@@ -74,7 +80,7 @@ class CuentaControllerTest extends IntegracionBase {
     @Autowired
     CuentaControllerTest(MockMvc mockMvc, UsuarioRepositorio usuarioRepositorio, PasswordEncoder passwordEncoder,
             JwtServicio jwtServicio, PurgaCuentasTarea purgaCuentasTarea, JdbcTemplate jdbc,
-            LimitadorPeticiones limitador) {
+            LimitadorPeticiones limitador, AlmacenamientoServicio almacenamiento) {
         this.mockMvc = mockMvc;
         this.usuarioRepositorio = usuarioRepositorio;
         this.passwordEncoder = passwordEncoder;
@@ -82,6 +88,7 @@ class CuentaControllerTest extends IntegracionBase {
         this.purgaCuentasTarea = purgaCuentasTarea;
         this.jdbc = jdbc;
         this.limitador = limitador;
+        this.almacenamiento = almacenamiento;
     }
 
     @BeforeEach
@@ -251,15 +258,21 @@ class CuentaControllerTest extends IntegracionBase {
     @Test
     void eliminarDiferidoDejaLaCuentaEliminadaYBorraLaCookie() throws Exception {
         String refresh = refreshDeLogin(PASSWORD);
+        String imagen = ClavesAlmacenamiento.claveComida(ana.getId(), LocalDate.now());
+        byte[] foto = new byte[] {1, 2, 3};
+        almacenamiento.guardar(imagen, foto, "image/jpeg");
 
         eliminar("Incorrecta-123", false)
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errors[0].campo").value("password"));
+        assertThat(almacenamiento.descargar(imagen)).isEqualTo(foto);
 
         String cookie = eliminar(PASSWORD, false)
                 .andExpect(status().isNoContent())
                 .andReturn().getResponse().getHeader("Set-Cookie");
         assertThat(cookie).contains("Max-Age=0");
+        assertThatThrownBy(() -> almacenamiento.descargar(imagen))
+                .isInstanceOf(ServicioNoDisponibleException.class);
 
         Usuario eliminado = usuarioRepositorio.findById(ana.getId()).orElseThrow();
         assertThat(eliminado.getEstado()).isEqualTo(EstadoUsuario.ELIMINADO);
@@ -274,12 +287,20 @@ class CuentaControllerTest extends IntegracionBase {
     @Test
     void eliminarInmediatoBorraElUsuarioYSusDatos() throws Exception {
         refreshDeLogin(PASSWORD);
+        String imagen = ClavesAlmacenamiento.claveComida(ana.getId(), LocalDate.now());
+        String miniatura = ClavesAlmacenamiento.claveMiniatura(imagen);
+        almacenamiento.guardar(imagen, new byte[] {1, 2, 3}, "image/jpeg");
+        almacenamiento.guardar(miniatura, new byte[] {1, 2, 3}, "image/jpeg");
 
         eliminar(PASSWORD, true).andExpect(status().isNoContent());
 
         assertThat(usuarioRepositorio.findById(ana.getId())).isEmpty();
         assertThat(jdbc.queryForObject("SELECT count(*) FROM refresh_token", Integer.class)).isZero();
         assertThat(jdbc.queryForObject("SELECT count(*) FROM usuario_rol", Integer.class)).isZero();
+        assertThatThrownBy(() -> almacenamiento.descargar(imagen))
+                .isInstanceOf(ServicioNoDisponibleException.class);
+        assertThatThrownBy(() -> almacenamiento.descargar(miniatura))
+                .isInstanceOf(ServicioNoDisponibleException.class);
     }
 
     @Test

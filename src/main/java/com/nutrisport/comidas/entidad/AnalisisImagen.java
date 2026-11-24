@@ -1,5 +1,6 @@
 package com.nutrisport.comidas.entidad;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.nutrisport.auth.entidad.Usuario;
 import com.nutrisport.catalogo.entidad.Alimento;
 import com.nutrisport.comidas.dto.CandidatoAnalisis;
@@ -77,7 +78,7 @@ public class AnalisisImagen extends EntidadBase {
     /** Diferencias entre la propuesta y lo confirmado (jsonb), para medir la precisión real. */
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "correcciones")
-    private String correcciones;
+    private JsonNode correcciones;
 
     @Column(name = "latencia_ms")
     private Integer latenciaMs;
@@ -201,11 +202,11 @@ public class AnalisisImagen extends EntidadBase {
         this.candidatos = candidatos == null ? new ArrayList<>() : new ArrayList<>(candidatos);
     }
 
-    public String getCorrecciones() {
+    public JsonNode getCorrecciones() {
         return correcciones;
     }
 
-    public void setCorrecciones(String correcciones) {
+    public void setCorrecciones(JsonNode correcciones) {
         this.correcciones = correcciones;
     }
 
