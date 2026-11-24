@@ -159,7 +159,8 @@ public class AlimentoServicio {
                 .orElseThrow(() -> new RecursoNoEncontradoException(NO_ENCONTRADO));
     }
 
-    private Categoria categoriaDeAlimento(UUID categoriaId) {
+    /** La categoría, que debe existir y ser de alimentos; si no, 400 en el campo categoriaId. */
+    public Categoria categoriaDeAlimento(UUID categoriaId) {
         return categoriaRepositorio.findById(categoriaId)
                 .filter(categoria -> categoria.getTipo() == TipoCategoria.ALIMENTO)
                 .orElseThrow(() -> new PeticionInvalidaException(DATOS_NO_VALIDOS,
@@ -181,7 +182,7 @@ public class AlimentoServicio {
     }
 
     /** Un alimento vegano es también vegetariano, y uno vegetariano es también pescetariano. */
-    private static void validar(AlimentoRequest peticion) {
+    public static void validar(AlimentoRequest peticion) {
         List<ErrorCampo> errores = new ArrayList<>();
         if (peticion.aptoVegano() && !peticion.aptoVegetariano()) {
             errores.add(new ErrorCampo("aptoVegetariano", "Un alimento apto para veganos también lo es para vegetarianos"));
