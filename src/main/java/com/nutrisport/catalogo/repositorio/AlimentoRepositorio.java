@@ -2,6 +2,8 @@ package com.nutrisport.catalogo.repositorio;
 
 import com.nutrisport.catalogo.entidad.Alimento;
 import com.nutrisport.catalogo.entidad.Preparacion;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.domain.Page;
@@ -55,4 +57,43 @@ public interface AlimentoRepositorio extends JpaRepository<Alimento, UUID> {
             nativeQuery = true)
     Page<Alimento> buscar(@Param("q") String q, @Param("categoriaId") UUID categoriaId,
             @Param("usuarioId") UUID usuarioId, Pageable pageable);
+
+    /**
+     * Los últimos alimentos distintos que el usuario ha registrado en sus comidas (el más reciente
+     * primero), entre los que sigue pudiendo usar: activos y públicos o propios.
+     */
+    @Query(value = """
+            SELECT a.*
+              FROM alimento a
+              JOIN (SELECT ar.alimento_id, max(ar.creado_en) AS ultimo_uso
+                      FROM alimento_registrado ar
+                      JOIN registro_comida rc ON rc.id = ar.registro_comida_id
+                     WHERE rc.usuario_id = :usuarioId
+                     GROUP BY ar.alimento_id) uso ON uso.alimento_id = a.id
+             WHERE a.activo = true
+               AND (a.visibilidad = 'PUBLICO' OR a.propietario_id = :usuarioId)
+             ORDER BY uso.ultimo_uso DESC, a.id
+             LIMIT :limite
+            """, nativeQuery = true)
+    List<Alimento> recientes(@Param("usuarioId") UUID usuarioId, @Param("limite") int limite);
+
+    /**
+     * Los alimentos que el usuario ha registrado más veces en comidas desde {@code desde} (incluida);
+     * a igualdad de veces, el usado más recientemente primero. Solo activos y públicos o propios.
+     */
+    @Query(value = """
+            SELECT a.*
+              FROM alimento a
+              JOIN (SELECT ar.alimento_id, count(*) AS veces, max(ar.creado_en) AS ultimo_uso
+                      FROM alimento_registrado ar
+                      JOIN registro_comida rc ON rc.id = ar.registro_comida_id
+                     WHERE rc.usuario_id = :usuarioId AND rc.fecha >= :desde
+                     GROUP BY ar.alimento_id) uso ON uso.alimento_id = a.id
+             WHERE a.activo = true
+               AND (a.visibilidad = 'PUBLICO' OR a.propietario_id = :usuarioId)
+             ORDER BY uso.veces DESC, uso.ultimo_uso DESC, a.id
+             LIMIT :limite
+            """, nativeQuery = true)
+    List<Alimento> frecuentes(@Param("usuarioId") UUID usuarioId, @Param("desde") LocalDate desde,
+            @Param("limite") int limite);
 }

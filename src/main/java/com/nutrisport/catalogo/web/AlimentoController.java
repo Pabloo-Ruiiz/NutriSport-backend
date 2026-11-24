@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.net.URI;
+import java.util.List;
 import java.util.UUID;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
@@ -48,6 +49,23 @@ public class AlimentoController {
             @RequestParam(name = "categoria", required = false) UUID categoriaId,
             @ParameterObject @PageableDefault(size = 20) Pageable paginacion) {
         return alimentoServicio.buscar(q, categoriaId, paginacion);
+    }
+
+    // recientes y frecuentes se declaran antes de /{id}
+    @GetMapping("/recientes")
+    @PreAuthorize("hasRole('DEPORTISTA')")
+    @Operation(summary = "Alimentos usados recientemente",
+            description = "Los 20 últimos alimentos distintos registrados en tus comidas, el más reciente primero.")
+    public List<AlimentoResumenResponse> recientes() {
+        return alimentoServicio.recientes();
+    }
+
+    @GetMapping("/frecuentes")
+    @PreAuthorize("hasRole('DEPORTISTA')")
+    @Operation(summary = "Alimentos más usados",
+            description = "Los 20 alimentos que más has registrado en los últimos 90 días.")
+    public List<AlimentoResumenResponse> frecuentes() {
+        return alimentoServicio.frecuentes();
     }
 
     @GetMapping("/{id}")
