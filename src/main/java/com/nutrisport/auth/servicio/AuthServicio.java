@@ -1,5 +1,7 @@
 package com.nutrisport.auth.servicio;
 
+import static com.nutrisport.comun.util.Transacciones.despuesDelCommit;
+
 import com.nutrisport.auth.dto.LoginRequest;
 import com.nutrisport.auth.dto.RegistroRequest;
 import com.nutrisport.auth.dto.RestablecerPasswordRequest;
@@ -16,6 +18,7 @@ import com.nutrisport.auth.seguridad.SeguridadUtils;
 import com.nutrisport.auth.seguridad.UsuarioAutenticado;
 import com.nutrisport.comun.correo.CorreoServicio;
 import com.nutrisport.comun.excepcion.AccesoDenegadoException;
+import com.nutrisport.comun.excepcion.ConflictoException;
 import com.nutrisport.comun.limite.LimitadorPeticiones;
 import com.nutrisport.comun.limite.PlanLimite;
 import java.time.Duration;
@@ -31,8 +34,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionSynchronization;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 /**
  * Registro, verificación de email, login, sesiones y recuperación de contraseña (§3.A, §5.5, §8.1).
@@ -128,10 +129,29 @@ public class AuthServicio {
         enviarVerificacion(usuario);
     }
 
-    /** Consume el token de verificación y marca el email como verificado. */
+    /**
+     * Consume el token del enlace del correo (§7.1):
+     * <ul>
+     * <li>{@code VERIFICACION_EMAIL}: marca el email como verificado.</li>
+     * <li>{@code CAMBIO_EMAIL}: sustituye el email por el nuevo ({@code datoExtra}), que queda
+     * verificado porque el enlace se abrió desde él. Si entretanto otra cuenta lo ha ocupado,
+     * responde {@code 409 EMAIL_EN_USO}.</li>
+     * </ul>
+     */
     public void verificarEmail(String token) {
-        TokenUsuario tokenUsuario = tokenUsuarioServicio.consumir(token, TipoToken.VERIFICACION_EMAIL);
+        TokenUsuario tokenUsuario = tokenUsuarioServicio.consumir(token,
+                TipoToken.VERIFICACION_EMAIL, TipoToken.CAMBIO_EMAIL);
         Usuario usuario = tokenUsuario.getUsuario();
+
+        if (tokenUsuario.getTipo() == TipoToken.CAMBIO_EMAIL) {
+            String nuevoEmail = tokenUsuario.getDatoExtra();
+            if (usuarioRepositorio.existsByEmail(nuevoEmail)) {
+                throw new ConflictoException("EMAIL_EN_USO", "Ese email ya está en uso por otra cuenta");
+            }
+            usuario.setEmail(nuevoEmail);
+            usuario.setEmailVerificadoEn(ahora());
+            return;
+        }
         if (usuario.getEmailVerificadoEn() == null) {
             usuario.setEmailVerificadoEn(ahora());
         }
@@ -264,20 +284,6 @@ public class AuthServicio {
         String nombre = usuario.getNombre();
         String token = tokenUsuarioServicio.crear(usuario, TipoToken.VERIFICACION_EMAIL, VALIDEZ_VERIFICACION, null);
         despuesDelCommit(() -> correoServicio.enviarVerificacion(email, nombre, token));
-    }
-
-    /** Ejecuta la acción cuando la transacción se confirma; sin transacción, la ejecuta ya. */
-    private static void despuesDelCommit(Runnable accion) {
-        if (TransactionSynchronizationManager.isSynchronizationActive()) {
-            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
-                @Override
-                public void afterCommit() {
-                    accion.run();
-                }
-            });
-        } else {
-            accion.run();
-        }
     }
 
     private static String normalizarEmail(String email) {

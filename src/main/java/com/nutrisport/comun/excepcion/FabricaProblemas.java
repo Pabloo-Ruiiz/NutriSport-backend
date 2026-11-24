@@ -44,6 +44,7 @@ public final class FabricaProblemas {
             case "CONSENTIMIENTO_REVOCADO" -> "Consentimiento revocado";
             case "NO_ENCONTRADO" -> "Recurso no encontrado";
             case "CONFLICTO" -> "Conflicto";
+            case "EMAIL_EN_USO" -> "Email en uso";
             case "ARCHIVO_DEMASIADO_GRANDE" -> "Archivo demasiado grande";
             case "ARCHIVO_NO_VALIDO" -> "Archivo no válido";
             case "PERFIL_REQUERIDO" -> "Perfil requerido";

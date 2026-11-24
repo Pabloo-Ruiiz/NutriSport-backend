@@ -90,7 +90,7 @@ class SeguridadConfigTest extends IntegracionBase {
                 .andExpect(status().isNotFound());
         // Un deportista autenticado pasa la autorización de las rutas normales
         mockMvc.perform(get("/api/v1/cuenta").header("Authorization", "Bearer " + tokenDeportista))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isOk());
     }
 
     @Test

@@ -258,10 +258,10 @@ class AuthControllerTest extends IntegracionBase {
         assertThat(refreshTokenRepositorio.findByTokenHash(Tokens.sha256Hex(refresh))).isPresent();
         assertThat(usuarioRepositorio.findByEmail("ana@ejemplo.com").orElseThrow().getUltimoAcceso()).isNotNull();
 
-        // El access token pasa la seguridad (404 porque /cuenta aún no existe)
+        // El access token sirve en una ruta protegida
         String accessToken = JsonPath.read(resultado.getResponse().getContentAsString(), "$.accessToken");
         mockMvc.perform(get("/api/v1/cuenta").header("Authorization", "Bearer " + accessToken))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isOk());
     }
 
     @Test
