@@ -20,6 +20,7 @@ import com.nutrisport.comun.dto.ErrorCampo;
 import com.nutrisport.comun.dto.Nutrientes;
 import com.nutrisport.comun.excepcion.PeticionInvalidaException;
 import com.nutrisport.comun.excepcion.RecursoNoEncontradoException;
+import com.nutrisport.perfil.servicio.ObjetivoDiarioServicio;
 import com.nutrisport.perfil.servicio.RestriccionesServicio;
 import com.nutrisport.perfil.servicio.RestriccionesUsuario;
 import java.math.BigDecimal;
@@ -43,6 +44,7 @@ import org.springframework.transaction.annotation.Transactional;
  * Registro de comidas e historial (§3.C y §7.4). Todas las operaciones actúan sobre las comidas del
  * usuario autenticado: las de otro responden 404. Los nutrientes de cada alimento se calculan con el
  * catálogo y se guardan como instantánea (§6.3); los totales se recalculan en la misma transacción.
+ * Al registrar una comida se crea el objetivo de ese día si aún no existe (y el usuario tiene perfil).
  */
 @Service
 @Transactional
@@ -63,11 +65,12 @@ public class ComidaServicio {
     private final RestriccionesServicio restriccionesServicio;
     private final ComidaMapper comidaMapper;
     private final Clock reloj;
+    private final ObjetivoDiarioServicio objetivoDiarioServicio;
 
     public ComidaServicio(RegistroComidaRepositorio registroRepositorio, AlimentoRepositorio alimentoRepositorio,
             UsuarioRepositorio usuarioRepositorio, SeguridadUtils seguridadUtils, ConversorUnidades conversorUnidades,
             CalculadoraNutricional calculadoraNutricional, RestriccionesServicio restriccionesServicio,
-            ComidaMapper comidaMapper, Clock reloj) {
+            ComidaMapper comidaMapper, Clock reloj, ObjetivoDiarioServicio objetivoDiarioServicio) {
         this.registroRepositorio = registroRepositorio;
         this.alimentoRepositorio = alimentoRepositorio;
         this.usuarioRepositorio = usuarioRepositorio;
@@ -77,6 +80,7 @@ public class ComidaServicio {
         this.restriccionesServicio = restriccionesServicio;
         this.comidaMapper = comidaMapper;
         this.reloj = reloj;
+        this.objetivoDiarioServicio = objetivoDiarioServicio;
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -97,7 +101,7 @@ public class ComidaServicio {
         anadirLineas(registro, peticion.alimentos(), usuarioId, Set.of());
         registro.recalcularTotales();
         registroRepositorio.save(registro);
-        // TODO paso 16: objetivoDiarioServicio.crearSiNoExiste(usuarioId, registro.getFecha())
+        objetivoDiarioServicio.crearSiNoExiste(usuarioId, registro.getFecha());
         return respuesta(registro, restriccionesServicio.estrictasDe(usuarioId));
     }
 
@@ -116,6 +120,7 @@ public class ComidaServicio {
         registro.vaciarAlimentos();
         anadirLineas(registro, peticion.alimentos(), usuarioId, yaRegistrados);
         registro.recalcularTotales();
+        objetivoDiarioServicio.crearSiNoExiste(usuarioId, registro.getFecha());
         return respuesta(registro, restriccionesServicio.estrictasDe(usuarioId));
     }
 
@@ -144,7 +149,7 @@ public class ComidaServicio {
         }
         copia.recalcularTotales();
         registroRepositorio.save(copia);
-        // TODO paso 16: objetivoDiarioServicio.crearSiNoExiste(usuarioId, copia.getFecha())
+        objetivoDiarioServicio.crearSiNoExiste(usuarioId, copia.getFecha());
         return respuesta(copia, restriccionesServicio.estrictasDe(usuarioId));
     }
 
