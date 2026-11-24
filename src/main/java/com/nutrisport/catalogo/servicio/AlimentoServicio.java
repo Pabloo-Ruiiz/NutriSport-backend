@@ -18,6 +18,8 @@ import com.nutrisport.comun.dto.PaginaResponse;
 import com.nutrisport.comun.excepcion.PeticionInvalidaException;
 import com.nutrisport.comun.excepcion.RecursoNoEncontradoException;
 import com.nutrisport.comun.util.TextoNormalizado;
+import java.time.Clock;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -37,6 +39,8 @@ public class AlimentoServicio {
     static final int LONGITUD_MINIMA_BUSQUEDA = 2;
     static final int LONGITUD_MAXIMA_BUSQUEDA = 60;
     static final int TAMANO_MAXIMO_PAGINA = 50;
+    static final int LIMITE_RECIENTES_FRECUENTES = 20;
+    static final int DIAS_FRECUENTES = 90;
 
     private static final String DATOS_NO_VALIDOS = "La petición contiene datos no válidos";
     private static final String NO_ENCONTRADO = "El alimento no existe";
@@ -47,16 +51,18 @@ public class AlimentoServicio {
     private final SeguridadUtils seguridadUtils;
     private final AlimentoMapper alimentoMapper;
     private final UsoAlimento usoAlimento;
+    private final Clock reloj;
 
     public AlimentoServicio(AlimentoRepositorio alimentoRepositorio, CategoriaRepositorio categoriaRepositorio,
             UsuarioRepositorio usuarioRepositorio, SeguridadUtils seguridadUtils, AlimentoMapper alimentoMapper,
-            UsoAlimento usoAlimento) {
+            UsoAlimento usoAlimento, Clock reloj) {
         this.alimentoRepositorio = alimentoRepositorio;
         this.categoriaRepositorio = categoriaRepositorio;
         this.usuarioRepositorio = usuarioRepositorio;
         this.seguridadUtils = seguridadUtils;
         this.alimentoMapper = alimentoMapper;
         this.usoAlimento = usoAlimento;
+        this.reloj = reloj;
     }
 
     /**
@@ -75,6 +81,24 @@ public class AlimentoServicio {
         return PaginaResponse.de(
                 alimentoRepositorio.buscar(consulta, categoriaId, seguridadUtils.usuarioActualId(), sinOrden),
                 alimentoMapper::aResumen);
+    }
+
+    /** Los 20 últimos alimentos distintos que el usuario ha registrado en sus comidas, el más reciente primero. */
+    @Transactional(readOnly = true)
+    public List<AlimentoResumenResponse> recientes() {
+        return alimentoRepositorio.recientes(seguridadUtils.usuarioActualId(), LIMITE_RECIENTES_FRECUENTES).stream()
+                .map(alimentoMapper::aResumen)
+                .toList();
+    }
+
+    /** Los 20 alimentos que el usuario más ha registrado en los últimos 90 días (hoy incluido). */
+    @Transactional(readOnly = true)
+    public List<AlimentoResumenResponse> frecuentes() {
+        LocalDate desde = LocalDate.now(reloj).minusDays(DIAS_FRECUENTES - 1L);
+        return alimentoRepositorio.frecuentes(seguridadUtils.usuarioActualId(), desde, LIMITE_RECIENTES_FRECUENTES)
+                .stream()
+                .map(alimentoMapper::aResumen)
+                .toList();
     }
 
     /** Detalle de un alimento visible para el usuario; 404 si no existe o es privado de otro. */
