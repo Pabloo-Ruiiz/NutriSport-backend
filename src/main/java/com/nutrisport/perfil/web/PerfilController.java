@@ -1,5 +1,7 @@
 package com.nutrisport.perfil.web;
 
+import com.nutrisport.perfil.dto.ObjetivosManualesRequest;
+import com.nutrisport.perfil.dto.ObjetivosResponse;
 import com.nutrisport.perfil.dto.PerfilRequest;
 import com.nutrisport.perfil.dto.PerfilResponse;
 import com.nutrisport.perfil.dto.PreferenciaDto;
@@ -10,6 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/perfil")
 @PreAuthorize("hasRole('DEPORTISTA')")
-@Tag(name = "Perfil", description = "Perfil deportivo, preferencias y restricciones alimentarias")
+@Tag(name = "Perfil", description = "Perfil deportivo, objetivos, preferencias y restricciones alimentarias")
 public class PerfilController {
 
     private final PerfilServicio perfilServicio;
@@ -43,6 +46,28 @@ public class PerfilController {
             description = "fechaCompeticion es obligatoria si el objetivo es COMPETICION.")
     public PerfilResponse guardar(@Valid @RequestBody PerfilRequest peticion) {
         return perfilServicio.guardar(peticion);
+    }
+
+    @GetMapping("/objetivos")
+    @Operation(summary = "Objetivos base y desglose del cálculo",
+            description = "Objetivos vigentes (sin entrenamiento), si son manuales, desglose del cálculo automático "
+                    + "y avisos de seguridad. 404 PERFIL_NO_ENCONTRADO si aún no hay perfil.")
+    public ObjetivosResponse obtenerObjetivos() {
+        return perfilServicio.obtenerObjetivos();
+    }
+
+    @PutMapping("/objetivos")
+    @Operation(summary = "Fijar objetivos manuales",
+            description = "Dejan de recalcularse al cambiar el perfil. Devuelve avisos (no bloquea) si la energía "
+                    + "de los macros se aleja más de un 10 % de kcal o si kcal está bajo el mínimo de seguridad.")
+    public ObjetivosResponse fijarObjetivosManuales(@Valid @RequestBody ObjetivosManualesRequest peticion) {
+        return perfilServicio.fijarObjetivosManuales(peticion);
+    }
+
+    @DeleteMapping("/objetivos/manuales")
+    @Operation(summary = "Volver al cálculo automático", description = "Recalcula los objetivos con el perfil actual.")
+    public ObjetivosResponse volverACalculoAutomatico() {
+        return perfilServicio.volverACalculoAutomatico();
     }
 
     @GetMapping("/preferencias")
