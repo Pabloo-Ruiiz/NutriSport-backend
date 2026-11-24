@@ -1,0 +1,24 @@
+{
+  "code": "8400000000017",
+  "status": 1,
+  "status_verbose": "product found",
+  "product": {
+    "code": "8400000000017",
+    "product_name": "Bebida de avena ficticia (datos de prueba)",
+    "brands": "Marca Ficticia",
+    "quantity": "1 l",
+    "serving_size": "250 ml",
+    "serving_quantity": 250,
+    "nutrition_data_per": "100ml",
+    "nutriments": {
+      "energy-kcal_100g": "46", "proteins_100g": "1,0", "carbohydrates_100g": 6.8,
+      "sugars_100g": 4.1, "fat_100g": 1.5, "saturated-fat_100g": 0.2, "fiber_100g": "traces",
+      "salt_100g": 0.1
+    },
+    "ingredients_text": "Agua, avena 10 %, aceite de girasol, sal.",
+    "allergens_tags": ["en:gluten", "en:etiqueta-desconocida"],
+    "traces_tags": ["en:gluten", "en:sesame-seeds"],
+    "categories_tags": ["en:plant-based-foods-and-beverages", "en:beverages", "en:plant-milks"],
+    "image_front_small_url": "https://images.openfoodfacts.org/images/products/840/000/000/0017/front_es.200.jpg"
+  }
+}

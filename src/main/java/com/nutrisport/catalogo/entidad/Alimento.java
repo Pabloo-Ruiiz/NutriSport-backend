@@ -78,6 +78,22 @@ public class Alimento extends EntidadBase {
     @Column(name = "unidad_base", nullable = false, length = 2)
     private UnidadBase unidadBase;
 
+    // Datos de producto de los proveedores externos (V11); nulos si el proveedor no los informa
+
+    @Column(name = "ingredientes_texto", columnDefinition = "text")
+    private String ingredientesTexto;
+
+    /** URL de la imagen en el proveedor: no se copia, se enlaza con atribución. */
+    @Column(name = "imagen_url", length = 300)
+    private String imagenUrl;
+
+    /** Ración del envase en gramos (o ml), si el proveedor la informa. */
+    @Column(name = "racion_gramos", precision = 7, scale = 1)
+    private BigDecimal racionGramos;
+
+    @Column(name = "racion_descripcion", length = 60)
+    private String racionDescripcion;
+
     /** Medidas caseras (columna jsonb). */
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "porciones", nullable = false)
@@ -280,6 +296,38 @@ public class Alimento extends EntidadBase {
 
     public void setUnidadBase(UnidadBase unidadBase) {
         this.unidadBase = unidadBase;
+    }
+
+    public String getIngredientesTexto() {
+        return ingredientesTexto;
+    }
+
+    public void setIngredientesTexto(String ingredientesTexto) {
+        this.ingredientesTexto = ingredientesTexto;
+    }
+
+    public String getImagenUrl() {
+        return imagenUrl;
+    }
+
+    public void setImagenUrl(String imagenUrl) {
+        this.imagenUrl = imagenUrl;
+    }
+
+    public BigDecimal getRacionGramos() {
+        return racionGramos;
+    }
+
+    public void setRacionGramos(BigDecimal racionGramos) {
+        this.racionGramos = racionGramos;
+    }
+
+    public String getRacionDescripcion() {
+        return racionDescripcion;
+    }
+
+    public void setRacionDescripcion(String racionDescripcion) {
+        this.racionDescripcion = racionDescripcion;
     }
 
     public List<PorcionCasera> getPorciones() {

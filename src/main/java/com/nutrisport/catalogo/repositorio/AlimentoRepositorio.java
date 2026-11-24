@@ -20,6 +20,12 @@ public interface AlimentoRepositorio extends JpaRepository<Alimento, UUID> {
 
     boolean existsByCategoriaId(UUID categoriaId);
 
+    /** El alimento con ese código de barras (único si existe). */
+    Optional<Alimento> findByCodigoBarras(String codigoBarras);
+
+    /** Los alimentos con alguno de esos códigos (para saber qué resultados de búsqueda ya están en el catálogo). */
+    List<Alimento> findByCodigoBarrasIn(Collection<String> codigosBarras);
+
     /**
      * Todo el catálogo para la administración, incluidos los alimentos privados de los usuarios y los
      * desactivados. Todos los filtros son opcionales; {@code q} llega ya normalizado (vacío = sin filtro,

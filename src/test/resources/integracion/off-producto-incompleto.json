@@ -1,0 +1,14 @@
+{
+  "code": "8400000000031",
+  "status": 1,
+  "status_verbose": "product found",
+  "product": {
+    "code": "8400000000031",
+    "product_name": "Snack ficticio sin macronutrientes (datos de prueba)",
+    "brands": "Marca Ficticia",
+    "nutrition_data_per": "100g",
+    "nutriments": {"energy-kcal_100g": 480, "salt_100g": 1.2},
+    "allergens_tags": ["en:milk"],
+    "traces_tags": []
+  }
+}
