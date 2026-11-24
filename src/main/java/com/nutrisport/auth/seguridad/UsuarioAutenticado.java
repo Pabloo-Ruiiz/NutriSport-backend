@@ -30,18 +30,27 @@ public class UsuarioAutenticado implements UserDetails, CredentialsContainer {
     private String passwordHash;
     private final Set<Rol> roles;
     private final EstadoUsuario estado;
+    /** Consentimiento de datos de salud vigente (§8.3); lo comprueba el InterceptorConsentimiento. */
+    private final boolean consentimientoVigente;
 
+    /** Usuario con el consentimiento de salud vigente. */
     public UsuarioAutenticado(UUID id, String email, String passwordHash, Set<Rol> roles, EstadoUsuario estado) {
+        this(id, email, passwordHash, roles, estado, true);
+    }
+
+    public UsuarioAutenticado(UUID id, String email, String passwordHash, Set<Rol> roles, EstadoUsuario estado,
+            boolean consentimientoVigente) {
         this.id = id;
         this.email = email;
         this.passwordHash = passwordHash;
         this.roles = roles == null ? Set.of() : Set.copyOf(roles);
         this.estado = estado;
+        this.consentimientoVigente = consentimientoVigente;
     }
 
     public static UsuarioAutenticado de(Usuario usuario) {
         return new UsuarioAutenticado(usuario.getId(), usuario.getEmail(), usuario.getPasswordHash(),
-                usuario.getRoles(), usuario.getEstado());
+                usuario.getRoles(), usuario.getEstado(), usuario.consentimientoVigente());
     }
 
     public UUID getId() {
@@ -58,6 +67,10 @@ public class UsuarioAutenticado implements UserDetails, CredentialsContainer {
 
     public EstadoUsuario getEstado() {
         return estado;
+    }
+
+    public boolean isConsentimientoVigente() {
+        return consentimientoVigente;
     }
 
     /** Autoridades {@code ROLE_DEPORTISTA} y {@code ROLE_ADMIN} (§8.2). */

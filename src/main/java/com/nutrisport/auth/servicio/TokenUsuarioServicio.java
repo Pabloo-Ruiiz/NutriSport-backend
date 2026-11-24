@@ -10,6 +10,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.Set;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,15 +52,19 @@ public class TokenUsuarioServicio {
     }
 
     /**
-     * Marca el token como usado y lo devuelve. Si no existe, es de otro tipo, ya se usó o ha caducado,
-     * lanza {@code 400 TOKEN_NO_VALIDO} con el mismo mensaje en todos los casos.
+     * Marca el token como usado y lo devuelve. Si no existe, no es de ninguno de los tipos admitidos,
+     * ya se usó o ha caducado, lanza {@code 400 TOKEN_NO_VALIDO} con el mismo mensaje en todos los casos.
+     *
+     * @param tipos tipos admitidos (p. ej. verificación y cambio de email en {@code /verificar-email})
      */
-    public TokenUsuario consumir(String token, TipoToken tipo) {
+    public TokenUsuario consumir(String token, TipoToken... tipos) {
         if (token == null || token.isBlank()) {
             throw new PeticionInvalidaException(TOKEN_NO_VALIDO, MENSAJE_NO_VALIDO);
         }
+        Set<TipoToken> admitidos = Set.of(tipos);
         TokenUsuario tokenUsuario = tokenUsuarioRepositorio
-                .findByTokenHashAndTipo(Tokens.sha256Hex(token.trim()), tipo)
+                .findByTokenHash(Tokens.sha256Hex(token.trim()))
+                .filter(encontrado -> admitidos.contains(encontrado.getTipo()))
                 .filter(encontrado -> encontrado.estaVigente(Instant.now()))
                 .orElseThrow(() -> new PeticionInvalidaException(TOKEN_NO_VALIDO, MENSAJE_NO_VALIDO));
         tokenUsuario.setUsadoEn(OffsetDateTime.now(ZoneOffset.UTC));

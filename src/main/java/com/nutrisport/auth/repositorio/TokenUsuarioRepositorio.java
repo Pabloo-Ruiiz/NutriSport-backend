@@ -18,6 +18,10 @@ public interface TokenUsuarioRepositorio extends JpaRepository<TokenUsuario, UUI
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     Optional<TokenUsuario> findByTokenHashAndTipo(String tokenHash, TipoToken tipo);
 
+    /** Por hash, sea cual sea el tipo (el hash es único), con la fila bloqueada. */
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    Optional<TokenUsuario> findByTokenHash(String tokenHash);
+
     /**
      * Invalida los tokens pendientes (sin usar y sin caducar) de un tipo, p. ej. al reenviar el correo
      * de verificación. Se marcan como caducados ahora, no como usados: {@code usadoEn} solo indica un
