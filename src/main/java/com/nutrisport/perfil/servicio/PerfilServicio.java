@@ -95,6 +95,21 @@ public class PerfilServicio {
         return perfilMapper.aRespuesta(perfil);
     }
 
+    /**
+     * Sincroniza el peso actual del perfil con el último pesaje (lo llama el seguimiento de peso). Si los
+     * objetivos no son manuales, los recalcula; en cualquier caso recalcula los objetivos diarios de hoy y
+     * de los días futuros. Si el usuario aún no tiene perfil, no hace nada.
+     */
+    public void actualizarPesoActual(UUID usuarioId, BigDecimal pesoKg) {
+        perfilRepositorio.findByUsuarioId(usuarioId).ifPresent(perfil -> {
+            perfil.setPesoActualKg(pesoKg);
+            if (!perfil.isObjetivosManuales()) {
+                aplicarObjetivosCalculados(perfil, calcular(perfil));
+            }
+            objetivoDiarioServicio.recalcularDesdeHoy(usuarioId);
+        });
+    }
+
     // ---------------------------------------------------------------------------------------------
     // Objetivos
     // ---------------------------------------------------------------------------------------------
