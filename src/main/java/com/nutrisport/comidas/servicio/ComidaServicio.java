@@ -6,6 +6,7 @@ import com.nutrisport.catalogo.entidad.Alimento;
 import com.nutrisport.catalogo.repositorio.AlimentoRepositorio;
 import com.nutrisport.catalogo.servicio.CalculadoraNutricional;
 import com.nutrisport.comidas.dto.AlimentoRegistradoRequest;
+import com.nutrisport.comidas.dto.CandidatoAnalisis;
 import com.nutrisport.comidas.dto.ComidasDiaResponse;
 import com.nutrisport.comidas.dto.DuplicarComidaRequest;
 import com.nutrisport.comidas.dto.RegistroComidaRequest;
@@ -92,13 +93,24 @@ public class ComidaServicio {
      * conflictos con sus restricciones se devuelven como avisos, sin impedir el registro.
      */
     public RegistroComidaResponse crear(RegistroComidaRequest peticion, OrigenRegistro origen) {
+        return crear(peticion, origen, null, null);
+    }
+
+    /** Registra una comida confirmada desde una foto y conserva la confianza de sus candidatos. */
+    public RegistroComidaResponse crearDesdeFoto(RegistroComidaRequest peticion,
+            List<CandidatoAnalisis> candidatos, List<Integer> indicesCandidatos) {
+        return crear(peticion, OrigenRegistro.FOTO, candidatos, indicesCandidatos);
+    }
+
+    private RegistroComidaResponse crear(RegistroComidaRequest peticion, OrigenRegistro origen,
+            List<CandidatoAnalisis> candidatos, List<Integer> indicesCandidatos) {
         UUID usuarioId = seguridadUtils.usuarioActualId();
         validarFecha(peticion.fecha(), "fecha");
         RegistroComida registro = new RegistroComida();
         registro.setUsuario(usuarioRepositorio.getReferenceById(usuarioId));
         registro.setOrigen(origen);
         copiarDatos(peticion, registro);
-        anadirLineas(registro, peticion.alimentos(), usuarioId, Set.of());
+        anadirLineas(registro, peticion.alimentos(), usuarioId, Set.of(), candidatos, indicesCandidatos);
         registro.recalcularTotales();
         registroRepositorio.save(registro);
         objetivoDiarioServicio.crearSiNoExiste(usuarioId, registro.getFecha());
@@ -118,7 +130,7 @@ public class ComidaServicio {
                 .collect(Collectors.toSet());
         copiarDatos(peticion, registro);
         registro.vaciarAlimentos();
-        anadirLineas(registro, peticion.alimentos(), usuarioId, yaRegistrados);
+        anadirLineas(registro, peticion.alimentos(), usuarioId, yaRegistrados, null, null);
         registro.recalcularTotales();
         objetivoDiarioServicio.crearSiNoExiste(usuarioId, registro.getFecha());
         return respuesta(registro, restriccionesServicio.estrictasDe(usuarioId));
@@ -222,7 +234,7 @@ public class ComidaServicio {
      * instantánea nutricional.
      */
     private void anadirLineas(RegistroComida registro, List<AlimentoRegistradoRequest> lineas, UUID usuarioId,
-            Set<UUID> inactivosAdmitidos) {
+            Set<UUID> inactivosAdmitidos, List<CandidatoAnalisis> candidatos, List<Integer> indicesCandidatos) {
         Set<UUID> ids = lineas.stream().map(AlimentoRegistradoRequest::alimentoId).collect(Collectors.toSet());
         Map<UUID, Alimento> alimentos = alimentoRepositorio.findAllById(ids).stream()
                 .collect(Collectors.toMap(Alimento::getId, Function.identity()));
@@ -253,7 +265,13 @@ public class ComidaServicio {
                         + " g; debe estar entre 0,1 y " + MAXIMO_GRAMOS.toPlainString() + " g"));
                 continue;
             }
-            nuevas.add(nuevaLinea(alimento, linea.cantidad(), linea.unidad().strip(), gramos));
+            AlimentoRegistrado nueva = nuevaLinea(alimento, linea.cantidad(), linea.unidad().strip(), gramos);
+            if (indicesCandidatos != null && indicesCandidatos.get(i) != null) {
+                CandidatoAnalisis candidato = candidatos.get(indicesCandidatos.get(i));
+                nueva.setOrigenIa(true);
+                nueva.setConfianzaIa(candidato.confianza());
+            }
+            nuevas.add(nueva);
         }
         if (!errores.isEmpty()) {
             throw new PeticionInvalidaException(DATOS_NO_VALIDOS, errores);

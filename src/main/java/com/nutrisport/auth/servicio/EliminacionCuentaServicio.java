@@ -1,5 +1,7 @@
 package com.nutrisport.auth.servicio;
 
+import com.nutrisport.almacenamiento.AlmacenamientoServicio;
+import com.nutrisport.almacenamiento.ClavesAlmacenamiento;
 import com.nutrisport.auth.dto.EliminarCuentaRequest;
 import com.nutrisport.auth.entidad.EstadoUsuario;
 import com.nutrisport.auth.entidad.Usuario;
@@ -33,13 +35,16 @@ public class EliminacionCuentaServicio {
     private final SeguridadUtils seguridadUtils;
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenServicio refreshTokenServicio;
+    private final AlmacenamientoServicio almacenamiento;
 
     public EliminacionCuentaServicio(UsuarioRepositorio usuarioRepositorio, SeguridadUtils seguridadUtils,
-            PasswordEncoder passwordEncoder, RefreshTokenServicio refreshTokenServicio) {
+            PasswordEncoder passwordEncoder, RefreshTokenServicio refreshTokenServicio,
+            AlmacenamientoServicio almacenamiento) {
         this.usuarioRepositorio = usuarioRepositorio;
         this.seguridadUtils = seguridadUtils;
         this.passwordEncoder = passwordEncoder;
         this.refreshTokenServicio = refreshTokenServicio;
+        this.almacenamiento = almacenamiento;
     }
 
     public void eliminar(EliminarCuentaRequest peticion) {
@@ -51,6 +56,8 @@ public class EliminacionCuentaServicio {
         }
         UUID id = usuario.getId();
 
+        almacenamiento.eliminarPrefijo(ClavesAlmacenamiento.prefijoUsuario(id));
+
         if (!peticion.inmediata()) {
             usuario.setEstado(EstadoUsuario.ELIMINADO);
             usuario.setEliminadoEn(OffsetDateTime.now(ZoneOffset.UTC));
@@ -59,8 +66,6 @@ public class EliminacionCuentaServicio {
         refreshTokenServicio.revocarTodos(id);
 
         if (peticion.inmediata()) {
-            // TODO paso 18: borrar también las fotos del usuario en el almacenamiento (MinIO/S3);
-            // la base de datos no puede borrarlas en cascada
             usuarioRepositorio.deleteById(id);
         }
     }
