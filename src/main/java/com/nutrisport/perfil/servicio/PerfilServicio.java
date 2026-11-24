@@ -1,5 +1,6 @@
 package com.nutrisport.perfil.servicio;
 
+import com.nutrisport.actividad.repositorio.TipoActividadRepositorio;
 import com.nutrisport.auth.entidad.Usuario;
 import com.nutrisport.auth.repositorio.UsuarioRepositorio;
 import com.nutrisport.auth.seguridad.SeguridadUtils;
@@ -50,11 +51,14 @@ public class PerfilServicio {
     private final PerfilMapper perfilMapper;
     private final CalculadoraObjetivos calculadoraObjetivos;
     private final Clock reloj;
+    private final TipoActividadRepositorio tipoActividadRepositorio;
+    private final ObjetivoDiarioServicio objetivoDiarioServicio;
 
     public PerfilServicio(PerfilDeportivoRepositorio perfilRepositorio,
             PreferenciaAlimentariaRepositorio preferenciaRepositorio, UsuarioRepositorio usuarioRepositorio,
             SeguridadUtils seguridadUtils, PerfilMapper perfilMapper, CalculadoraObjetivos calculadoraObjetivos,
-            Clock reloj) {
+            Clock reloj, TipoActividadRepositorio tipoActividadRepositorio,
+            ObjetivoDiarioServicio objetivoDiarioServicio) {
         this.perfilRepositorio = perfilRepositorio;
         this.preferenciaRepositorio = preferenciaRepositorio;
         this.usuarioRepositorio = usuarioRepositorio;
@@ -62,6 +66,8 @@ public class PerfilServicio {
         this.perfilMapper = perfilMapper;
         this.calculadoraObjetivos = calculadoraObjetivos;
         this.reloj = reloj;
+        this.tipoActividadRepositorio = tipoActividadRepositorio;
+        this.objetivoDiarioServicio = objetivoDiarioServicio;
     }
 
     /** Perfil del usuario; 404 {@code PERFIL_NO_ENCONTRADO} si aún no lo ha creado. */
@@ -79,11 +85,13 @@ public class PerfilServicio {
         UUID usuarioId = seguridadUtils.usuarioActualId();
         PerfilDeportivo perfil = perfilRepositorio.findByUsuarioId(usuarioId)
                 .orElseGet(() -> nuevoPerfil(usuarioId));
+        validarDeportePrincipal(peticion.deportePrincipal(), perfil.getDeportePrincipal());
         perfilMapper.actualizar(peticion, perfil);
         perfil = perfilRepositorio.save(perfil);
         if (!perfil.isObjetivosManuales()) {
             aplicarObjetivosCalculados(perfil, calcular(perfil));
         }
+        objetivoDiarioServicio.recalcularDesdeHoy(usuarioId);
         return perfilMapper.aRespuesta(perfil);
     }
 
@@ -105,6 +113,7 @@ public class PerfilServicio {
         perfil.setObjetivoCarbohidratosG(peticion.carbohidratosG());
         perfil.setObjetivoGrasaG(peticion.grasaG());
         perfil.setObjetivosManuales(true);
+        objetivoDiarioServicio.recalcularDesdeHoy(perfil.getUsuario().getId());
         return respuestaObjetivos(perfil);
     }
 
@@ -113,6 +122,7 @@ public class PerfilServicio {
         PerfilDeportivo perfil = perfilActual();
         perfil.setObjetivosManuales(false);
         aplicarObjetivosCalculados(perfil, calcular(perfil));
+        objetivoDiarioServicio.recalcularDesdeHoy(perfil.getUsuario().getId());
         return respuestaObjetivos(perfil);
     }
 
@@ -179,6 +189,19 @@ public class PerfilServicio {
         PerfilDeportivo perfil = new PerfilDeportivo();
         perfil.setUsuario(usuarioRepositorio.getReferenceById(usuarioId));
         return perfil;
+    }
+
+    /**
+     * El deporte principal debe ser un tipo de actividad activo del catálogo; se admite uno desactivado
+     * si es el que el perfil ya tenía, para no obligar a cambiarlo al editar otros datos.
+     */
+    private void validarDeportePrincipal(String codigo, String codigoActual) {
+        boolean valido = tipoActividadRepositorio.existsByCodigoAndActivoTrue(codigo)
+                || (codigo.equals(codigoActual) && tipoActividadRepositorio.existsById(codigo));
+        if (!valido) {
+            throw new PeticionInvalidaException(DATOS_NO_VALIDOS, List.of(new ErrorCampo("deportePrincipal",
+                    "No es un tipo de actividad del catálogo")));
+        }
     }
 
     private static void validarFechaCompeticion(PerfilRequest peticion) {

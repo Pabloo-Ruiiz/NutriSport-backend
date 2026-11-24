@@ -73,7 +73,7 @@ class PerfilControllerTest extends IntegracionBase {
         mockMvc.perform(conToken(get(RUTA_PERFIL)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.fechaNacimiento").value("1995-05-10"))
-                .andExpect(jsonPath("$.deportePrincipal").value("RUNNING"));
+                .andExpect(jsonPath("$.deportePrincipal").value("CARRERA_9_7KMH"));
     }
 
     @Test
@@ -110,6 +110,14 @@ class PerfilControllerTest extends IntegracionBase {
         guardarPerfil(perfil("1995-05-10", "170", "COMPETICION", null))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errors[0].campo").value("fechaCompeticion"));
+    }
+
+    @Test
+    void unDeportePrincipalQueNoEstaEnElCatalogoDevuelve400() throws Exception {
+        guardarPerfil(perfil("1995-05-10", "170", "MANTENER", null).replace("CARRERA_9_7KMH", "RUNNING"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errors[0].campo").value("deportePrincipal"));
+        assertThat(jdbc.queryForObject("SELECT count(*) FROM perfil_deportivo", Integer.class)).isZero();
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -183,7 +191,7 @@ class PerfilControllerTest extends IntegracionBase {
                   "pesoKg": 68.4,
                   "objetivo": "%s",
                   %s
-                  "deportePrincipal": "RUNNING",
+                  "deportePrincipal": "CARRERA_9_7KMH",
                   "nivelActividad": "MODERADO",
                   "diasEntrenamientoSemana": 4,
                   "duracionMediaMin": 60,
