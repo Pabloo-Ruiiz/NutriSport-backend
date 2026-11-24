@@ -1,7 +1,9 @@
 package com.nutrisport.catalogo.repositorio;
 
 import com.nutrisport.catalogo.entidad.Alimento;
+import com.nutrisport.catalogo.entidad.FuenteDato;
 import com.nutrisport.catalogo.entidad.Preparacion;
+import com.nutrisport.catalogo.entidad.Visibilidad;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
@@ -15,6 +17,33 @@ import org.springframework.data.repository.query.Param;
 
 /** Acceso a la tabla {@code alimento}. */
 public interface AlimentoRepositorio extends JpaRepository<Alimento, UUID> {
+
+    boolean existsByCategoriaId(UUID categoriaId);
+
+    /**
+     * Todo el catálogo para la administración, incluidos los alimentos privados de los usuarios y los
+     * desactivados. Todos los filtros son opcionales; {@code q} llega ya normalizado (vacío = sin filtro,
+     * nunca nulo: PostgreSQL no sabría el tipo del parámetro dentro del LIKE).
+     */
+    @Query(value = """
+            select a from Alimento a
+             where (:q = '' or a.nombreNormalizado like concat('%', :q, '%'))
+               and (:fuente is null or a.fuente = :fuente)
+               and (:revisados is null or a.alergenosRevisados = :revisados)
+               and (:visibilidad is null or a.visibilidad = :visibilidad)
+               and (:activo is null or a.activo = :activo)
+            """,
+            countQuery = """
+            select count(a) from Alimento a
+             where (:q = '' or a.nombreNormalizado like concat('%', :q, '%'))
+               and (:fuente is null or a.fuente = :fuente)
+               and (:revisados is null or a.alergenosRevisados = :revisados)
+               and (:visibilidad is null or a.visibilidad = :visibilidad)
+               and (:activo is null or a.activo = :activo)
+            """)
+    Page<Alimento> buscarParaAdmin(@Param("q") String q, @Param("fuente") FuenteDato fuente,
+            @Param("revisados") Boolean revisados, @Param("visibilidad") Visibilidad visibilidad,
+            @Param("activo") Boolean activo, Pageable pageable);
 
     /** Parecido (pg_trgm) entre el nombre normalizado de un alimento y un texto. */
     interface SimilitudAlimento {

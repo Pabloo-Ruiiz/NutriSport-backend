@@ -85,9 +85,9 @@ class SeguridadConfigTest extends IntegracionBase {
                 .andExpect(status().isForbidden())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
                 .andExpect(jsonPath("$.codigo").value("SIN_PERMISO"));
-        // El administrador pasa la autorización; 404 porque aún no existe el controlador
+        // El administrador pasa la autorización y obtiene el listado de usuarios
         mockMvc.perform(get("/api/v1/admin/usuarios").header("Authorization", "Bearer " + tokenAdmin))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isOk());
         // Un deportista autenticado pasa la autorización de las rutas normales
         mockMvc.perform(get("/api/v1/cuenta").header("Authorization", "Bearer " + tokenDeportista))
                 .andExpect(status().isOk());

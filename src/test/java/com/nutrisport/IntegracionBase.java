@@ -90,17 +90,29 @@ public abstract class IntegracionBase {
      * un mismo test (por ejemplo, para comprobar que un usuario no ve los recursos de otro).
      */
     protected UsuarioConToken crearUsuarioYToken() {
+        return crearConRol("deportista", Rol.DEPORTISTA);
+    }
+
+    /**
+     * Crea un administrador (solo rol ADMIN) activo y con el email verificado, y le emite un access
+     * token. Como {@link #crearUsuarioYToken()}, el email es único en cada llamada.
+     */
+    protected UsuarioConToken crearAdminYToken() {
+        return crearConRol("admin", Rol.ADMIN);
+    }
+
+    private UsuarioConToken crearConRol(String prefijoEmail, Rol rol) {
         OffsetDateTime ahora = OffsetDateTime.now(ZoneOffset.UTC);
         Usuario usuario = new Usuario();
-        usuario.setNombre("Deportista de prueba");
-        usuario.setEmail("deportista-" + UUID.randomUUID() + "@ejemplo.com");
+        usuario.setNombre(rol == Rol.ADMIN ? "Administrador de prueba" : "Deportista de prueba");
+        usuario.setEmail(prefijoEmail + "-" + UUID.randomUUID() + "@ejemplo.com");
         usuario.setPasswordHash(HASH_DE_RELLENO);
         usuario.setEstado(EstadoUsuario.ACTIVO);
         usuario.setEmailVerificadoEn(ahora);
         usuario.setMayorEdadDeclaradaEn(ahora);
         usuario.setConsentimientoSaludEn(ahora);
         usuario.setConsentimientoSaludVersion("2026-11");
-        usuario.anadirRol(Rol.DEPORTISTA);
+        usuario.anadirRol(rol);
         usuario = usuarioRepositorioBase.save(usuario);
         String token = jwtServicioBase.generarAccessToken(UsuarioAutenticado.de(usuario));
         return new UsuarioConToken(usuario, token);

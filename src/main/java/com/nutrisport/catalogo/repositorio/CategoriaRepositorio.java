@@ -10,4 +10,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface CategoriaRepositorio extends JpaRepository<Categoria, UUID> {
 
     List<Categoria> findByTipoOrderByOrden(TipoCategoria tipo);
+
+    boolean existsByPadreId(UUID padreId);
+
+    boolean existsByTipoAndNombreIgnoreCase(TipoCategoria tipo, String nombre);
+
+    boolean existsByTipoAndNombreIgnoreCaseAndIdNot(TipoCategoria tipo, String nombre, UUID id);
 }
