@@ -21,6 +21,7 @@ import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
@@ -159,8 +160,11 @@ public class ManejadorGlobalExcepciones extends ResponseEntityExceptionHandler {
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<ProblemDetail> manejarAutenticacion(AuthenticationException ex,
             HttpServletRequest peticion) {
+        // El login lanza BadCredentialsException con un mensaje genérico propio ("Email o contraseña
+        // incorrectos"); el resto de excepciones de Spring Security llevan textos internos en inglés
+        String detalle = ex instanceof BadCredentialsException ? ex.getMessage() : "Es necesario iniciar sesión";
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(crearProblema(HttpStatus.UNAUTHORIZED,
-                "NO_AUTENTICADO", "Es necesario iniciar sesión", List.of(), peticion.getRequestURI()));
+                "NO_AUTENTICADO", detalle, List.of(), peticion.getRequestURI()));
     }
 
     @ExceptionHandler(AccessDeniedException.class)

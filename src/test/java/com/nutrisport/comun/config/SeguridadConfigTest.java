@@ -68,10 +68,10 @@ class SeguridadConfigTest extends IntegracionBase {
     @Test
     void rutasPublicasNoPidenToken() throws Exception {
         mockMvc.perform(get("/actuator/health")).andExpect(status().isOk());
-        // Aún no hay controlador de auth: 404 demuestra que la seguridad deja pasar la petición
+        // 400 de validación (no 401): la seguridad deja pasar la petición hasta el controlador
         mockMvc.perform(post("/api/v1/auth/login").contentType(MediaType.APPLICATION_JSON).content("{}"))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.codigo").value("NO_ENCONTRADO"));
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.codigo").value("VALIDACION"));
         // Solo POST es público en /auth
         mockMvc.perform(get("/api/v1/auth/login")).andExpect(status().isUnauthorized());
     }
