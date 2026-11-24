@@ -30,14 +30,12 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.util.Map;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -45,28 +43,17 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Gestión de la cuenta, consentimiento de salud, eliminación, purga y administrador inicial.
  * <p>
- * Como el módulo de perfil aún no existe, {@link ControladorPerfilPrueba} ocupa {@code /api/v1/perfil}
- * para comprobar el InterceptorConsentimiento con una respuesta 200 real.
+ * El InterceptorConsentimiento se comprueba con {@code GET /api/v1/perfil/preferencias}, que responde
+ * 200 con una lista vacía cuando deja pasar la petición.
  */
 @AutoConfigureMockMvc
-@Import(CuentaControllerTest.ControladorPerfilPrueba.class)
 class CuentaControllerTest extends IntegracionBase {
 
-    /** Sustituto del futuro PerfilController: solo responde 200. */
-    @RestController
-    static class ControladorPerfilPrueba {
-
-        @GetMapping("/api/v1/perfil")
-        Map<String, String> perfil() {
-            return Map.of("estado", "accesible");
-        }
-    }
+    private static final String RUTA_SALUD_ACCESIBLE = "/api/v1/perfil/preferencias";
 
     private static final String EMAIL = "ana@ejemplo.com";
     private static final String PASSWORD = "Avena-y-platano-42";
@@ -229,9 +216,9 @@ class CuentaControllerTest extends IntegracionBase {
     @Test
     void revocarElConsentimientoBloqueaLasRutasDeSaludHastaDarloDeNuevo() throws Exception {
         // Con consentimiento: el interceptor deja pasar
-        mockMvc.perform(conToken(get("/api/v1/perfil")))
+        mockMvc.perform(conToken(get(RUTA_SALUD_ACCESIBLE)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.estado").value("accesible"));
+                .andExpect(jsonPath("$").isEmpty());
 
         mockMvc.perform(conToken(delete("/api/v1/cuenta/consentimiento-salud"))).andExpect(status().isNoContent());
 
@@ -249,9 +236,9 @@ class CuentaControllerTest extends IntegracionBase {
         mockMvc.perform(conToken(post("/api/v1/cuenta/consentimiento-salud"))).andExpect(status().isNoContent());
 
         // Con el consentimiento de nuevo vigente, vuelve a haber acceso
-        mockMvc.perform(conToken(get("/api/v1/perfil")))
+        mockMvc.perform(conToken(get(RUTA_SALUD_ACCESIBLE)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.estado").value("accesible"));
+                .andExpect(jsonPath("$").isEmpty());
         Usuario usuario = usuarioRepositorio.findById(ana.getId()).orElseThrow();
         assertThat(usuario.consentimientoVigente()).isTrue();
         assertThat(usuario.getConsentimientoSaludVersion()).isEqualTo("2026-11");
