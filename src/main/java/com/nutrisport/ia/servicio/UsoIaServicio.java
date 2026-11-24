@@ -48,7 +48,7 @@ public class UsoIaServicio {
         UsoIa uso = new UsoIa();
         uso.setUsuario(usuarioId == null ? null : usuarioRepositorio.getReferenceById(usuarioId));
         uso.setFuncion(funcion);
-        uso.setProveedor(propiedades.modo() == IaProperties.Modo.REAL ? propiedades.proveedor() : PROVEEDOR_SIMULADO);
+        uso.setProveedor(proveedorActual());
         uso.setModelo(resultado == null ? null : resultado.modelo());
         uso.setTokensEntrada(tokensEntrada);
         uso.setTokensSalida(tokensSalida);
@@ -58,8 +58,13 @@ public class UsoIaServicio {
         usoIaRepositorio.save(uso);
     }
 
+    /** Proveedor que responde ahora: el configurado en modo real, "simulado" en modo simulado. */
+    public String proveedorActual() {
+        return propiedades.modo() == IaProperties.Modo.REAL ? propiedades.proveedor() : PROVEEDOR_SIMULADO;
+    }
+
     /** USD = (entrada × precio entrada + salida × precio salida) / 1 000 000, con 6 decimales. */
-    BigDecimal costeEstimado(int tokensEntrada, int tokensSalida) {
+    public BigDecimal costeEstimado(int tokensEntrada, int tokensSalida) {
         return propiedades.costeEntradaMillon().multiply(BigDecimal.valueOf(tokensEntrada))
                 .add(propiedades.costeSalidaMillon().multiply(BigDecimal.valueOf(tokensSalida)))
                 .divide(MILLON, DECIMALES_COSTE, RoundingMode.HALF_UP);

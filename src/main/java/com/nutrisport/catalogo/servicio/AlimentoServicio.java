@@ -171,7 +171,7 @@ public class AlimentoServicio {
      * {@code _} y {@code \}) para que se busquen como texto y no como patrón.
      */
     private static String normalizarConsulta(String q) {
-        String consulta = TextoNormalizado.normalizar(q == null ? "" : q.replaceAll("[%_\\\\]", " "));
+        String consulta = q == null ? "" : TextoNormalizado.paraBusqueda(q);
         if (consulta.length() < LONGITUD_MINIMA_BUSQUEDA || consulta.length() > LONGITUD_MAXIMA_BUSQUEDA) {
             throw new PeticionInvalidaException(DATOS_NO_VALIDOS, List.of(new ErrorCampo("q",
                     "La búsqueda debe tener entre " + LONGITUD_MINIMA_BUSQUEDA + " y " + LONGITUD_MAXIMA_BUSQUEDA

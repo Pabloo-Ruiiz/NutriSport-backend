@@ -1,0 +1,22 @@
+package com.nutrisport.comidas.repositorio;
+
+import com.nutrisport.comidas.entidad.AnalisisImagen;
+import com.nutrisport.comidas.entidad.EstadoAnalisis;
+import java.time.OffsetDateTime;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+/** Acceso a la tabla {@code analisis_imagen}. Los análisis de otro usuario no se encuentran (404). */
+public interface AnalisisImagenRepositorio extends JpaRepository<AnalisisImagen, UUID> {
+
+    Optional<AnalisisImagen> findByIdAndUsuarioId(UUID id, UUID usuarioId);
+
+    /**
+     * Análisis en alguno de esos estados creados antes de un instante: con PENDIENTE y PROCESANDO, los
+     * atascados (p. ej. tras un reinicio) que la tarea programada marca como FALLIDO.
+     */
+    List<AnalisisImagen> findByEstadoInAndCreadoEnBefore(Collection<EstadoAnalisis> estados, OffsetDateTime antesDe);
+}

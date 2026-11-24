@@ -48,6 +48,15 @@ public class AlmacenamientoServicio {
         }
     }
 
+    /** Contenido de un objeto (p. ej. la foto que se envía a la IA). */
+    public byte[] descargar(String clave) {
+        try {
+            return s3.getObjectAsBytes(peticion -> peticion.bucket(propiedades.bucket()).key(clave)).asByteArray();
+        } catch (SdkException e) {
+            throw noDisponible("descargar " + clave, e);
+        }
+    }
+
     /** URL prefirmada GET válida {@code url-minutos} minutos, firmada con el endpoint público. */
     public String urlLectura(String clave) {
         return firmante.presignGetObject(peticion -> peticion
