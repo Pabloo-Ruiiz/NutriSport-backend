@@ -5,11 +5,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Path;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +50,6 @@ public class ManejadorGlobalExcepciones extends ResponseEntityExceptionHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(ManejadorGlobalExcepciones.class);
 
-    private static final String PREFIJO_TIPO = "urn:nutrisport:error:";
     private static final String VALIDACION = "VALIDACION";
     private static final String MENSAJE_VALIDACION = "Los datos enviados no son válidos";
 
@@ -241,36 +238,7 @@ public class ManejadorGlobalExcepciones extends ResponseEntityExceptionHandler {
 
     private ProblemDetail crearProblema(HttpStatusCode estado, String codigo, String detalle,
             List<ErrorCampo> errores, String ruta) {
-        ProblemDetail problema = ProblemDetail.forStatusAndDetail(estado, detalle);
-        problema.setType(URI.create(PREFIJO_TIPO + codigo.toLowerCase(Locale.ROOT)));
-        problema.setTitle(titulo(codigo));
-        problema.setInstance(aUri(ruta));
-        problema.setProperty("codigo", codigo);
-        problema.setProperty("errors", errores);
-        return problema;
-    }
-
-    private static String titulo(String codigo) {
-        return switch (codigo) {
-            case "VALIDACION" -> "Datos no válidos";
-            case "TOKEN_NO_VALIDO" -> "Token no válido";
-            case "NO_AUTENTICADO" -> "No autenticado";
-            case "SIN_PERMISO" -> "Acceso denegado";
-            case "EMAIL_NO_VERIFICADO" -> "Email no verificado";
-            case "CONSENTIMIENTO_REVOCADO" -> "Consentimiento revocado";
-            case "NO_ENCONTRADO" -> "Recurso no encontrado";
-            case "CONFLICTO" -> "Conflicto";
-            case "ARCHIVO_DEMASIADO_GRANDE" -> "Archivo demasiado grande";
-            case "ARCHIVO_NO_VALIDO" -> "Archivo no válido";
-            case "PERFIL_REQUERIDO" -> "Perfil requerido";
-            case "REGLA_NEGOCIO" -> "Regla de negocio incumplida";
-            case "NUTRICION_INCOMPLETA" -> "Datos nutricionales incompletos";
-            case "LIMITE_EXCEDIDO" -> "Límite excedido";
-            case "SERVICIO_NO_DISPONIBLE" -> "Servicio no disponible";
-            case "PROVEEDOR_NO_DISPONIBLE" -> "Proveedor externo no disponible";
-            case "ERROR_INTERNO" -> "Error interno";
-            default -> "Error en la petición";
-        };
+        return FabricaProblemas.crear(estado, codigo, detalle, errores, ruta);
     }
 
     private static String ruta(WebRequest peticion) {
@@ -278,18 +246,6 @@ public class ManejadorGlobalExcepciones extends ResponseEntityExceptionHandler {
             return servlet.getRequest().getRequestURI();
         }
         return null;
-    }
-
-    /** La ruta llega ya codificada; si aun así no es una URI válida, se omite {@code instance}. */
-    private static URI aUri(String ruta) {
-        if (ruta == null) {
-            return null;
-        }
-        try {
-            return URI.create(ruta);
-        } catch (IllegalArgumentException e) {
-            return null;
-        }
     }
 
     /** De {@code "registrar.peticion.gramos"} devuelve {@code "gramos"}. */
