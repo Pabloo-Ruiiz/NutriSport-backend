@@ -3,6 +3,7 @@ package com.nutrisport.catalogo.repositorio;
 import com.nutrisport.catalogo.entidad.Alimento;
 import com.nutrisport.catalogo.entidad.Preparacion;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -14,6 +15,19 @@ import org.springframework.data.repository.query.Param;
 
 /** Acceso a la tabla {@code alimento}. */
 public interface AlimentoRepositorio extends JpaRepository<Alimento, UUID> {
+
+    /** Parecido (pg_trgm) entre el nombre normalizado de un alimento y un texto. */
+    interface SimilitudAlimento {
+
+        UUID getId();
+
+        Number getSimilitud();
+    }
+
+    /** Parecido de cada uno de esos alimentos con {@code q} (ya normalizado), de 0 a 1. */
+    @Query(value = "SELECT a.id AS id, similarity(a.nombre_normalizado, :q) AS similitud FROM alimento a WHERE a.id IN (:ids)",
+            nativeQuery = true)
+    List<SimilitudAlimento> similitudes(@Param("q") String q, @Param("ids") Collection<UUID> ids);
 
     /**
      * Alimento público con ese nombre, marca y preparación (clave de la importación por CSV). Una

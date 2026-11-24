@@ -12,6 +12,7 @@ public final class TextoNormalizado {
 
     private static final Pattern MARCAS_DIACRITICAS = Pattern.compile("\\p{M}+");
     private static final Pattern ESPACIOS = Pattern.compile("\\s+");
+    private static final Pattern COMODINES_LIKE = Pattern.compile("[%_\\\\]");
 
     private TextoNormalizado() {
     }
@@ -28,5 +29,13 @@ public final class TextoNormalizado {
         }
         String sinMarcas = MARCAS_DIACRITICAS.matcher(Normalizer.normalize(texto, Normalizer.Form.NFD)).replaceAll("");
         return ESPACIOS.matcher(sinMarcas.toLowerCase(Locale.ROOT)).replaceAll(" ").strip();
+    }
+
+    /**
+     * Como {@link #normalizar} pero quitando también los comodines de LIKE ({@code %}, {@code _} y la
+     * barra invertida), para buscar alimentos por el texto y no por un patrón.
+     */
+    public static String paraBusqueda(String texto) {
+        return normalizar(texto == null ? null : COMODINES_LIKE.matcher(texto).replaceAll(" "));
     }
 }
