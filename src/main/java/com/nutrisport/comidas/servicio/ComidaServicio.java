@@ -2,9 +2,12 @@ package com.nutrisport.comidas.servicio;
 
 import com.nutrisport.auth.repositorio.UsuarioRepositorio;
 import com.nutrisport.auth.seguridad.SeguridadUtils;
+import com.nutrisport.catalogo.dto.ProductoResponse;
 import com.nutrisport.catalogo.entidad.Alimento;
 import com.nutrisport.catalogo.repositorio.AlimentoRepositorio;
 import com.nutrisport.catalogo.servicio.CalculadoraNutricional;
+import com.nutrisport.catalogo.servicio.NormalizacionAlimentosServicio;
+import com.nutrisport.catalogo.servicio.ProductoServicio;
 import com.nutrisport.comidas.dto.AlimentoRegistradoRequest;
 import com.nutrisport.comidas.dto.CandidatoAnalisis;
 import com.nutrisport.comidas.dto.ComidasDiaResponse;
@@ -21,6 +24,7 @@ import com.nutrisport.comun.dto.ErrorCampo;
 import com.nutrisport.comun.dto.Nutrientes;
 import com.nutrisport.comun.excepcion.PeticionInvalidaException;
 import com.nutrisport.comun.excepcion.RecursoNoEncontradoException;
+import com.nutrisport.comun.excepcion.ReglaNegocioException;
 import com.nutrisport.perfil.servicio.ObjetivoDiarioServicio;
 import com.nutrisport.perfil.servicio.RestriccionesServicio;
 import com.nutrisport.perfil.servicio.RestriccionesUsuario;
@@ -29,6 +33,7 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -67,11 +72,13 @@ public class ComidaServicio {
     private final ComidaMapper comidaMapper;
     private final Clock reloj;
     private final ObjetivoDiarioServicio objetivoDiarioServicio;
+    private final ProductoServicio productoServicio;
 
     public ComidaServicio(RegistroComidaRepositorio registroRepositorio, AlimentoRepositorio alimentoRepositorio,
             UsuarioRepositorio usuarioRepositorio, SeguridadUtils seguridadUtils, ConversorUnidades conversorUnidades,
             CalculadoraNutricional calculadoraNutricional, RestriccionesServicio restriccionesServicio,
-            ComidaMapper comidaMapper, Clock reloj, ObjetivoDiarioServicio objetivoDiarioServicio) {
+            ComidaMapper comidaMapper, Clock reloj, ObjetivoDiarioServicio objetivoDiarioServicio,
+            ProductoServicio productoServicio) {
         this.registroRepositorio = registroRepositorio;
         this.alimentoRepositorio = alimentoRepositorio;
         this.usuarioRepositorio = usuarioRepositorio;
@@ -82,6 +89,7 @@ public class ComidaServicio {
         this.comidaMapper = comidaMapper;
         this.reloj = reloj;
         this.objetivoDiarioServicio = objetivoDiarioServicio;
+        this.productoServicio = productoServicio;
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -91,6 +99,10 @@ public class ComidaServicio {
     /**
      * Registra una comida. Los alimentos deben ser visibles para el usuario y estar activos. Los
      * conflictos con sus restricciones se devuelven como avisos, sin impedir el registro.
+     * <p>
+     * Las líneas con {@code codigoBarras} se resuelven con {@link ProductoServicio#porCodigo} (catálogo y, si
+     * hace falta, Open Food Facts). Si todas vienen por código, el origen de un registro manual pasa a ser
+     * CODIGO_BARRAS.
      */
     public RegistroComidaResponse crear(RegistroComidaRequest peticion, OrigenRegistro origen) {
         return crear(peticion, origen, null, null);
@@ -106,11 +118,14 @@ public class ComidaServicio {
             List<CandidatoAnalisis> candidatos, List<Integer> indicesCandidatos) {
         UUID usuarioId = seguridadUtils.usuarioActualId();
         validarFecha(peticion.fecha(), "fecha");
+        boolean todasPorCodigo = !peticion.alimentos().isEmpty()
+                && peticion.alimentos().stream().allMatch(AlimentoRegistradoRequest::porCodigo);
+        List<AlimentoRegistradoRequest> lineas = resolverCodigos(peticion.alimentos());
         RegistroComida registro = new RegistroComida();
         registro.setUsuario(usuarioRepositorio.getReferenceById(usuarioId));
-        registro.setOrigen(origen);
+        registro.setOrigen(origen == OrigenRegistro.MANUAL && todasPorCodigo ? OrigenRegistro.CODIGO_BARRAS : origen);
         copiarDatos(peticion, registro);
-        anadirLineas(registro, peticion.alimentos(), usuarioId, Set.of(), candidatos, indicesCandidatos);
+        anadirLineas(registro, lineas, usuarioId, Set.of(), candidatos, indicesCandidatos);
         registro.recalcularTotales();
         registroRepositorio.save(registro);
         objetivoDiarioServicio.crearSiNoExiste(usuarioId, registro.getFecha());
@@ -128,9 +143,10 @@ public class ComidaServicio {
         Set<UUID> yaRegistrados = registro.getAlimentos().stream()
                 .map(linea -> linea.getAlimento().getId())
                 .collect(Collectors.toSet());
+        List<AlimentoRegistradoRequest> lineas = resolverCodigos(peticion.alimentos());
         copiarDatos(peticion, registro);
         registro.vaciarAlimentos();
-        anadirLineas(registro, peticion.alimentos(), usuarioId, yaRegistrados, null, null);
+        anadirLineas(registro, lineas, usuarioId, yaRegistrados, null, null);
         registro.recalcularTotales();
         objetivoDiarioServicio.crearSiNoExiste(usuarioId, registro.getFecha());
         return respuesta(registro, restriccionesServicio.estrictasDe(usuarioId));
@@ -220,6 +236,31 @@ public class ComidaServicio {
         registro.setHora(peticion.hora());
         registro.setTipoComida(peticion.tipoComida());
         registro.setNotas(peticion.notas() == null || peticion.notas().isBlank() ? null : peticion.notas().strip());
+    }
+
+    /**
+     * Sustituye las líneas con código de barras por el alimento del catálogo correspondiente (un mismo código
+     * se consulta una sola vez). Un producto con la información nutricional incompleta no se puede registrar:
+     * 422 NUTRICION_INCOMPLETA. Un código desconocido da 404 y un proveedor caído sin copia local, 503.
+     */
+    private List<AlimentoRegistradoRequest> resolverCodigos(List<AlimentoRegistradoRequest> lineas) {
+        Map<String, UUID> resueltos = new HashMap<>();
+        return lineas.stream()
+                .map(linea -> {
+                    if (!linea.porCodigo()) {
+                        return linea;
+                    }
+                    UUID alimentoId = resueltos.computeIfAbsent(linea.codigoBarras(), codigo -> {
+                        ProductoResponse producto = productoServicio.porCodigo(codigo);
+                        if (!producto.nutricionCompleta() || producto.id() == null) {
+                            throw new ReglaNegocioException("NUTRICION_INCOMPLETA",
+                                    NormalizacionAlimentosServicio.MENSAJE_NUTRICION_INCOMPLETA);
+                        }
+                        return producto.id();
+                    });
+                    return new AlimentoRegistradoRequest(alimentoId, linea.cantidad(), linea.unidad());
+                })
+                .toList();
     }
 
     /** Se admiten fechas pasadas y hasta mañana (comidas planificadas para el día siguiente). */

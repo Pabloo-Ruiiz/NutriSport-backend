@@ -38,5 +38,10 @@ public interface AlimentoMapper {
     @Mapping(target = "propietario", ignore = true)
     @Mapping(target = "validado", ignore = true)
     @Mapping(target = "activo", ignore = true)
+    // Datos de producto de los proveedores externos: no se editan desde el formulario y se conservan
+    @Mapping(target = "ingredientesTexto", ignore = true)
+    @Mapping(target = "imagenUrl", ignore = true)
+    @Mapping(target = "racionGramos", ignore = true)
+    @Mapping(target = "racionDescripcion", ignore = true)
     void actualizar(AlimentoRequest peticion, @MappingTarget Alimento alimento);
 }

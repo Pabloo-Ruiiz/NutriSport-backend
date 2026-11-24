@@ -5,6 +5,7 @@ import com.nutrisport.auth.seguridad.JwtServicio;
 import com.nutrisport.auth.seguridad.ManejadorAccesoDenegado;
 import com.nutrisport.auth.seguridad.PuntoEntradaNoAutenticado;
 import com.nutrisport.auth.seguridad.UsuarioDetailsServiceImpl;
+import com.nutrisport.catalogo.servicio.ProductoServicio;
 import jakarta.servlet.DispatcherType;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
@@ -149,7 +150,9 @@ public class SeguridadConfig {
         configuracion.setAllowedOrigins(List.of(urlFrontend));
         configuracion.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuracion.setAllowedHeaders(List.of(HttpHeaders.AUTHORIZATION, HttpHeaders.CONTENT_TYPE));
-        configuracion.setExposedHeaders(List.of(HttpHeaders.LOCATION));
+        // Cabeceras que el JavaScript del frontend necesita leer (las demás las oculta el navegador en CORS)
+        configuracion.setExposedHeaders(List.of(HttpHeaders.LOCATION, HttpHeaders.RETRY_AFTER,
+                ProductoServicio.CABECERA_NO_DISPONIBLE));
         configuracion.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource origen = new UrlBasedCorsConfigurationSource();
         origen.registerCorsConfiguration("/**", configuracion);

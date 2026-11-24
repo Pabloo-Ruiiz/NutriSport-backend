@@ -157,7 +157,9 @@ public class OpenApiConfig {
                 .schema(new IntegerSchema().example(180)));
         respuestas.put(LIMITE_EXCEDIDO_NOMBRE, limite);
         respuestas.put(SERVICIO_NO_DISPONIBLE_NOMBRE, problema(503, "SERVICIO_NO_DISPONIBLE",
-                "Un servicio externo (proveedor de IA o almacenamiento de fotos) no está disponible.",
+                "Un servicio externo no está disponible: SERVICIO_NO_DISPONIBLE (proveedor de IA o almacenamiento de "
+                        + "fotos) o PROVEEDOR_NO_DISPONIBLE (API externa de alimentos caída o sin cupo). Retry-After "
+                        + "indica cuántos segundos esperar en el segundo caso.",
                 "El servicio no está disponible temporalmente"));
         return respuestas;
     }

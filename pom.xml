@@ -108,6 +108,16 @@
 			<artifactId>caffeine</artifactId>
 		</dependency>
 		<dependency>
+			<!-- RestClient.Builder autoconfigurado (conversores JSON de la aplicación): clientes de las APIs externas -->
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-restclient</artifactId>
+		</dependency>
+		<dependency>
+			<!-- Abstracción de caché de Spring (@Cacheable) con Caffeine: búsquedas en APIs externas -->
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-cache</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.mapstruct</groupId>
 			<artifactId>mapstruct</artifactId>
 			<version>${mapstruct.version}</version>

@@ -4,7 +4,7 @@
 
 NutriSport AI es una aplicación web que ayuda a deportistas a planificar, registrar y analizar su alimentación teniendo en cuenta sus objetivos físicos, sus hábitos alimentarios y su actividad deportiva. Este repositorio contiene la **API REST** (Spring Boot): cuentas y seguridad, perfil y objetivos nutricionales, catálogo de alimentos, registro de comidas (manual o con una foto analizada por IA), entrenamientos, seguimiento diario y administración.
 
-Es el proyecto final individual de 2.º de DAW. La especificación completa está en [`docs/PROJECT_PROPOSAL.md`](docs/PROJECT_PROPOSAL.md).
+Es uno de los proyectos individuales de 2.º de DAW. La especificación completa está en [`docs/PROJECT_PROPOSAL.md`](docs/PROJECT_PROPOSAL.md).
 
 > [!IMPORTANT]
 > NutriSport AI ofrece **estimaciones orientativas** y **no sustituye el consejo de un profesional sanitario o dietista-nutricionista**. Los valores reconocidos en las fotos son estimaciones de IA, y los objetivos calculados tienen límites de seguridad, pero no son una prescripción.

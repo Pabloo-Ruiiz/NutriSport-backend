@@ -1,0 +1,25 @@
+{
+  "hits": [
+    {
+      "code": "3017624010701",
+      "product_name": "Nutella",
+      "brands": ["Ferrero"],
+      "nutrition_data_per": "100g",
+      "nutriments": {"energy-kcal_100g": 539, "proteins_100g": 6.3, "carbohydrates_100g": 57.5, "fat_100g": 30.9},
+      "allergens_tags": ["en:nuts"]
+    },
+    {
+      "code": "8400000000017",
+      "product_name": "Bebida de avena ficticia (datos de prueba)",
+      "brands": ["Marca Ficticia", "Otra Marca"],
+      "nutrition_data_per": "100ml",
+      "nutriments": {"energy-kcal_100g": 46}
+    },
+    {
+      "product_name": "Resultado sin código: se descarta"
+    }
+  ],
+  "page": 2,
+  "page_size": 20,
+  "count": 42
+}

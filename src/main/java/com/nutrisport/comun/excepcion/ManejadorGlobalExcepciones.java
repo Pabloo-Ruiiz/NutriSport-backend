@@ -65,6 +65,8 @@ public class ManejadorGlobalExcepciones extends ResponseEntityExceptionHandler {
         ResponseEntity.BodyBuilder respuesta = ResponseEntity.status(ex.getEstado());
         if (ex instanceof LimiteExcedidoException limite) {
             respuesta.header(HttpHeaders.RETRY_AFTER, String.valueOf(limite.getSegundosReintento()));
+        } else if (ex instanceof ProveedorNoDisponibleException proveedor) {
+            respuesta.header(HttpHeaders.RETRY_AFTER, String.valueOf(proveedor.getSegundosReintento()));
         }
         return respuesta.body(problema);
     }
