@@ -33,6 +33,8 @@
 		<mapstruct.version>1.6.3</mapstruct.version>
 		<bucket4j.version>8.23.0</bucket4j.version>
 		<awssdk.version>2.59.8</awssdk.version>
+		<!-- Spring AI 2.x es la línea para Spring Boot 4 (la 1.x se construye contra Spring Boot 3.5) -->
+		<spring-ai.version>2.1.0</spring-ai.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -41,6 +43,13 @@
 				<groupId>software.amazon.awssdk</groupId>
 				<artifactId>bom</artifactId>
 				<version>${awssdk.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.ai</groupId>
+				<artifactId>spring-ai-bom</artifactId>
+				<version>${spring-ai.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -106,6 +115,11 @@
 		<dependency>
 			<groupId>software.amazon.awssdk</groupId>
 			<artifactId>s3</artifactId>
+		</dependency>
+		<dependency>
+			<!-- Proveedor de IA (Anthropic Claude), solo a través de los puertos de com.nutrisport.ia.puerto -->
+			<groupId>org.springframework.ai</groupId>
+			<artifactId>spring-ai-starter-model-anthropic</artifactId>
 		</dependency>
 
 		<dependency>
