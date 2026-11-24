@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,8 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
  * Tarea nocturna (§3.G): marca como OMITIDO los entrenamientos PLANIFICADO de días anteriores a hoy
  * que no se han marcado como realizados, y recalcula el objetivo de esos días, porque dejan de contar.
  * <p>
- * Se ejecutará a las 00:30 en la zona {@code app.zona-horaria} con {@code @Scheduled} cuando exista
- * SchedulingConfig (paso 19). Recoge también los de días más antiguos por si alguna noche no se ejecutó.
+ * Se ejecuta cada día a las 00:30 en la zona {@code app.zona-horaria} (SchedulingConfig). Recoge también
+ * los de días más antiguos por si alguna noche no se ejecutó.
  */
 @Component
 public class OmitirEntrenamientosTarea {
@@ -45,6 +46,12 @@ public class OmitirEntrenamientosTarea {
      *            inicio
      * @return número de entrenamientos marcados como omitidos
      */
+    /** Ejecución programada: cada día a las 00:30, con el día que acaba de empezar. */
+    @Scheduled(cron = "0 30 0 * * *", zone = "${app.zona-horaria}")
+    public void ejecutarProgramada() {
+        ejecutar(LocalDate.now(reloj));
+    }
+
     @Transactional
     public int ejecutar(LocalDate hoy) {
         ZoneId zona = reloj.getZone();

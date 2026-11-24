@@ -8,6 +8,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,8 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
  * Borrado físico diferido de las cuentas eliminadas (§6.3): las que llevan más de 30 días en estado
  * ELIMINADO se borran con todos sus datos (FK con ON DELETE CASCADE).
  * <p>
- * La programación periódica con {@code @Scheduled} se activará en el paso 19, cuando exista
- * {@code SchedulingConfig}. Recibe el instante actual para poder probarla.
+ * Se ejecuta cada día a las 05:00 en la zona {@code app.zona-horaria} (SchedulingConfig).
+ * {@link #ejecutar(Instant)} recibe el instante actual para poder probarla.
  */
 @Component
 public class PurgaCuentasTarea {
@@ -29,6 +30,12 @@ public class PurgaCuentasTarea {
 
     public PurgaCuentasTarea(UsuarioRepositorio usuarioRepositorio) {
         this.usuarioRepositorio = usuarioRepositorio;
+    }
+
+    /** Ejecución programada: cada día a las 05:00. */
+    @Scheduled(cron = "0 0 5 * * *", zone = "${app.zona-horaria}")
+    public void ejecutarProgramada() {
+        ejecutar(Instant.now());
     }
 
     /** Devuelve el número de cuentas borradas. */
