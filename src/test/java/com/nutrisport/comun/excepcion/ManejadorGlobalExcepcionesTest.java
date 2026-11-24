@@ -78,8 +78,11 @@ class ManejadorGlobalExcepcionesTest {
         mockMvc.perform(get("/pruebas/invalida"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.codigo").value("VALIDACION"))
+                .andExpect(jsonPath("$.errors", hasSize(2)))
                 .andExpect(jsonPath("$.errors[0].campo").value("fecha"))
-                .andExpect(jsonPath("$.errors[0].mensaje").value("No puede ser futura"));
+                .andExpect(jsonPath("$.errors[0].mensaje").value("No puede ser futura"))
+                .andExpect(jsonPath("$.errors[1].campo").value("hora"))
+                .andExpect(jsonPath("$.errors[1].mensaje").value("Es obligatoria"));
     }
 
     @Test
@@ -150,7 +153,7 @@ class ManejadorGlobalExcepcionesTest {
     @Test
     void archivoDemasiadoGrandeDevuelve413() throws Exception {
         mockMvc.perform(get("/pruebas/archivo-grande"))
-                .andExpect(status().isPayloadTooLarge())
+                .andExpect(status().isContentTooLarge())
                 .andExpect(jsonPath("$.codigo").value("ARCHIVO_DEMASIADO_GRANDE"));
     }
 
@@ -177,7 +180,13 @@ class ManejadorGlobalExcepcionesTest {
         mockMvc.perform(get("/pruebas/interno"))
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.codigo").value("ERROR_INTERNO"))
-                .andExpect(jsonPath("$.detail").value("Error interno del servidor"));
+                .andExpect(jsonPath("$.detail").value("Error interno del servidor"))
+                // Ni la traza ni el mensaje de la excepción llegan al cliente
+                .andExpect(jsonPath("$.trace").doesNotExist())
+                .andExpect(jsonPath("$.exception").doesNotExist())
+                .andExpect(content().string(not(containsString("fallo inesperado con datos internos"))))
+                .andExpect(content().string(not(containsString("IllegalStateException"))))
+                .andExpect(content().string(not(containsString("at com.nutrisport"))));
     }
 
     @Test
@@ -212,7 +221,8 @@ class ManejadorGlobalExcepcionesTest {
         @GetMapping("/invalida")
         void invalida() {
             throw new PeticionInvalidaException("Fecha no válida",
-                    List.of(new ErrorCampo("fecha", "No puede ser futura")));
+                    List.of(new ErrorCampo("fecha", "No puede ser futura"),
+                            new ErrorCampo("hora", "Es obligatoria")));
         }
 
         @GetMapping("/regla")
