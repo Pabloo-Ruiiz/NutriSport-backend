@@ -7,7 +7,14 @@ import com.nutrisport.comidas.dto.RegistroComidaResponse;
 import com.nutrisport.comidas.entidad.OrigenRegistro;
 import com.nutrisport.comidas.entidad.TipoComida;
 import com.nutrisport.comidas.servicio.ComidaServicio;
+import com.nutrisport.comun.documentacion.RespuestasApi;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.net.URI;
@@ -15,6 +22,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -34,8 +42,24 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/comidas")
 @PreAuthorize("hasRole('DEPORTISTA')")
-@Tag(name = "Comidas", description = "Registro manual de comidas, historial y duplicado")
+@Tag(name = "Comidas", description = "Registro manual de comidas, historial por días, edición y duplicado. "
+        + "Las cantidades se convierten a gramos y los nutrientes se guardan como instantánea del catálogo.")
+@SecurityRequirement(name = RespuestasApi.SEGURIDAD)
+@ApiResponse(responseCode = "401", ref = RespuestasApi.NO_AUTENTICADO)
+@ApiResponse(responseCode = "403", ref = RespuestasApi.SIN_PERMISO)
 public class ComidaController {
+
+    private static final String EJEMPLO_COMIDA = """
+            {
+              "fecha": "2026-11-24",
+              "hora": "14:30",
+              "tipoComida": "COMIDA",
+              "notas": "Después del rodaje largo",
+              "alimentos": [
+                {"alimentoId": "3f8b2c1e-6a4d-4e2b-9c7a-1d2e3f4a5b6c", "cantidad": 150, "unidad": "g"},
+                {"alimentoId": "7a1c9e2d-4b3f-4a6e-8d2c-5e6f7a8b9c0d", "cantidad": 1, "unidad": "plato"}
+              ]
+            }""";
 
     private final ComidaServicio comidaServicio;
 
@@ -46,42 +70,75 @@ public class ComidaController {
     @GetMapping
     @Operation(summary = "Historial de comidas por días",
             description = "Días con comidas entre desde y hasta (ambos incluidos, máximo 92 días), opcionalmente "
-                    + "de un tipo de comida, con los totales de cada día.")
-    public List<ComidasDiaResponse> listar(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate desde,
+                    + "de un tipo de comida, con los totales de cada día. Los días sin comidas no aparecen.")
+    @ApiResponse(responseCode = "200", description = "Días con sus comidas y totales, en orden cronológico")
+    @ApiResponse(responseCode = "400", ref = RespuestasApi.VALIDACION)
+    public List<ComidasDiaResponse> listar(
+            @Parameter(description = "Primer día (incluido)", example = "2026-11-01")
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate desde,
+            @Parameter(description = "Último día (incluido); como mucho 92 días después de desde", example = "2026-11-24")
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate hasta,
+            @Parameter(description = "Solo las comidas de este tipo")
             @RequestParam(required = false) TipoComida tipo) {
         return comidaServicio.listar(desde, hasta, tipo);
     }
 
     @GetMapping("/dia/{fecha}")
-    @Operation(summary = "Comidas y totales de un día")
-    public ComidasDiaResponse dia(@PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha) {
+    @Operation(summary = "Comidas y totales de un día",
+            description = "Comidas del día en orden cronológico con sus avisos y la suma de sus nutrientes.")
+    @ApiResponse(responseCode = "200", description = "Comidas del día y totales")
+    @ApiResponse(responseCode = "400", ref = RespuestasApi.VALIDACION)
+    public ComidasDiaResponse dia(
+            @Parameter(description = "Día (AAAA-MM-DD)", example = "2026-11-24")
+            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha) {
         return comidaServicio.dia(fecha);
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Detalle de una comida", description = "404 si no existe o es de otro usuario.")
+    @Operation(summary = "Detalle de una comida", description = "Con sus alimentos, totales y avisos.")
+    @ApiResponse(responseCode = "200", description = "La comida")
+    @ApiResponse(responseCode = "404", ref = RespuestasApi.NO_ENCONTRADO)
     public RegistroComidaResponse obtener(@PathVariable UUID id) {
         return comidaServicio.obtener(id);
     }
 
     @PostMapping
     @Operation(summary = "Registrar una comida",
-            description = "Cantidades en g, kg, ml, l o porciones caseras del alimento. Devuelve avisos si algún "
-                    + "alimento choca con las restricciones del usuario, pero no impide el registro.")
+            description = "Hasta 40 alimentos. Cantidades en g, kg, ml, l o en una porción casera del alimento "
+                    + "(p. ej. \"plato\"), hasta 5 kg por alimento. Se admiten fechas pasadas y hasta mañana. "
+                    + "Devuelve avisos si algún alimento choca con las restricciones del usuario, sin impedir "
+                    + "el registro.",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = RegistroComidaRequest.class),
+                    examples = @ExampleObject(name = "Comida", summary = "Comida con dos alimentos",
+                            value = EJEMPLO_COMIDA))))
+    @ApiResponse(responseCode = "201", description = "Comida registrada; Location apunta a ella")
+    @ApiResponse(responseCode = "400", ref = RespuestasApi.VALIDACION)
     public ResponseEntity<RegistroComidaResponse> crear(@Valid @RequestBody RegistroComidaRequest peticion) {
         RegistroComidaResponse creada = comidaServicio.crear(peticion, OrigenRegistro.MANUAL);
         return ResponseEntity.created(URI.create("/api/v1/comidas/" + creada.id())).body(creada);
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Editar una comida", description = "Sustituye sus datos y todos sus alimentos.")
+    @Operation(summary = "Editar una comida",
+            description = "Sustituye sus datos y todos sus alimentos (mismas reglas que al registrarla).",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = RegistroComidaRequest.class),
+                    examples = @ExampleObject(name = "Comida", summary = "Comida con dos alimentos",
+                            value = EJEMPLO_COMIDA))))
+    @ApiResponse(responseCode = "200", description = "Comida actualizada")
+    @ApiResponse(responseCode = "400", ref = RespuestasApi.VALIDACION)
+    @ApiResponse(responseCode = "404", ref = RespuestasApi.NO_ENCONTRADO)
     public RegistroComidaResponse editar(@PathVariable UUID id, @Valid @RequestBody RegistroComidaRequest peticion) {
         return comidaServicio.editar(id, peticion);
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Eliminar una comida")
+    @Operation(summary = "Eliminar una comida", description = "Borra la comida y sus alimentos.")
+    @ApiResponse(responseCode = "204", description = "Comida eliminada")
+    @ApiResponse(responseCode = "404", ref = RespuestasApi.NO_ENCONTRADO)
     public ResponseEntity<Void> eliminar(@PathVariable UUID id) {
         comidaServicio.eliminar(id);
         return ResponseEntity.noContent().build();
@@ -89,7 +146,11 @@ public class ComidaController {
 
     @PostMapping("/{id}/duplicar")
     @Operation(summary = "Duplicar una comida en otra fecha o tipo",
-            description = "Crea una comida nueva con origen COPIA y los nutrientes actuales del catálogo.")
+            description = "Crea una comida nueva con origen COPIA y los nutrientes actuales del catálogo. Sin "
+                    + "tipoComida se conserva el de la original.")
+    @ApiResponse(responseCode = "201", description = "Copia creada; Location apunta a ella")
+    @ApiResponse(responseCode = "400", ref = RespuestasApi.VALIDACION)
+    @ApiResponse(responseCode = "404", ref = RespuestasApi.NO_ENCONTRADO)
     public ResponseEntity<RegistroComidaResponse> duplicar(@PathVariable UUID id,
             @Valid @RequestBody DuplicarComidaRequest peticion) {
         RegistroComidaResponse copia = comidaServicio.duplicar(id, peticion);

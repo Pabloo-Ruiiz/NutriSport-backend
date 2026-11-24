@@ -7,8 +7,11 @@ import com.nutrisport.auth.dto.CuentaResponse;
 import com.nutrisport.auth.dto.EliminarCuentaRequest;
 import com.nutrisport.auth.servicio.CuentaServicio;
 import com.nutrisport.auth.servicio.EliminacionCuentaServicio;
+import com.nutrisport.comun.documentacion.RespuestasApi;
 import com.nutrisport.comun.dto.MensajeResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
@@ -29,7 +32,10 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/api/v1/cuenta")
-@Tag(name = "Cuenta", description = "Datos de la cuenta, contraseña, email, consentimiento y eliminación")
+@Tag(name = "Cuenta", description = "Datos de la cuenta del usuario autenticado: nombre y unidades, contraseña, "
+        + "email, consentimiento de tratamiento de datos de salud (RGPD art. 9) y eliminación de la cuenta.")
+@SecurityRequirement(name = RespuestasApi.SEGURIDAD)
+@ApiResponse(responseCode = "401", ref = RespuestasApi.NO_AUTENTICADO)
 public class CuentaController {
 
     private static final MensajeResponse MENSAJE_CAMBIO_EMAIL = new MensajeResponse(
@@ -47,19 +53,28 @@ public class CuentaController {
     }
 
     @GetMapping
-    @Operation(summary = "Datos de la cuenta")
+    @Operation(summary = "Datos de la cuenta",
+            description = "Nombre, email, roles, estado, si el email está verificado, si el consentimiento de salud "
+                    + "está vigente y las unidades.")
+    @ApiResponse(responseCode = "200", description = "La cuenta")
     public CuentaResponse obtener() {
         return cuentaServicio.obtener();
     }
 
     @PatchMapping
     @Operation(summary = "Actualizar nombre y unidades", description = "Los campos que no se envían no cambian.")
+    @ApiResponse(responseCode = "200", description = "Cuenta actualizada")
+    @ApiResponse(responseCode = "400", ref = RespuestasApi.VALIDACION)
     public CuentaResponse actualizar(@Valid @RequestBody ActualizarCuentaRequest peticion) {
         return cuentaServicio.actualizar(peticion);
     }
 
     @PutMapping("/password")
-    @Operation(summary = "Cambiar la contraseña", description = "Requiere la actual y cierra todas las sesiones.")
+    @Operation(summary = "Cambiar la contraseña",
+            description = "Requiere la contraseña actual (400 PASSWORD_INCORRECTA si no coincide). La nueva sigue las "
+                    + "reglas del registro. Cierra todas las sesiones.")
+    @ApiResponse(responseCode = "204", description = "Contraseña cambiada")
+    @ApiResponse(responseCode = "400", ref = RespuestasApi.VALIDACION)
     public ResponseEntity<Void> cambiarPassword(@Valid @RequestBody CambiarPasswordRequest peticion) {
         cuentaServicio.cambiarPassword(peticion);
         return ResponseEntity.noContent().build();
@@ -67,7 +82,11 @@ public class CuentaController {
 
     @PutMapping("/email")
     @Operation(summary = "Cambiar el email",
-            description = "Envía un enlace de confirmación al email nuevo. Responde siempre 202 con el mismo mensaje.")
+            description = "Requiere la contraseña. Envía un enlace de confirmación al email nuevo; el cambio se hace "
+                    + "al abrirlo (POST /auth/verificar-email). Responde siempre 202 con el mismo mensaje, para no "
+                    + "revelar si el email ya está en uso.")
+    @ApiResponse(responseCode = "202", description = "Petición aceptada")
+    @ApiResponse(responseCode = "400", ref = RespuestasApi.VALIDACION)
     public ResponseEntity<MensajeResponse> cambiarEmail(@Valid @RequestBody CambiarEmailRequest peticion) {
         cuentaServicio.solicitarCambioEmail(peticion);
         return ResponseEntity.accepted().body(MENSAJE_CAMBIO_EMAIL);
@@ -76,7 +95,11 @@ public class CuentaController {
     @DeleteMapping("/consentimiento-salud")
     @PreAuthorize("hasRole('DEPORTISTA')")
     @Operation(summary = "Revocar el consentimiento de datos de salud",
-            description = "Bloquea perfil, comidas, análisis, entrenamientos y seguimiento (403 CONSENTIMIENTO_REVOCADO).")
+            description = "Bloquea perfil, comidas, análisis, entrenamientos y seguimiento (403 "
+                    + "CONSENTIMIENTO_REVOCADO) hasta que se vuelva a dar. Los datos no se borran: se pueden "
+                    + "eliminar con DELETE /cuenta.")
+    @ApiResponse(responseCode = "204", description = "Consentimiento revocado")
+    @ApiResponse(responseCode = "403", ref = RespuestasApi.SIN_PERMISO)
     public ResponseEntity<Void> revocarConsentimiento() {
         cuentaServicio.revocarConsentimiento();
         return ResponseEntity.noContent().build();
@@ -84,7 +107,11 @@ public class CuentaController {
 
     @PostMapping("/consentimiento-salud")
     @PreAuthorize("hasRole('DEPORTISTA')")
-    @Operation(summary = "Volver a dar el consentimiento de datos de salud (versión vigente del texto)")
+    @Operation(summary = "Volver a dar el consentimiento de datos de salud",
+            description = "Guarda la fecha y la versión vigente del texto del consentimiento y desbloquea las "
+                    + "funciones con datos de salud.")
+    @ApiResponse(responseCode = "204", description = "Consentimiento registrado")
+    @ApiResponse(responseCode = "403", ref = RespuestasApi.SIN_PERMISO)
     public ResponseEntity<Void> darConsentimiento() {
         cuentaServicio.darConsentimiento();
         return ResponseEntity.noContent().build();
@@ -93,7 +120,13 @@ public class CuentaController {
     @DeleteMapping
     @PreAuthorize("hasRole('DEPORTISTA')")
     @Operation(summary = "Eliminar la cuenta",
-            description = "Requiere la contraseña. Inmediata o diferida 30 días. Cierra todas las sesiones.")
+            description = "Requiere la contraseña (400 PASSWORD_INCORRECTA si no coincide). Con inmediata = true se "
+                    + "borra todo al momento; si no, la cuenta queda ELIMINADA y se borra a los 30 días. En ambos "
+                    + "casos se borran las fotos, se cierran todas las sesiones y se borra la cookie.")
+    @ApiResponse(responseCode = "204", description = "Cuenta eliminada")
+    @ApiResponse(responseCode = "400", ref = RespuestasApi.VALIDACION)
+    @ApiResponse(responseCode = "403", ref = RespuestasApi.SIN_PERMISO)
+    @ApiResponse(responseCode = "503", ref = RespuestasApi.SERVICIO_NO_DISPONIBLE)
     public ResponseEntity<Void> eliminar(@Valid @RequestBody EliminarCuentaRequest peticion) {
         eliminacionCuentaServicio.eliminar(peticion);
         return ResponseEntity.noContent()
