@@ -32,7 +32,20 @@
 		<springdoc.version>3.2.1</springdoc.version>
 		<mapstruct.version>1.6.3</mapstruct.version>
 		<bucket4j.version>8.23.0</bucket4j.version>
+		<awssdk.version>2.59.8</awssdk.version>
 	</properties>
+	<dependencyManagement>
+		<dependencies>
+			<!-- Alinea las versiones de todos los módulos del AWS SDK v2 (S3 contra MinIO) -->
+			<dependency>
+				<groupId>software.amazon.awssdk</groupId>
+				<artifactId>bom</artifactId>
+				<version>${awssdk.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -89,6 +102,10 @@
 			<groupId>org.mapstruct</groupId>
 			<artifactId>mapstruct</artifactId>
 			<version>${mapstruct.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>software.amazon.awssdk</groupId>
+			<artifactId>s3</artifactId>
 		</dependency>
 
 		<dependency>
@@ -162,6 +179,12 @@
 		<dependency>
 			<groupId>org.testcontainers</groupId>
 			<artifactId>testcontainers-postgresql</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<!-- En Testcontainers 2.x el módulo es testcontainers-minio (org.testcontainers:minio es de la 1.x) -->
+			<groupId>org.testcontainers</groupId>
+			<artifactId>testcontainers-minio</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
