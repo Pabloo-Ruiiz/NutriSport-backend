@@ -38,6 +38,29 @@ services:
       - "1025:1025"
       - "8025:8025"
 
+  # Backend en contenedor. El perfil "app" hace que solo arranque si se pide
+  # (docker compose --profile app up -d --build); en el día a día se ejecuta desde VS Code.
+  backend:
+    build: .
+    container_name: nutrisport-backend
+    profiles: ["app"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+      minio:
+        condition: service_started
+      mailpit:
+        condition: service_started
+    environment:
+      SPRING_PROFILES_ACTIVE: local
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/nutrisportdb
+      SPRING_MAIL_HOST: mailpit
+      APP_ALMACENAMIENTO_ENDPOINT: http://minio:9000
+      APP_ALMACENAMIENTO_ENDPOINT_PUBLICO: http://localhost:9000
+    env_file: .env
+    ports:
+      - "8080:8080"
+
 volumes:
   postgres-data:
   minio-data:
