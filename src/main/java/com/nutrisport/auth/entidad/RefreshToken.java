@@ -42,6 +42,10 @@ public class RefreshToken extends EntidadBase {
     @Column(name = "reemplazado_por")
     private UUID reemplazadoPor;
 
+    /** "Mantener la sesión iniciada": la cookie se emite con Max-Age también al rotar (V2). */
+    @Column(name = "persistente", nullable = false)
+    private boolean persistente;
+
     public RefreshToken() {
     }
 
@@ -91,5 +95,13 @@ public class RefreshToken extends EntidadBase {
 
     public void setReemplazadoPor(UUID reemplazadoPor) {
         this.reemplazadoPor = reemplazadoPor;
+    }
+
+    public boolean isPersistente() {
+        return persistente;
+    }
+
+    public void setPersistente(boolean persistente) {
+        this.persistente = persistente;
     }
 }
