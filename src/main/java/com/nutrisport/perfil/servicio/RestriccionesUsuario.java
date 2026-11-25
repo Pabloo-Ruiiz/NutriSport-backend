@@ -4,6 +4,7 @@ import com.nutrisport.catalogo.entidad.Alimento;
 import com.nutrisport.perfil.entidad.Dieta;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
 
@@ -28,6 +29,29 @@ public record RestriccionesUsuario(Set<String> alergenos, boolean intoleranciaLa
         dietas = Set.copyOf(dietas);
         alimentosRechazados = Set.copyOf(alimentosRechazados);
         categoriasRechazadas = Set.copyOf(categoriasRechazadas);
+    }
+
+    /**
+     * Las restricciones en palabras, sin datos identificativos ("alergia a gluten, sin lactosa, dieta vegana, 2
+     * alimentos o categorías rechazados") o "ninguna". La usan los textos que se envían a la IA (menús, sugerencias y
+     * asistente). HALAL y KOSHER no se mencionan: son preferencia blanda.
+     */
+    public String descripcion() {
+        List<String> partes = new ArrayList<>();
+        alergenos.stream().sorted()
+                .forEach(alergeno -> partes.add("alergia a " + alergeno.toLowerCase(Locale.ROOT).replace('_', ' ')));
+        if (intoleranciaLactosa) {
+            partes.add("sin lactosa");
+        }
+        dietas.stream().sorted()
+                .filter(dieta -> dieta != Dieta.HALAL && dieta != Dieta.KOSHER)
+                .forEach(dieta -> partes.add("dieta " + dieta.name().toLowerCase(Locale.ROOT)));
+        int rechazos = alimentosRechazados.size() + categoriasRechazadas.size();
+        if (rechazos > 0) {
+            partes.add(rechazos + (rechazos == 1 ? " alimento o categoría rechazados"
+                    : " alimentos o categorías rechazados"));
+        }
+        return partes.isEmpty() ? "ninguna" : String.join(", ", partes);
     }
 
     /** Avisos para el alimento, en este orden: alérgenos, trazas, sin revisar, lactosa, dietas y rechazos. */

@@ -274,7 +274,12 @@ public class ComidaServicio {
     /** Comidas de un día en orden cronológico, con la suma de sus totales. */
     @Transactional(readOnly = true)
     public ComidasDiaResponse dia(LocalDate fecha) {
-        UUID usuarioId = seguridadUtils.usuarioActualId();
+        return dia(seguridadUtils.usuarioActualId(), fecha);
+    }
+
+    /** Como {@link #dia(LocalDate)} para un usuario dado, sin depender del contexto de seguridad. */
+    @Transactional(readOnly = true)
+    public ComidasDiaResponse dia(UUID usuarioId, LocalDate fecha) {
         return resumenDia(fecha, registroRepositorio.findByUsuarioIdAndFecha(usuarioId, fecha),
                 restriccionesServicio.estrictasDe(usuarioId));
     }
@@ -285,13 +290,21 @@ public class ComidaServicio {
      */
     @Transactional(readOnly = true)
     public List<ComidasDiaResponse> listar(LocalDate desde, LocalDate hasta, TipoComida tipo) {
+        return listar(seguridadUtils.usuarioActualId(), desde, hasta, tipo);
+    }
+
+    /**
+     * Como {@link #listar(LocalDate, LocalDate, TipoComida)} para un usuario dado, sin depender del contexto de
+     * seguridad.
+     */
+    @Transactional(readOnly = true)
+    public List<ComidasDiaResponse> listar(UUID usuarioId, LocalDate desde, LocalDate hasta, TipoComida tipo) {
         if (hasta.isBefore(desde)) {
             throw invalida("hasta", "Debe ser igual o posterior a desde");
         }
         if (ChronoUnit.DAYS.between(desde, hasta) >= MAXIMO_DIAS_HISTORIAL) {
             throw invalida("hasta", "El rango no puede superar los " + MAXIMO_DIAS_HISTORIAL + " días");
         }
-        UUID usuarioId = seguridadUtils.usuarioActualId();
         RestriccionesUsuario restricciones = restriccionesServicio.estrictasDe(usuarioId);
         Map<LocalDate, List<RegistroComida>> porDia = registroRepositorio
                 .buscar(usuarioId, desde, hasta, tipo, Pageable.unpaged())
