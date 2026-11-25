@@ -14,6 +14,7 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.data.domain.Slice;
 
 /**
  * Acceso a la tabla {@code registro_comida}. Todas las consultas filtran por el usuario: una comida de
@@ -163,4 +164,15 @@ public interface RegistroComidaRepositorio extends JpaRepository<RegistroComida,
             """)
     List<TotalesTipoComida> totalesPorTipoComida(@Param("usuarioId") UUID usuarioId,
             @Param("desde") LocalDate desde, @Param("hasta") LocalDate hasta);
+
+    /**
+     * Comidas del usuario en orden cronológico, por lotes (exportación de datos). Sin los alimentos: se cargan por
+     * lotes al recorrerlas (hibernate.default_batch_fetch_size), para no paginar en memoria.
+     */
+    @Query("""
+            select r from RegistroComida r
+             where r.usuario.id = :usuarioId
+             order by r.fecha asc, r.hora asc nulls last, r.creadoEn asc, r.id asc
+            """)
+    Slice<RegistroComida> lotesDelUsuario(@Param("usuarioId") UUID usuarioId, Pageable pageable);
 }

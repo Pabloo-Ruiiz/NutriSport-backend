@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import java.util.List;
 
 /** Menús de cada usuario (§6.1). Todas las consultas filtran por el usuario: los menús de otro no existen. */
 public interface MenuSemanalRepositorio extends JpaRepository<MenuSemanal, UUID> {
@@ -39,4 +40,7 @@ public interface MenuSemanalRepositorio extends JpaRepository<MenuSemanal, UUID>
             """)
     Page<MenuSemanal> buscar(@Param("usuarioId") UUID usuarioId, @Param("favorito") Boolean favorito,
             @Param("desde") LocalDate desde, Pageable pageable);
+
+    /** Todos los menús del usuario por fecha de inicio (exportación de datos); sus comidas se cargan por lotes. */
+    List<MenuSemanal> findByUsuarioIdOrderByFechaInicioAscIdAsc(UUID usuarioId);
 }

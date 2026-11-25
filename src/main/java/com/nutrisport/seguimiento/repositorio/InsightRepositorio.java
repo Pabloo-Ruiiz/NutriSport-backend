@@ -47,4 +47,7 @@ public interface InsightRepositorio extends JpaRepository<Insight, UUID> {
     List<UUID> usuariosParaDetectar(@Param("desde") LocalDate desde,
             @Param("desdeInstante") OffsetDateTime desdeInstante, @Param("despuesDe") UUID despuesDe,
             @Param("limite") int limite);
+
+    /** Todos los insights del usuario, vigentes o no (exportación de datos). */
+    List<Insight> findByUsuarioIdOrderByCreadoEnAsc(UUID usuarioId);
 }

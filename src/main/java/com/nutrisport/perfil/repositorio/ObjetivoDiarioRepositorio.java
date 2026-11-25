@@ -18,4 +18,7 @@ public interface ObjetivoDiarioRepositorio extends JpaRepository<ObjetivoDiario,
 
     /** Objetivos desde una fecha: al cambiar el perfil solo se recalculan hoy y los días futuros. */
     List<ObjetivoDiario> findByUsuarioIdAndFechaGreaterThanEqual(UUID usuarioId, LocalDate desde);
+
+    /** Todos los objetivos del usuario, del más antiguo al más reciente (exportación de datos). */
+    List<ObjetivoDiario> findByUsuarioIdOrderByFechaAsc(UUID usuarioId);
 }
