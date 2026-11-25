@@ -6,6 +6,7 @@ import com.nutrisport.catalogo.entidad.Categoria;
 import com.nutrisport.catalogo.entidad.FuenteDato;
 import com.nutrisport.catalogo.entidad.PorcionCasera;
 import com.nutrisport.catalogo.entidad.Preparacion;
+import com.nutrisport.catalogo.entidad.UnidadBase;
 import com.nutrisport.catalogo.entidad.Visibilidad;
 import com.nutrisport.catalogo.repositorio.AlimentoFuenteRepositorio;
 import com.nutrisport.catalogo.repositorio.AlimentoRepositorio;
@@ -17,13 +18,17 @@ import com.nutrisport.comun.excepcion.ReglaNegocioException;
 import com.nutrisport.integracion.openfoodfacts.ProductoExternoDto;
 import com.nutrisport.integracion.openfoodfacts.TablaAlergenosOff;
 import com.nutrisport.integracion.openfoodfacts.TablaCategoriasOff;
+import com.nutrisport.integracion.usda.AlimentoUsdaDto;
+import com.nutrisport.integracion.usda.PorcionUsdaDto;
 import com.nutrisport.perfil.entidad.Alergeno;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Clock;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.regex.Pattern;
 import org.springframework.stereotype.Service;
@@ -41,6 +46,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class NormalizacionAlimentosServicio {
 
     static final String LICENCIA_OFF = "ODbL";
+    static final String LICENCIA_USDA = "CC0";
     static final String URL_FICHA_OFF = "https://world.openfoodfacts.org/product/";
     /** Porción casera que se crea con la ración del envase (§3.4). */
     static final String PORCION_ENVASE = "ración del envase";
@@ -49,6 +55,9 @@ public class NormalizacionAlimentosServicio {
     private static final int LONGITUD_MARCA = 80;
     private static final int LONGITUD_RACION = 60;
     private static final int LONGITUD_URL = 300;
+    /** Nombre de una porción casera (PorcionCasera: 40 caracteres). */
+    private static final int LONGITUD_PORCION = 40;
+    private static final Pattern FDC_ID = Pattern.compile("\\d{1,10}");
     /** Límite prudente para el texto de ingredientes (columna text). */
     private static final int LONGITUD_INGREDIENTES = 10_000;
     private static final BigDecimal MAXIMO_KCAL = new BigDecimal("900");
@@ -134,7 +143,91 @@ public class NormalizacionAlimentosServicio {
      * del llamador aunque este la capturase.
      */
     public static boolean nutricionValida(ProductoExternoDto producto) {
-        return Nutricion.leer(producto) != null;
+        return Nutricion.leer(producto.kcal100(), producto.proteinas100(), producto.carbohidratos100(),
+                producto.grasas100()) != null;
+    }
+
+    /** Lo mismo para un alimento de USDA. */
+    public static boolean nutricionValida(AlimentoUsdaDto alimento) {
+        return Nutricion.leer(alimento.kcal100(), alimento.proteinas100(), alimento.carbohidratos100(),
+                alimento.grasas100()) != null;
+    }
+
+    /**
+     * Crea o reutiliza el alimento de un alimento genérico de USDA (Foundation o SR Legacy). Lo busca por su
+     * procedencia (USDA + fdcId); si ya existe, lo devuelve sin cambios. Si no, crea un alimento PUBLICO, fuente
+     * USDA, con la descripción en inglés como nombre (el administrador puede traducirlo), en "Otros", con las
+     * medidas caseras de {@code foodPortions} como porciones y los alérgenos sin revisar (USDA no los informa).
+     * Su procedencia lleva licencia CC0 y sin URL: la de la ficha pública no se ha podido verificar.
+     *
+     * @throws ReglaNegocioException 422 NUTRICION_INCOMPLETA si faltan la energía o algún macronutriente
+     */
+    public Alimento desdeUsda(AlimentoUsdaDto usda, List<PorcionUsdaDto> porcionesUsda) {
+        String fdcId = usda.fdcId() == null ? "" : usda.fdcId().strip();
+        if (!FDC_ID.matcher(fdcId).matches()) {
+            throw new PeticionInvalidaException("La petición contiene datos no válidos",
+                    List.of(new ErrorCampo("fdcId", "El identificador de USDA debe ser numérico")));
+        }
+        AlimentoFuente existente = fuenteRepositorio.findByProveedorAndReferenciaExterna(FuenteDato.USDA, fdcId)
+                .orElse(null);
+        if (existente != null) {
+            return existente.getAlimento();
+        }
+        Nutricion nutricion = Nutricion.de(usda.kcal100(), usda.proteinas100(), usda.carbohidratos100(),
+                usda.grasas100());
+
+        Alimento alimento = new Alimento();
+        alimento.setNombre(recortar(usda.descripcion(), LONGITUD_NOMBRE));
+        alimento.setCategoria(categoriaRepositorio.findById(TablaCategoriasOff.OTROS)
+                .orElseThrow(() -> new IllegalStateException("Falta la categoría Otros (R__categorias.sql)")));
+        alimento.setPreparacion(Preparacion.OTRA);
+        alimento.setUnidadBase(UnidadBase.G);
+        alimento.setKcal100(nutricion.kcal());
+        alimento.setProteinas100(nutricion.proteinas());
+        alimento.setCarbohidratos100(nutricion.carbohidratos());
+        alimento.setGrasas100(nutricion.grasas());
+        alimento.setPorciones(porcionesUsda(porcionesUsda));
+        alimento.setFuente(FuenteDato.USDA);
+        alimento.setReferenciaExterna(fdcId);
+        alimento.setVisibilidad(Visibilidad.PUBLICO);
+        alimento.setValidado(false);
+        alimento.setAlergenosRevisados(false);
+        alimento.setAptoVegano(false);
+        alimento.setAptoVegetariano(false);
+        alimento.setAptoPescetariano(false);
+        alimento = alimentoRepositorio.save(alimento);
+
+        AlimentoFuente fuente = new AlimentoFuente();
+        fuente.setAlimento(alimento);
+        fuente.setProveedor(FuenteDato.USDA);
+        fuente.setReferenciaExterna(fdcId);
+        fuente.setUrl(null);
+        fuente.setLicencia(LICENCIA_USDA);
+        fuente.setSincronizadoEn(OffsetDateTime.now(reloj));
+        fuenteRepositorio.save(fuente);
+        return alimento;
+    }
+
+    /**
+     * Medidas caseras de USDA como porciones: una por descripción (sin repetir), con los gramos de una sola
+     * medida ({@code gramWeight / amount}) y solo las de 0,1 a 5000 g.
+     */
+    public static List<PorcionCasera> porcionesUsda(List<PorcionUsdaDto> porciones) {
+        List<PorcionCasera> resultado = new ArrayList<>();
+        Set<String> nombres = new HashSet<>();
+        for (PorcionUsdaDto porcion : porciones == null ? List.<PorcionUsdaDto>of() : porciones) {
+            String nombre = recortar(porcion.modifier(), LONGITUD_PORCION);
+            if (nombre == null || porcion.gramWeight() == null || porcion.amount() == null
+                    || porcion.amount().signum() <= 0) {
+                continue;
+            }
+            BigDecimal gramos = porcion.gramWeight().divide(porcion.amount(), 1, RoundingMode.HALF_UP);
+            if (gramos.signum() > 0 && gramos.compareTo(MAXIMO_RACION) <= 0
+                    && nombres.add(nombre.toLowerCase(Locale.ROOT))) {
+                resultado.add(new PorcionCasera(nombre, gramos));
+            }
+        }
+        return resultado;
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -263,7 +356,12 @@ public class NormalizacionAlimentosServicio {
     private record Nutricion(BigDecimal kcal, BigDecimal proteinas, BigDecimal carbohidratos, BigDecimal grasas) {
 
         static Nutricion de(ProductoExternoDto producto) {
-            Nutricion nutricion = leer(producto);
+            return de(producto.kcal100(), producto.proteinas100(), producto.carbohidratos100(), producto.grasas100());
+        }
+
+        static Nutricion de(BigDecimal kcal100, BigDecimal proteinas100, BigDecimal carbohidratos100,
+                BigDecimal grasas100) {
+            Nutricion nutricion = leer(kcal100, proteinas100, carbohidratos100, grasas100);
             if (nutricion == null) {
                 throw new ReglaNegocioException("NUTRICION_INCOMPLETA", MENSAJE_NUTRICION_INCOMPLETA);
             }
@@ -271,11 +369,12 @@ public class NormalizacionAlimentosServicio {
         }
 
         /** Nulo si falta la energía o algún macronutriente, o tienen valores imposibles. */
-        static Nutricion leer(ProductoExternoDto producto) {
-            BigDecimal kcal = enRango(producto.kcal100(), MAXIMO_KCAL);
-            BigDecimal proteinas = enRango(producto.proteinas100(), MAXIMO_GRAMOS_EN_100);
-            BigDecimal carbohidratos = enRango(producto.carbohidratos100(), MAXIMO_GRAMOS_EN_100);
-            BigDecimal grasas = enRango(producto.grasas100(), MAXIMO_GRAMOS_EN_100);
+        static Nutricion leer(BigDecimal kcal100, BigDecimal proteinas100, BigDecimal carbohidratos100,
+                BigDecimal grasas100) {
+            BigDecimal kcal = enRango(kcal100, MAXIMO_KCAL);
+            BigDecimal proteinas = enRango(proteinas100, MAXIMO_GRAMOS_EN_100);
+            BigDecimal carbohidratos = enRango(carbohidratos100, MAXIMO_GRAMOS_EN_100);
+            BigDecimal grasas = enRango(grasas100, MAXIMO_GRAMOS_EN_100);
             if (kcal == null || proteinas == null || carbohidratos == null || grasas == null) {
                 return null;
             }
