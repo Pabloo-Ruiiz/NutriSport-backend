@@ -226,6 +226,15 @@ public class CalculoNutricionalServicio {
     // Totales de la receta
     // ---------------------------------------------------------------------------------------------
 
+    /**
+     * Vuelve a calcular los totales de la receta (nutrientes por ración, estado, alérgenos y aptitudes) con los
+     * alimentos y gramos que ya tienen sus ingredientes, sin emparejar ni convertir medidas (no llama a USDA). Para
+     * recetas derivadas en las que el backend ya ha fijado los gramos.
+     */
+    public void recalcularTotales(Receta receta) {
+        aplicarTotales(receta);
+    }
+
     /** Nutrientes por ración, completitud, estado, alérgenos y aptitudes a partir de los ingredientes ya calculados. */
     private void aplicarTotales(Receta receta) {
         List<RecetaIngrediente> ingredientes = receta.getIngredientes();

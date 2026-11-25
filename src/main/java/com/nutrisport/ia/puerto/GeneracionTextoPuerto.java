@@ -15,4 +15,14 @@ public interface GeneracionTextoPuerto {
      * @throws com.nutrisport.comun.excepcion.ServicioNoDisponibleException si el proveedor no responde
      */
     ResultadoIa<String> generar(String plantilla, Map<String, Object> variables);
+
+    /**
+     * Como {@link #generar} pero con salida estructurada: el proveedor recibe el esquema JSON de {@code tipo} y la
+     * respuesta se convierte a ese tipo. El resultado es una propuesta: quien llama la valida antes de usarla.
+     *
+     * @param tipo clase (normalmente un record) en la que se convierte la respuesta
+     * @return resultado con el objeto convertido; su contenido puede ser nulo si el modelo no propone nada
+     * @throws com.nutrisport.comun.excepcion.ServicioNoDisponibleException si el proveedor no responde
+     */
+    <T> ResultadoIa<T> generarEstructurado(String plantilla, Map<String, Object> variables, Class<T> tipo);
 }

@@ -20,6 +20,21 @@ public interface RecetaRepositorio extends JpaRepository<Receta, UUID> {
     /** Una receta importada por su idMeal (para no importarla dos veces). */
     Optional<Receta> findByOrigenAndReferenciaExterna(OrigenReceta origen, String referenciaExterna);
 
+    /**
+     * Candidatas para el generador de menús (§4.5): publicadas, públicas o propias del usuario y con cálculo
+     * COMPLETO o APROXIMADO, con sus ingredientes y alimentos (para comprobar las restricciones). El resto del filtro
+     * duro lo aplica el motor.
+     */
+    @EntityGraph(attributePaths = {"ingredientes", "ingredientes.alimento"})
+    @Query("""
+            select distinct r from Receta r left join r.propietario p
+             where r.publicada = true
+               and (r.visibilidad = com.nutrisport.catalogo.entidad.Visibilidad.PUBLICO or p.id = :usuarioId)
+               and r.estadoNutricional in (com.nutrisport.recetas.entidad.EstadoNutricional.COMPLETO,
+                                           com.nutrisport.recetas.entidad.EstadoNutricional.APROXIMADO)
+            """)
+    List<Receta> candidatasParaMenu(@Param("usuarioId") UUID usuarioId);
+
     /** Detalle con sus ingredientes y los alimentos emparejados. */
     @EntityGraph(attributePaths = {"ingredientes", "ingredientes.alimento", "categoria"})
     Optional<Receta> findWithIngredientesById(UUID id);
