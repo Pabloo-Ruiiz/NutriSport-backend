@@ -1,6 +1,9 @@
 package com.nutrisport.comun.config;
 
+import com.nutrisport.seguimiento.entidad.Agrupacion;
+import java.util.Locale;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.format.FormatterRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -27,5 +30,12 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registro) {
         registro.addInterceptor(interceptorConsentimiento).addPathPatterns(RUTAS_DATOS_SALUD);
+    }
+
+    /** {@code ?agrupacion=semana} y {@code ?periodo=mes} también en minúsculas, como los escribe §7.7. */
+    @Override
+    public void addFormatters(FormatterRegistry registro) {
+        registro.addConverter(String.class, Agrupacion.class,
+                valor -> Agrupacion.valueOf(valor.strip().toUpperCase(Locale.ROOT)));
     }
 }
