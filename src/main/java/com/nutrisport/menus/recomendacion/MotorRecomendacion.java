@@ -112,7 +112,18 @@ public final class MotorRecomendacion {
                 && receta.getTiempoPreparacionMin() > contexto.tiempoMaxMin()) {
             return false;
         }
-        RestriccionesUsuario restricciones = contexto.restricciones();
+        return cumpleRestricciones(receta, contexto.restricciones());
+    }
+
+    /**
+     * Solo las restricciones estrictas: {@link CompatibilidadReceta} (con alergias, además alérgenos verificados) y
+     * las aptitudes de la receta para las dietas y la intolerancia del usuario. Es la compatibilidad que se exige
+     * también al elegir una receta a mano.
+     */
+    public static boolean cumpleRestricciones(Receta receta, RestriccionesUsuario restricciones) {
+        if (restricciones == null) {
+            return true;
+        }
         if (!restricciones.alergenos().isEmpty() && !receta.isAlergenosVerificados()) {
             return false;
         }

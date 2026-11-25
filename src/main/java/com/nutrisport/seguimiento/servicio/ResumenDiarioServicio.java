@@ -6,6 +6,7 @@ import com.nutrisport.auth.seguridad.SeguridadUtils;
 import com.nutrisport.comidas.dto.ComidasDiaResponse;
 import com.nutrisport.comidas.servicio.ComidaServicio;
 import com.nutrisport.comun.dto.Nutrientes;
+import com.nutrisport.menus.servicio.MenuServicio;
 import com.nutrisport.perfil.dto.ObjetivoDiarioResponse;
 import com.nutrisport.perfil.servicio.ObjetivoDiarioServicio;
 import com.nutrisport.seguimiento.dto.ResumenDiarioResponse;
@@ -15,13 +16,15 @@ import java.math.RoundingMode;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Resumen diario del usuario autenticado (§3.F): consumido frente al objetivo de ese día, guardado en
  * ObjetivoDiario para que no cambie al actualizar el perfil. Si el día aún no tiene objetivo, se crea con
- * el perfil actual (sin perfil, 422 PERFIL_REQUERIDO).
+ * el perfil actual (sin perfil, 422 PERFIL_REQUERIDO). Incluye las comidas planificadas de ese día aún no consumidas
+ * en los menús ACTIVO.
  */
 @Service
 @Transactional
@@ -32,14 +35,17 @@ public class ResumenDiarioServicio {
     private final ObjetivoDiarioServicio objetivoDiarioServicio;
     private final ComidaServicio comidaServicio;
     private final EntrenamientoServicio entrenamientoServicio;
+    private final MenuServicio menuServicio;
     private final SeguridadUtils seguridadUtils;
     private final Clock reloj;
 
     public ResumenDiarioServicio(ObjetivoDiarioServicio objetivoDiarioServicio, ComidaServicio comidaServicio,
-            EntrenamientoServicio entrenamientoServicio, SeguridadUtils seguridadUtils, Clock reloj) {
+            EntrenamientoServicio entrenamientoServicio, MenuServicio menuServicio, SeguridadUtils seguridadUtils,
+            Clock reloj) {
         this.objetivoDiarioServicio = objetivoDiarioServicio;
         this.comidaServicio = comidaServicio;
         this.entrenamientoServicio = entrenamientoServicio;
+        this.menuServicio = menuServicio;
         this.seguridadUtils = seguridadUtils;
         this.reloj = reloj;
     }
@@ -47,7 +53,8 @@ public class ResumenDiarioServicio {
     /** Resumen del día indicado o, si es nulo, de hoy (en la zona horaria de la aplicación). */
     public ResumenDiarioResponse de(LocalDate fecha) {
         LocalDate dia = fecha != null ? fecha : LocalDate.now(reloj);
-        ObjetivoDiarioResponse objetivoDiario = objetivoDiarioServicio.obtener(seguridadUtils.usuarioActualId(), dia);
+        UUID usuarioId = seguridadUtils.usuarioActualId();
+        ObjetivoDiarioResponse objetivoDiario = objetivoDiarioServicio.obtener(usuarioId, dia);
         ComidasDiaResponse comidas = comidaServicio.dia(dia);
         List<EntrenamientoResponse> entrenamientos = entrenamientoServicio.listar(dia, dia, null);
 
@@ -66,7 +73,8 @@ public class ResumenDiarioServicio {
                 porcentaje(consumido.grasa(), objetivo.grasa()));
 
         return new ResumenDiarioResponse(dia, objetivo, objetivoDiario.kcalEntreno(), consumido, restante,
-                exceso.signum() > 0 ? exceso : null, porcentajes, comidas.comidas(), entrenamientos, List.of());
+                exceso.signum() > 0 ? exceso : null, porcentajes, comidas.comidas(), entrenamientos,
+                menuServicio.pendientesDelDia(usuarioId, dia));
     }
 
     private static BigDecimal restante(BigDecimal objetivo, BigDecimal consumido) {

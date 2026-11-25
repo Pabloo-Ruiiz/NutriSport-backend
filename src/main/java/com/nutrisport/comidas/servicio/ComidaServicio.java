@@ -4,6 +4,7 @@ import com.nutrisport.auth.repositorio.UsuarioRepositorio;
 import com.nutrisport.auth.seguridad.SeguridadUtils;
 import com.nutrisport.catalogo.dto.ProductoResponse;
 import com.nutrisport.catalogo.entidad.Alimento;
+import com.nutrisport.catalogo.entidad.UnidadBase;
 import com.nutrisport.catalogo.repositorio.AlimentoRepositorio;
 import com.nutrisport.catalogo.servicio.CalculadoraNutricional;
 import com.nutrisport.catalogo.servicio.NormalizacionAlimentosServicio;
@@ -28,9 +29,15 @@ import com.nutrisport.comun.excepcion.ReglaNegocioException;
 import com.nutrisport.perfil.servicio.ObjetivoDiarioServicio;
 import com.nutrisport.perfil.servicio.RestriccionesServicio;
 import com.nutrisport.perfil.servicio.RestriccionesUsuario;
+import com.nutrisport.recetas.entidad.EstadoNutricional;
+import com.nutrisport.recetas.entidad.Receta;
+import com.nutrisport.recetas.entidad.RecetaIngrediente;
+import com.nutrisport.recetas.repositorio.RecetaRepositorio;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.Clock;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -73,12 +80,13 @@ public class ComidaServicio {
     private final Clock reloj;
     private final ObjetivoDiarioServicio objetivoDiarioServicio;
     private final ProductoServicio productoServicio;
+    private final RecetaRepositorio recetaRepositorio;
 
     public ComidaServicio(RegistroComidaRepositorio registroRepositorio, AlimentoRepositorio alimentoRepositorio,
             UsuarioRepositorio usuarioRepositorio, SeguridadUtils seguridadUtils, ConversorUnidades conversorUnidades,
             CalculadoraNutricional calculadoraNutricional, RestriccionesServicio restriccionesServicio,
             ComidaMapper comidaMapper, Clock reloj, ObjetivoDiarioServicio objetivoDiarioServicio,
-            ProductoServicio productoServicio) {
+            ProductoServicio productoServicio, RecetaRepositorio recetaRepositorio) {
         this.registroRepositorio = registroRepositorio;
         this.alimentoRepositorio = alimentoRepositorio;
         this.usuarioRepositorio = usuarioRepositorio;
@@ -90,6 +98,7 @@ public class ComidaServicio {
         this.reloj = reloj;
         this.objetivoDiarioServicio = objetivoDiarioServicio;
         this.productoServicio = productoServicio;
+        this.recetaRepositorio = recetaRepositorio;
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -179,6 +188,77 @@ public class ComidaServicio {
         registroRepositorio.save(copia);
         objetivoDiarioServicio.crearSiNoExiste(usuarioId, copia.getFecha());
         return respuesta(copia, restriccionesServicio.estrictasDe(usuarioId));
+    }
+
+    /**
+     * Registra como comida (origen RECETA) una receta visible para el usuario: sus ingredientes emparejados con el
+     * catálogo, con los gramos escalados a {@code raciones / raciones de la receta}.
+     *
+     * @throws RecursoNoEncontradoException 404 si la receta no existe o es privada de otro usuario
+     * @throws ReglaNegocioException        422 NUTRICION_INCOMPLETA si la receta tiene cálculo INCOMPLETO o ningún
+     *                                      ingrediente emparejado con gramos
+     */
+    public RegistroComidaResponse registrarDesdeReceta(UUID recetaId, BigDecimal raciones, LocalDate fecha,
+            TipoComida tipoComida) {
+        UUID usuarioId = seguridadUtils.usuarioActualId();
+        Receta receta = recetaRepositorio.findWithIngredientesById(recetaId)
+                .filter(encontrada -> encontrada.esVisiblePara(usuarioId))
+                .orElseThrow(() -> new RecursoNoEncontradoException("La receta no existe"));
+        return registrarReceta(usuarioId, receta, raciones, fecha, tipoComida, null, OrigenRegistro.RECETA);
+    }
+
+    /**
+     * Registra una comida planificada de un menú (origen PLAN), como {@link #registrarDesdeReceta}. La receta ya la
+     * ha comprobado el menú; hay que llamarlo dentro de una transacción (ingredientes perezosos).
+     */
+    public RegistroComidaResponse registrarPlanificada(Receta receta, BigDecimal raciones, LocalDate fecha,
+            TipoComida tipoComida, LocalTime hora) {
+        return registrarReceta(seguridadUtils.usuarioActualId(), receta, raciones, fecha, tipoComida, hora,
+                OrigenRegistro.PLAN);
+    }
+
+    private RegistroComidaResponse registrarReceta(UUID usuarioId, Receta receta, BigDecimal raciones, LocalDate fecha,
+            TipoComida tipoComida, LocalTime hora, OrigenRegistro origen) {
+        validarFecha(fecha, "fecha");
+        if (receta.getEstadoNutricional() == EstadoNutricional.INCOMPLETO) {
+            throw new ReglaNegocioException("NUTRICION_INCOMPLETA",
+                    "La receta no tiene un cálculo nutricional completo y no se puede registrar");
+        }
+        BigDecimal factor = raciones.divide(BigDecimal.valueOf(receta.getRaciones()), 6, RoundingMode.HALF_UP);
+        RegistroComida registro = new RegistroComida();
+        registro.setUsuario(usuarioRepositorio.getReferenceById(usuarioId));
+        registro.setOrigen(origen);
+        registro.setFecha(fecha);
+        registro.setHora(hora);
+        registro.setTipoComida(tipoComida);
+        registro.setNotas(notaDeReceta(receta, raciones));
+        for (RecetaIngrediente ingrediente : receta.getIngredientes()) {
+            if (ingrediente.getAlimento() == null || ingrediente.getCantidadGramos() == null) {
+                continue;
+            }
+            BigDecimal gramos = ingrediente.getCantidadGramos().multiply(factor).setScale(1, RoundingMode.HALF_UP);
+            if (gramos.signum() <= 0) {
+                continue;
+            }
+            Alimento alimento = ingrediente.getAlimento();
+            String unidad = alimento.getUnidadBase() == UnidadBase.ML ? "ml" : "g";
+            registro.anadirAlimento(nuevaLinea(alimento, gramos, unidad, gramos));
+        }
+        if (registro.getAlimentos().isEmpty()) {
+            throw new ReglaNegocioException("NUTRICION_INCOMPLETA",
+                    "La receta no tiene ingredientes emparejados con el catálogo y no se puede registrar");
+        }
+        registro.recalcularTotales();
+        registroRepositorio.save(registro);
+        objetivoDiarioServicio.crearSiNoExiste(usuarioId, registro.getFecha());
+        return respuesta(registro, restriccionesServicio.estrictasDe(usuarioId));
+    }
+
+    /** "Pollo con arroz · 1.5 raciones", recortado a las 500 letras de las notas. */
+    private static String notaDeReceta(Receta receta, BigDecimal raciones) {
+        String nota = receta.getNombre() + " · " + raciones.stripTrailingZeros().toPlainString()
+                + (raciones.compareTo(BigDecimal.ONE) == 0 ? " ración" : " raciones");
+        return nota.length() <= 500 ? nota : nota.substring(0, 500);
     }
 
     // ---------------------------------------------------------------------------------------------

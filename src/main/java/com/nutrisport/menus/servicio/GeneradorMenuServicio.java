@@ -165,19 +165,11 @@ public class GeneradorMenuServicio {
     // ---------------------------------------------------------------------------------------------
 
     private Plan planificar(UUID usuarioId, GenerarMenuRequest peticion, LocalDate fin) {
-        PerfilDeportivo perfil = perfilRepositorio.findByUsuarioId(usuarioId)
-                .filter(encontrado -> encontrado.getObjetivoKcal() != null)
-                .orElseThrow(() -> new ReglaNegocioException("PERFIL_REQUERIDO",
-                        "Completa tu perfil deportivo para generar un menú"));
-        RestriccionesUsuario restricciones = restriccionesServicio.estrictasDe(usuarioId);
+        PerfilDeportivo perfil = perfilRequerido(usuarioId);
         List<Receta> candidatas = recetaRepositorio.candidatasParaMenu(usuarioId);
-        ContextoGeneracion contexto = new ContextoGeneracion(restricciones, favoritas(usuarioId, candidatas),
-                perfil.getTiempoMaxCocinaMin() == null ? null : perfil.getTiempoMaxCocinaMin().intValue(),
-                perfil.getComidasPorDia() == null ? 3 : perfil.getComidasPorDia());
-        if (!MotorRecomendacion.hayCandidatas(contexto, candidatas)) {
-            throw new ReglaNegocioException("SIN_RECETAS_COMPATIBLES",
-                    "No hay recetas publicadas compatibles con tus restricciones para generar un menú");
-        }
+        ContextoGeneracion contexto = contexto(usuarioId, perfil, candidatas);
+        RestriccionesUsuario restricciones = contexto.restricciones();
+        exigirCandidatas(contexto, candidatas);
 
         Set<LocalDate> diasEntreno = menuServicio.diasDeEntreno(usuarioId, peticion.fechaInicio(), fin);
         List<DiaGenerado> dias = new ArrayList<>();
@@ -208,6 +200,34 @@ public class GeneradorMenuServicio {
         }
         return new Plan(dias, datosExplicacion(peticion.tipo(), dias.size(), kcalObjetivo, kcalPlanificado,
                 diasEntreno, restricciones, diasConAviso));
+    }
+
+    /** Perfil con objetivo calculado; si no, 422 PERFIL_REQUERIDO. */
+    PerfilDeportivo perfilRequerido(UUID usuarioId) {
+        return perfilRepositorio.findByUsuarioId(usuarioId)
+                .filter(encontrado -> encontrado.getObjetivoKcal() != null)
+                .orElseThrow(() -> new ReglaNegocioException("PERFIL_REQUERIDO",
+                        "Completa tu perfil deportivo para generar un menú"));
+    }
+
+    /**
+     * Datos del usuario para el motor: restricciones estrictas, favoritas y, si hay perfil, su tiempo máximo de cocina
+     * y sus comidas al día (sin perfil: sin límite de tiempo y 3 comidas).
+     */
+    ContextoGeneracion contexto(UUID usuarioId, PerfilDeportivo perfil, List<Receta> candidatas) {
+        Integer tiempoMax = perfil == null || perfil.getTiempoMaxCocinaMin() == null ? null
+                : perfil.getTiempoMaxCocinaMin().intValue();
+        int comidasPorDia = perfil == null || perfil.getComidasPorDia() == null ? 3 : perfil.getComidasPorDia();
+        return new ContextoGeneracion(restriccionesServicio.estrictasDe(usuarioId), favoritas(usuarioId, candidatas),
+                tiempoMax, comidasPorDia);
+    }
+
+    /** 422 SIN_RECETAS_COMPATIBLES si ninguna receta pasa el filtro duro en ninguna franja. */
+    static void exigirCandidatas(ContextoGeneracion contexto, List<Receta> candidatas) {
+        if (!MotorRecomendacion.hayCandidatas(contexto, candidatas)) {
+            throw new ReglaNegocioException("SIN_RECETAS_COMPATIBLES",
+                    "No hay recetas publicadas compatibles con tus restricciones para generar un menú");
+        }
     }
 
     /** Recetas favoritas, o con un alimento o de una categoría (de receta o del alimento) con preferencia FAVORITO. */
