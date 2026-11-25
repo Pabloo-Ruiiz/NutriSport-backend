@@ -135,6 +135,17 @@ public interface RecetaRepositorio extends JpaRepository<Receta, UUID> {
     /** Las recetas ya importadas de entre esos idMeal (para no ofrecerlas como pendientes). */
     List<Receta> findByOrigenAndReferenciaExternaIn(OrigenReceta origen, Collection<String> referenciasExternas);
 
+    /**
+     * Recetas de TheMealDB con algún ingrediente de ese nombre normalizado (minúsculas, espacios simples): las que
+     * hay que recalcular cuando el administrador cambia su emparejamiento.
+     */
+    @Query(value = """
+            SELECT DISTINCT r.id FROM receta r JOIN receta_ingrediente i ON i.receta_id = r.id
+             WHERE r.origen = 'THEMEALDB'
+               AND lower(regexp_replace(trim(i.nombre_original), '\\s+', ' ', 'g')) = :nombreNormalizado
+            """, nativeQuery = true)
+    List<UUID> conIngrediente(@Param("nombreNormalizado") String nombreNormalizado);
+
     /** Para no cargar dos veces las recetas de desarrollo. */
     boolean existsByOrigen(OrigenReceta origen);
 

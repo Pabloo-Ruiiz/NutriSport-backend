@@ -19,7 +19,10 @@ import com.nutrisport.integracion.themealdb.TablaCategoriasMealDb;
 import com.nutrisport.integracion.themealdb.TheMealDbServicio;
 import com.nutrisport.perfil.servicio.RestriccionesServicio;
 import com.nutrisport.perfil.servicio.RestriccionesUsuario;
+import com.nutrisport.comun.dto.Nutrientes;
 import com.nutrisport.recetas.dto.BusquedaRecetasResponse;
+import com.nutrisport.recetas.dto.IngredienteCalculoResponse;
+import com.nutrisport.recetas.dto.NutricionRecetaResponse;
 import com.nutrisport.recetas.dto.IngredienteRecetaResponse;
 import com.nutrisport.recetas.dto.NutricionRacion;
 import com.nutrisport.recetas.dto.RecetaResponse;
@@ -85,6 +88,7 @@ public class RecetaServicio {
     private final CategoriaRepositorio categoriaRepositorio;
     private final UsuarioRepositorio usuarioRepositorio;
     private final TheMealDbServicio theMealDb;
+    private final CalculoNutricionalServicio calculo;
     private final RestriccionesServicio restriccionesServicio;
     private final SeguridadUtils seguridadUtils;
     private final TransactionTemplate escritura;
@@ -93,13 +97,14 @@ public class RecetaServicio {
 
     public RecetaServicio(RecetaRepositorio recetaRepositorio, RecetaFavoritaRepositorio favoritaRepositorio,
             CategoriaRepositorio categoriaRepositorio, UsuarioRepositorio usuarioRepositorio,
-            TheMealDbServicio theMealDb, RestriccionesServicio restriccionesServicio, SeguridadUtils seguridadUtils,
-            PlatformTransactionManager transacciones, Clock reloj) {
+            TheMealDbServicio theMealDb, CalculoNutricionalServicio calculo, RestriccionesServicio restriccionesServicio,
+            SeguridadUtils seguridadUtils, PlatformTransactionManager transacciones, Clock reloj) {
         this.recetaRepositorio = recetaRepositorio;
         this.favoritaRepositorio = favoritaRepositorio;
         this.categoriaRepositorio = categoriaRepositorio;
         this.usuarioRepositorio = usuarioRepositorio;
         this.theMealDb = theMealDb;
+        this.calculo = calculo;
         this.restriccionesServicio = restriccionesServicio;
         this.seguridadUtils = seguridadUtils;
         this.escritura = new TransactionTemplate(transacciones);
@@ -164,7 +169,8 @@ public class RecetaServicio {
     /**
      * Detalle de una receta de TheMealDB con su {@code id} propio. Si ya está importada se devuelve sin llamar a
      * TheMealDB; si no, se importa: idioma "en", 4 raciones supuestas, sin publicar, categoría equivalente (o
-     * "Otras"), instrucciones partidas por líneas e ingredientes sin emparejar (SIN_DATOS).
+     * "Otras") e instrucciones partidas por líneas, y se calculan sus nutrientes emparejando los ingredientes
+     * (CalculoNutricionalServicio).
      *
      * @throws RecursoNoEncontradoException   404 si TheMealDB no tiene esa receta
      * @throws ProveedorNoDisponibleException 503 si hay que importarla y TheMealDB no responde
@@ -183,7 +189,9 @@ public class RecetaServicio {
                     throw e;
                 }
             }
-            // TODO A3: calcular nutrientes, alérgenos y aptitudes con CalculoNutricionalServicio
+            // Nutrientes, alérgenos y aptitudes a partir de los ingredientes (A3). Si USDA no responde, los
+            // ingredientes sin emparejar quedan SIN_DATOS y la receta INCOMPLETO: se recalcula más tarde
+            calculo.calcular(existente);
         }
         return detalle(existente, null);
     }
@@ -206,6 +214,39 @@ public class RecetaServicio {
             boolean favorita = favoritaRepositorio.existsById(new RecetaFavorita.Id(usuarioId, receta.getId()));
             return respuesta(receta, raciones != null ? raciones : receta.getRaciones(),
                     restriccionesServicio.estrictasDe(usuarioId), favorita);
+        });
+    }
+
+    /**
+     * Desglose del cálculo nutricional: cada ingrediente con sus gramos para {@code raciones} (las de la receta si
+     * es nulo, de 1 a 20), su conversión y la fuente de sus nutrientes, y los nutrientes por ración (nulos si el
+     * cálculo es INCOMPLETO).
+     */
+    public NutricionRecetaResponse nutricion(UUID id, Integer raciones) {
+        if (raciones != null && (raciones < 1 || raciones > MAXIMO_RACIONES)) {
+            throw invalida("raciones", "Las raciones deben estar entre 1 y " + MAXIMO_RACIONES);
+        }
+        UUID usuarioId = seguridadUtils.usuarioActualId();
+        return lectura.execute(estado -> {
+            Receta receta = visible(id, usuarioId);
+            int pedidas = raciones != null ? raciones : receta.getRaciones();
+            BigDecimal factor = BigDecimal.valueOf(pedidas)
+                    .divide(BigDecimal.valueOf(receta.getRaciones()), 6, RoundingMode.HALF_UP);
+            List<IngredienteCalculoResponse> ingredientes = receta.getIngredientes().stream()
+                    .map(i -> new IngredienteCalculoResponse(
+                            i.getAlimento() != null ? i.getAlimento().getNombre() : i.getNombreOriginal(),
+                            i.getNombreOriginal(),
+                            i.getMedidaOriginal(),
+                            i.getCantidadGramos() == null ? null
+                                    : i.getCantidadGramos().multiply(factor).setScale(1, RoundingMode.HALF_UP),
+                            i.getEstadoConversion(),
+                            i.getAlimento() == null ? null : i.getAlimento().getFuente().name()))
+                    .toList();
+            NutricionRacion racion = nutricion(receta);
+            Nutrientes porRacion = racion == null ? null
+                    : new Nutrientes(racion.kcal(), racion.proteinas(), racion.carbohidratos(), racion.grasas());
+            return new NutricionRecetaResponse(pedidas, receta.isRacionesSupuestas(), porRacion,
+                    receta.getEstadoNutricional(), receta.getCompletitudPct(), ingredientes);
         });
     }
 

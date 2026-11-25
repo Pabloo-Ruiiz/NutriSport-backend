@@ -1,0 +1,18 @@
+{
+  "fdcId": 173944,
+  "description": "Bananas, raw",
+  "dataType": "SR Legacy",
+  "foodNutrients": [
+    {"nutrient": {"id": 1062, "number": "268", "name": "Energy", "unitName": "kJ"}, "amount": 371},
+    {"nutrient": {"id": 1008, "number": "208", "name": "Energy", "unitName": "kcal"}, "amount": 89.0},
+    {"nutrient": {"id": 1003, "number": "203", "name": "Protein", "unitName": "g"}, "amount": 1.09},
+    {"nutrient": {"id": 1004, "number": "204", "name": "Total lipid (fat)", "unitName": "g"}, "amount": 0.33},
+    {"nutrient": {"id": 1005, "number": "205", "name": "Carbohydrate, by difference", "unitName": "g"}, "amount": 22.8}
+  ],
+  "foodPortions": [
+    {"amount": 1.0, "modifier": "NLEA serving", "gramWeight": 126.0},
+    {"amount": 1.0, "modifier": "cup, sliced", "gramWeight": 150.0},
+    {"amount": 1.0, "modifier": "extra small", "gramWeight": 81.0},
+    {"amount": 1.0, "modifier": "sin gramos: se descarta"}
+  ]
+}

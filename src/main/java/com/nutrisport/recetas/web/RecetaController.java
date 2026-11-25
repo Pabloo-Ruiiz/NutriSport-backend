@@ -8,6 +8,7 @@ import com.nutrisport.comidas.entidad.TipoComida;
 import com.nutrisport.comun.documentacion.RespuestasApi;
 import com.nutrisport.integracion.comun.ProveedorExterno;
 import com.nutrisport.recetas.dto.BusquedaRecetasResponse;
+import com.nutrisport.recetas.dto.NutricionRecetaResponse;
 import com.nutrisport.recetas.dto.RecetaResponse;
 import com.nutrisport.recetas.dto.RecetaResumenResponse;
 import com.nutrisport.recetas.servicio.RecetaServicio;
@@ -138,6 +139,20 @@ public class RecetaController {
             @Parameter(description = "Raciones para las cantidades (1–20); por defecto, las de la receta", example = "2")
             @RequestParam(required = false) Integer raciones) {
         return recetaServicio.detalle(id, raciones);
+    }
+
+    @GetMapping("/{id}/nutricion")
+    @Operation(summary = "Desglose del cálculo nutricional",
+            description = "Cada ingrediente con sus gramos para las raciones pedidas, cómo se han obtenido (EXACTA, "
+                    + "ESTIMADA, DESPRECIABLE o SIN_DATOS) y la fuente de sus nutrientes; nutrientes por ración (nulos "
+                    + "si el cálculo es INCOMPLETO), estado y completitud. Las raciones de TheMealDB son supuestas.")
+    @ApiResponse(responseCode = "200", description = "Desglose del cálculo")
+    @ApiResponse(responseCode = "400", ref = RespuestasApi.VALIDACION)
+    @ApiResponse(responseCode = "404", ref = RespuestasApi.NO_ENCONTRADO)
+    public NutricionRecetaResponse nutricion(@PathVariable UUID id,
+            @Parameter(description = "Raciones para las cantidades (1–20); por defecto, las de la receta", example = "2")
+            @RequestParam(required = false) Integer raciones) {
+        return recetaServicio.nutricion(id, raciones);
     }
 
     @GetMapping("/{id}/relacionadas")

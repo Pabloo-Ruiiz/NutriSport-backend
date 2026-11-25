@@ -32,7 +32,8 @@ import org.springframework.web.util.UriBuilder;
  * <li>Un timeout, un error de red o un 5xx se reintentan una vez (consumiendo cupo, porque es otra llamada); si
  * vuelven a fallar, el proveedor queda caído 60 s.</li>
  * <li>Un 429 o un 503 no se reintentan: el proveedor queda caído lo que diga {@code Retry-After} (segundos o
- * fecha HTTP; 60 s si no viene; como mucho 1 hora).</li>
+ * fecha HTTP; 60 s si no viene; como mucho 1 hora). Un proveedor puede fijar una caída propia para el 429: USDA
+ * bloquea la clave una hora al superar el límite.</li>
  * <li>Otro 4xx distinto de 404 (400, 401...) es un error de configuración que no se arregla reintentando: caído
  * 60 s.</li>
  * <li>Un 404 o un cuerpo que no se puede leer devuelven {@code null} ("sin datos").</li>
@@ -59,14 +60,26 @@ public final class LlamadaProveedor {
     private final EstadoProveedor estadoProveedor;
     private final Clock reloj;
     private final Duration esperaReintento;
+    /** Caída fija tras un 429; nula para usar Retry-After. */
+    private final Duration caidaPorLimite;
 
     public LlamadaProveedor(ProveedorExterno proveedor, LimitadorProveedor limitador, EstadoProveedor estadoProveedor,
             Clock reloj, Duration esperaReintento) {
+        this(proveedor, limitador, estadoProveedor, reloj, esperaReintento, null);
+    }
+
+    /**
+     * @param caidaPorLimite tiempo que el proveedor queda caído tras un 429, sea cual sea su {@code Retry-After}
+     *                       (p. ej. 1 hora en USDA); nulo para usar {@code Retry-After}
+     */
+    public LlamadaProveedor(ProveedorExterno proveedor, LimitadorProveedor limitador, EstadoProveedor estadoProveedor,
+            Clock reloj, Duration esperaReintento, Duration caidaPorLimite) {
         this.proveedor = proveedor;
         this.limitador = limitador;
         this.estadoProveedor = estadoProveedor;
         this.reloj = reloj;
         this.esperaReintento = esperaReintento;
+        this.caidaPorLimite = caidaPorLimite;
     }
 
     /** Fábrica de peticiones con los timeouts de conexión y de lectura configurados para el proveedor. */
@@ -104,6 +117,9 @@ public final class LlamadaProveedor {
                 }
                 throw caido(operacion, respuesta == null ? "sin respuesta" : String.valueOf(respuesta.estado()),
                         CAIDA_POR_DEFECTO);
+            }
+            if (respuesta.estado() == 429 && caidaPorLimite != null) {
+                throw caido(operacion, "429", caidaPorLimite);
             }
             if (respuesta.estado() == 429 || respuesta.estado() == 503) {
                 throw caido(operacion, String.valueOf(respuesta.estado()), retryAfter(respuesta.cabeceras()));

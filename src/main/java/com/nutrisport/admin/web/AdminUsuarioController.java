@@ -30,8 +30,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/admin/usuarios")
 @PreAuthorize("hasRole('ADMIN')")
 @Tag(name = "Admin", description = "Solo para administradores: catálogo de alimentos (alta, edición, revisión de "
-        + "alérgenos e importación CSV), categorías y usuarios (búsqueda, bloqueo y roles). Cada acción queda "
-        + "auditada. Nunca da acceso a datos de salud.")
+        + "alérgenos e importación CSV), categorías, recetas públicas y su publicación, emparejamientos de "
+        + "ingredientes y usuarios (búsqueda, bloqueo y roles). Cada acción queda auditada. Nunca da acceso a datos "
+        + "de salud.")
 @SecurityRequirement(name = RespuestasApi.SEGURIDAD)
 @ApiResponse(responseCode = "401", ref = RespuestasApi.NO_AUTENTICADO)
 @ApiResponse(responseCode = "403", ref = RespuestasApi.SIN_PERMISO)

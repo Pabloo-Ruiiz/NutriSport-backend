@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tools.jackson.core.type.TypeReference;
@@ -53,13 +54,15 @@ public class ImportadorRecetasJson {
     private final AlimentoRepositorio alimentoRepositorio;
     private final CategoriaRepositorio categoriaRepositorio;
     private final JsonMapper jsonMapper;
+    private final CalculoNutricionalServicio calculo;
 
     public ImportadorRecetasJson(RecetaRepositorio recetaRepositorio, AlimentoRepositorio alimentoRepositorio,
-            CategoriaRepositorio categoriaRepositorio, JsonMapper jsonMapper) {
+            CategoriaRepositorio categoriaRepositorio, JsonMapper jsonMapper, CalculoNutricionalServicio calculo) {
         this.recetaRepositorio = recetaRepositorio;
         this.alimentoRepositorio = alimentoRepositorio;
         this.categoriaRepositorio = categoriaRepositorio;
         this.jsonMapper = jsonMapper;
+        this.calculo = calculo;
     }
 
     @Transactional
@@ -70,16 +73,16 @@ public class ImportadorRecetasJson {
                 .map(Receta::getNombre)
                 .toList();
         List<ErrorCampo> errores = new ArrayList<>();
-        int creadas = 0;
+        List<UUID> creadas = new ArrayList<>();
         for (RecetaJson json : recetas) {
             if (existentes.contains(json.nombre())) {
                 continue;
             }
-            recetaRepositorio.save(receta(json, errores));
-            creadas++;
+            creadas.add(recetaRepositorio.saveAndFlush(receta(json, errores)).getId());
         }
-        // TODO A3: calcular nutrientes, alérgenos y aptitudes con CalculoNutricionalServicio
-        return new ResultadoImportacion(creadas, 0, errores);
+        // Sus ingredientes ya están emparejados y en gramos exactos: el cálculo no llama a USDA
+        creadas.forEach(calculo::calcular);
+        return new ResultadoImportacion(creadas.size(), 0, errores);
     }
 
     private Receta receta(RecetaJson json, List<ErrorCampo> errores) {

@@ -25,6 +25,7 @@ import com.nutrisport.integracion.comun.LimitadorProveedor;
 import com.nutrisport.recetas.servicio.ImportadorRecetasJson;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -151,7 +152,9 @@ class RecetasIntegracionTest extends IntegracionBase {
                 .andExpect(jsonPath("$.catalogo.content.length()").value(1))
                 .andExpect(jsonPath("$.catalogo.content[0].nombre").value("Salmón al horno con patata y espárragos"))
                 .andExpect(jsonPath("$.catalogo.content[0].origen").value("PROPIA"))
-                .andExpect(jsonPath("$.catalogo.content[0].estadoNutricional").value("INCOMPLETO"))
+                // Ingredientes emparejados y en gramos exactos: cálculo COMPLETO
+                .andExpect(jsonPath("$.catalogo.content[0].estadoNutricional").value("COMPLETO"))
+                .andExpect(jsonPath("$.catalogo.content[0].nutricionRacion.kcal").isNumber())
                 .andExpect(jsonPath("$.catalogo.content[0].fuente").doesNotExist())
                 .andExpect(jsonPath("$.themealdb.length()").value(0));
     }
@@ -175,27 +178,30 @@ class RecetasIntegracionTest extends IntegracionBase {
                 .andExpect(jsonPath("$.catalogo.content[0].nombre").value("Pollo a la plancha con arroz y brócoli"));
         buscar("franja", "DESAYUNO")
                 .andExpect(jsonPath("$.catalogo.totalElements").value(4));
-        // Ninguna receta tiene aún cálculo nutricional: el filtro de kcal no deja pasar ninguna
-        buscar("q", "pollo", "maxKcal", "800").andExpect(jsonPath("$.catalogo.totalElements").value(0));
+        buscar("q", "pollo", "maxKcal", "800").andExpect(jsonPath("$.catalogo.totalElements").value(1));
 
         assertThat(MEALDB.recibidas()).isEmpty();
     }
 
     @Test
     void losFiltrosNutricionalesSoloAdmitenRecetasConCalculo() throws Exception {
-        jdbc.update("""
-                UPDATE receta SET estado_nutricional = 'COMPLETO', completitud_pct = 100, kcal_racion = 520,
-                       proteina_racion = 42, carbohidratos_racion = 55, grasa_racion = 12
-                 WHERE nombre = 'Pollo a la plancha con arroz y brócoli'""");
-        jdbc.update("""
-                UPDATE receta SET estado_nutricional = 'INCOMPLETO', kcal_racion = 300, proteina_racion = 50
-                 WHERE nombre = 'Tortilla de claras con espinacas'""");
+        String conFiltro = buscar("maxKcal", "600", "minProteina", "40", "size", "50")
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        List<Map<String, Object>> recetas = JsonPath.read(conFiltro, "$.catalogo.content");
+        assertThat(recetas).isNotEmpty().allSatisfy(receta -> {
+            Map<?, ?> nutricion = (Map<?, ?>) receta.get("nutricionRacion");
+            assertThat(((Number) nutricion.get("kcal")).doubleValue()).isLessThanOrEqualTo(600);
+            assertThat(((Number) nutricion.get("proteinas")).doubleValue()).isGreaterThanOrEqualTo(40);
+        });
 
-        buscar("maxKcal", "600", "minProteina", "40")
-                .andExpect(jsonPath("$.catalogo.totalElements").value(1))
-                .andExpect(jsonPath("$.catalogo.content[0].nombre").value("Pollo a la plancha con arroz y brócoli"))
-                .andExpect(jsonPath("$.catalogo.content[0].nutricionRacion.kcal").value(520.0));
-        buscar("maxKcal", "500").andExpect(jsonPath("$.catalogo.totalElements").value(0));
+        // Una receta INCOMPLETO no pasa el filtro aunque sus valores guardados encajen
+        String nombre = (String) recetas.get(0).get("nombre");
+        jdbc.update("UPDATE receta SET estado_nutricional = 'INCOMPLETO' WHERE nombre = ?", nombre);
+        String sinElla = buscar("maxKcal", "600", "minProteina", "40", "size", "50")
+                .andReturn().getResponse().getContentAsString();
+        assertThat((List<String>) JsonPath.read(sinElla, "$.catalogo.content[*].nombre")).doesNotContain(nombre);
+        buscar("maxKcal", "1").andExpect(jsonPath("$.catalogo.totalElements").value(0));
     }
 
     @Test
@@ -260,7 +266,9 @@ class RecetasIntegracionTest extends IntegracionBase {
                 .andExpect(jsonPath("$.ingredientes.length()").value(10))
                 .andExpect(jsonPath("$.ingredientes[4].nombre").value("Harissa Spice"))
                 .andExpect(jsonPath("$.ingredientes[4].medidaOriginal").value("2 tblsp"))
-                .andExpect(jsonPath("$.ingredientes[4].estadoConversion").value("SIN_DATOS"))
+                // Sin emparejar (USDA no está disponible en este test), pero con gramos por densidad 1
+                .andExpect(jsonPath("$.ingredientes[4].estadoConversion").value("ESTIMADA"))
+                .andExpect(jsonPath("$.ingredientes[4].gramos").value(30.0))
                 .andExpect(jsonPath("$.ingredientes[4].alimentoId").doesNotExist())
                 .andExpect(jsonPath("$.instrucciones[0].orden").value(1))
                 .andExpect(jsonPath("$.nutricionRacion").doesNotExist())
@@ -317,9 +325,17 @@ class RecetasIntegracionTest extends IntegracionBase {
         detalle(yogur, null).andExpect(jsonPath("$.compatible").value(false));
         detalle(hummus, null).andExpect(jsonPath("$.compatible").value(true));
 
-        // Con una alergia estricta hacen falta además los alérgenos verificados (aún sin cálculo: false)
+        // Con una alergia estricta: alérgenos verificados (todos los ingredientes emparejados y revisados) y
+        // ninguno de los del usuario
+        String gachas = idDe("Gachas de avena con plátano y crema de cacahuete");
         preferencias("""
                 [{"tipo": "ALERGIA", "alergeno": "CACAHUETES", "severidad": "ESTRICTA"}]""");
+        detalle(hummus, null).andExpect(jsonPath("$.alergenosVerificados").value(true))
+                .andExpect(jsonPath("$.compatible").value(true));
+        detalle(gachas, null).andExpect(jsonPath("$.alergenos").value(hasItem("CACAHUETES")))
+                .andExpect(jsonPath("$.compatible").value(false));
+        preferencias("""
+                [{"tipo": "ALERGIA", "alergeno": "SESAMO", "severidad": "ESTRICTA"}]""");
         detalle(hummus, null).andExpect(jsonPath("$.compatible").value(false));
     }
 
