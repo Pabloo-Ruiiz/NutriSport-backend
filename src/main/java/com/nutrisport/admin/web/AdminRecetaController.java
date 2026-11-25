@@ -66,9 +66,11 @@ public class AdminRecetaController {
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Eliminar una receta propia pública",
-            description = "La borra con sus ingredientes y favoritas. 404 si no es una receta propia pública.")
+            description = "La borra con sus ingredientes y favoritas. 404 si no es una receta propia pública; 409 "
+                    + "RECETA_PLANIFICADA si está en algún menú (despublícala en su lugar).")
     @ApiResponse(responseCode = "204", description = "Receta eliminada")
     @ApiResponse(responseCode = "404", ref = RespuestasApi.NO_ENCONTRADO)
+    @ApiResponse(responseCode = "409", ref = RespuestasApi.CONFLICTO)
     public ResponseEntity<Void> eliminar(@PathVariable UUID id) {
         adminRecetaServicio.eliminar(id);
         return ResponseEntity.noContent().build();
