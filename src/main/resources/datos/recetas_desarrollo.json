@@ -1,0 +1,846 @@
+[
+  {
+    "nombre": "Gachas de avena con plátano y crema de cacahuete",
+    "descripcion": "Desayuno rico en hidratos para antes de entrenar.",
+    "categoria": "Desayunos",
+    "raciones": 1,
+    "tiempoPreparacionMin": 10,
+    "dificultad": "FACIL",
+    "franjasAptas": [
+      "DESAYUNO",
+      "PRE_ENTRENO"
+    ],
+    "etiquetas": [
+      "pre-entreno",
+      "alta-energia"
+    ],
+    "ingredientes": [
+      {
+        "alimento": "Copos de avena",
+        "gramos": 60,
+        "medida": "60 g"
+      },
+      {
+        "alimento": "Leche semidesnatada",
+        "gramos": 250,
+        "medida": "1 vaso"
+      },
+      {
+        "alimento": "Plátano",
+        "gramos": 120,
+        "medida": "1 unidad mediana"
+      },
+      {
+        "alimento": "Crema de cacahuete",
+        "gramos": 15,
+        "medida": "1 cucharada"
+      }
+    ],
+    "pasos": [
+      "Calienta la leche con la avena a fuego medio removiendo 5 minutos.",
+      "Sirve con el plátano en rodajas y la crema de cacahuete por encima."
+    ]
+  },
+  {
+    "nombre": "Tostadas integrales con aguacate y huevo",
+    "descripcion": "Tostadas con grasas saludables y proteína.",
+    "categoria": "Desayunos",
+    "raciones": 1,
+    "tiempoPreparacionMin": 10,
+    "dificultad": "FACIL",
+    "franjasAptas": [
+      "DESAYUNO"
+    ],
+    "etiquetas": [
+      "alta-proteina"
+    ],
+    "ingredientes": [
+      {
+        "alimento": "Pan integral",
+        "gramos": 60,
+        "medida": "2 rebanadas"
+      },
+      {
+        "alimento": "Aguacate",
+        "gramos": 70,
+        "medida": "media unidad"
+      },
+      {
+        "alimento": "Huevo a la plancha",
+        "gramos": 60,
+        "medida": "1 unidad"
+      },
+      {
+        "alimento": "Aceite de oliva virgen extra",
+        "gramos": 5,
+        "medida": "1 cucharadita"
+      }
+    ],
+    "pasos": [
+      "Tuesta el pan.",
+      "Aplasta el aguacate con unas gotas de aceite y repártelo.",
+      "Coloca el huevo a la plancha encima."
+    ]
+  },
+  {
+    "nombre": "Tortitas de avena y claras",
+    "descripcion": "Tortitas esponjosas con mucha proteína.",
+    "categoria": "Desayunos",
+    "raciones": 1,
+    "tiempoPreparacionMin": 15,
+    "dificultad": "FACIL",
+    "franjasAptas": [
+      "DESAYUNO",
+      "MERIENDA"
+    ],
+    "etiquetas": [
+      "alta-proteina"
+    ],
+    "ingredientes": [
+      {
+        "alimento": "Harina de avena",
+        "gramos": 50,
+        "medida": "50 g"
+      },
+      {
+        "alimento": "Clara de huevo",
+        "gramos": 120,
+        "medida": "4 claras"
+      },
+      {
+        "alimento": "Plátano",
+        "gramos": 60,
+        "medida": "media unidad"
+      },
+      {
+        "alimento": "Miel",
+        "gramos": 10,
+        "medida": "1 cucharadita"
+      }
+    ],
+    "pasos": [
+      "Tritura la harina, las claras y el plátano.",
+      "Cuaja pequeñas tortitas en una sartén antiadherente.",
+      "Sirve con la miel."
+    ]
+  },
+  {
+    "nombre": "Yogur griego con frutos rojos y granola",
+    "descripcion": "Bol rápido de lácteo, fruta y cereal.",
+    "categoria": "Desayunos",
+    "raciones": 1,
+    "tiempoPreparacionMin": 5,
+    "dificultad": "FACIL",
+    "franjasAptas": [
+      "DESAYUNO",
+      "MERIENDA",
+      "POST_ENTRENO"
+    ],
+    "etiquetas": [
+      "recuperacion"
+    ],
+    "ingredientes": [
+      {
+        "alimento": "Yogur griego",
+        "gramos": 150,
+        "medida": "1 envase"
+      },
+      {
+        "alimento": "Frutos rojos congelados",
+        "gramos": 80,
+        "medida": "1 puñado"
+      },
+      {
+        "alimento": "Granola",
+        "gramos": 30,
+        "medida": "3 cucharadas"
+      }
+    ],
+    "pasos": [
+      "Pon el yogur en un bol.",
+      "Añade los frutos rojos descongelados y la granola."
+    ]
+  },
+  {
+    "nombre": "Batido de recuperación de plátano y proteína",
+    "descripcion": "Batido para después del entrenamiento: hidratos y proteína.",
+    "categoria": "Post-entreno",
+    "raciones": 1,
+    "tiempoPreparacionMin": 5,
+    "dificultad": "FACIL",
+    "franjasAptas": [
+      "POST_ENTRENO"
+    ],
+    "etiquetas": [
+      "post-entreno",
+      "alta-proteina"
+    ],
+    "ingredientes": [
+      {
+        "alimento": "Leche semidesnatada",
+        "gramos": 300,
+        "medida": "1 vaso grande"
+      },
+      {
+        "alimento": "Proteína de suero en polvo",
+        "gramos": 30,
+        "medida": "1 cacito"
+      },
+      {
+        "alimento": "Plátano",
+        "gramos": 120,
+        "medida": "1 unidad mediana"
+      },
+      {
+        "alimento": "Copos de avena",
+        "gramos": 30,
+        "medida": "30 g"
+      }
+    ],
+    "pasos": [
+      "Tritura todos los ingredientes hasta que quede homogéneo."
+    ]
+  },
+  {
+    "nombre": "Pollo a la plancha con arroz y brócoli",
+    "descripcion": "El clásico plato de deportista.",
+    "categoria": "Pollo",
+    "raciones": 1,
+    "tiempoPreparacionMin": 25,
+    "dificultad": "FACIL",
+    "franjasAptas": [
+      "COMIDA",
+      "CENA",
+      "POST_ENTRENO"
+    ],
+    "etiquetas": [
+      "alta-proteina",
+      "post-entreno"
+    ],
+    "ingredientes": [
+      {
+        "alimento": "Pechuga de pollo a la plancha",
+        "gramos": 150,
+        "medida": "1 filete"
+      },
+      {
+        "alimento": "Arroz blanco cocido",
+        "gramos": 180,
+        "medida": "1 taza"
+      },
+      {
+        "alimento": "Brócoli cocido",
+        "gramos": 150,
+        "medida": "1 plato pequeño"
+      },
+      {
+        "alimento": "Aceite de oliva virgen extra",
+        "gramos": 10,
+        "medida": "1 cucharada"
+      }
+    ],
+    "pasos": [
+      "Cuece el arroz y el brócoli.",
+      "Haz la pechuga a la plancha.",
+      "Sirve todo con el aceite en crudo."
+    ]
+  },
+  {
+    "nombre": "Ensalada de quinoa, garbanzos y verduras",
+    "descripcion": "Ensalada completa de legumbre y pseudocereal.",
+    "categoria": "Vegana",
+    "raciones": 2,
+    "tiempoPreparacionMin": 20,
+    "dificultad": "FACIL",
+    "franjasAptas": [
+      "COMIDA",
+      "CENA"
+    ],
+    "etiquetas": [
+      "vegana",
+      "fibra"
+    ],
+    "ingredientes": [
+      {
+        "alimento": "Quinoa cocida",
+        "gramos": 200,
+        "medida": "1 taza"
+      },
+      {
+        "alimento": "Garbanzos cocidos",
+        "gramos": 200,
+        "medida": "1 bote pequeño escurrido"
+      },
+      {
+        "alimento": "Tomate",
+        "gramos": 150,
+        "medida": "1 unidad"
+      },
+      {
+        "alimento": "Pepino",
+        "gramos": 100,
+        "medida": "medio pepino"
+      },
+      {
+        "alimento": "Pimiento rojo",
+        "gramos": 80,
+        "medida": "medio pimiento"
+      },
+      {
+        "alimento": "Aceite de oliva virgen extra",
+        "gramos": 20,
+        "medida": "2 cucharadas"
+      }
+    ],
+    "pasos": [
+      "Pica las verduras.",
+      "Mezcla con la quinoa y los garbanzos.",
+      "Aliña con el aceite."
+    ]
+  },
+  {
+    "nombre": "Salmón al horno con patata y espárragos",
+    "descripcion": "Pescado azul con hidratos de patata.",
+    "categoria": "Pescado y marisco",
+    "raciones": 2,
+    "tiempoPreparacionMin": 30,
+    "dificultad": "MEDIA",
+    "franjasAptas": [
+      "COMIDA",
+      "CENA"
+    ],
+    "etiquetas": [
+      "omega-3"
+    ],
+    "ingredientes": [
+      {
+        "alimento": "Salmón crudo",
+        "gramos": 300,
+        "medida": "2 lomos"
+      },
+      {
+        "alimento": "Patata al horno",
+        "gramos": 400,
+        "medida": "2 patatas medianas"
+      },
+      {
+        "alimento": "Espárragos verdes a la plancha",
+        "gramos": 200,
+        "medida": "1 manojo"
+      },
+      {
+        "alimento": "Aceite de oliva virgen extra",
+        "gramos": 15,
+        "medida": "1 cucharada"
+      }
+    ],
+    "pasos": [
+      "Hornea las patatas en rodajas 15 minutos a 200 grados.",
+      "Añade el salmón y hornea 12 minutos más.",
+      "Sirve con los espárragos a la plancha."
+    ]
+  },
+  {
+    "nombre": "Espaguetis con atún y tomate",
+    "descripcion": "Pasta rápida para cargar hidratos.",
+    "categoria": "Pasta",
+    "raciones": 2,
+    "tiempoPreparacionMin": 20,
+    "dificultad": "FACIL",
+    "franjasAptas": [
+      "COMIDA",
+      "PRE_ENTRENO"
+    ],
+    "etiquetas": [
+      "pre-entreno",
+      "alta-energia"
+    ],
+    "ingredientes": [
+      {
+        "alimento": "Espaguetis cocidos",
+        "gramos": 400,
+        "medida": "2 platos"
+      },
+      {
+        "alimento": "Atún en conserva al natural",
+        "gramos": 160,
+        "medida": "2 latas"
+      },
+      {
+        "alimento": "Tomate triturado en conserva",
+        "gramos": 200,
+        "medida": "medio bote"
+      },
+      {
+        "alimento": "Cebolla",
+        "gramos": 60,
+        "medida": "media cebolla"
+      },
+      {
+        "alimento": "Aceite de oliva",
+        "gramos": 10,
+        "medida": "1 cucharada"
+      }
+    ],
+    "pasos": [
+      "Sofríe la cebolla con el aceite.",
+      "Añade el tomate y cocina 10 minutos.",
+      "Incorpora el atún y mezcla con la pasta."
+    ]
+  },
+  {
+    "nombre": "Lentejas estofadas con verduras",
+    "descripcion": "Legumbre tradicional sin carne.",
+    "categoria": "Vegana",
+    "raciones": 4,
+    "tiempoPreparacionMin": 40,
+    "dificultad": "MEDIA",
+    "franjasAptas": [
+      "COMIDA"
+    ],
+    "etiquetas": [
+      "vegana",
+      "fibra",
+      "hierro"
+    ],
+    "ingredientes": [
+      {
+        "alimento": "Lentejas cocidas",
+        "gramos": 800,
+        "medida": "4 raciones"
+      },
+      {
+        "alimento": "Zanahoria cocida",
+        "gramos": 150,
+        "medida": "2 zanahorias"
+      },
+      {
+        "alimento": "Patata cocida",
+        "gramos": 300,
+        "medida": "2 patatas"
+      },
+      {
+        "alimento": "Cebolla",
+        "gramos": 100,
+        "medida": "1 cebolla"
+      },
+      {
+        "alimento": "Pimiento verde",
+        "gramos": 80,
+        "medida": "1 pimiento"
+      },
+      {
+        "alimento": "Aceite de oliva virgen extra",
+        "gramos": 20,
+        "medida": "2 cucharadas"
+      }
+    ],
+    "pasos": [
+      "Sofríe la cebolla y el pimiento.",
+      "Añade la zanahoria, la patata y las lentejas con agua.",
+      "Cuece 25 minutos a fuego lento."
+    ]
+  },
+  {
+    "nombre": "Tortilla de claras con espinacas",
+    "descripcion": "Cena ligera y proteica.",
+    "categoria": "Cenas ligeras",
+    "raciones": 1,
+    "tiempoPreparacionMin": 10,
+    "dificultad": "FACIL",
+    "franjasAptas": [
+      "CENA"
+    ],
+    "etiquetas": [
+      "alta-proteina",
+      "ligera"
+    ],
+    "ingredientes": [
+      {
+        "alimento": "Clara de huevo",
+        "gramos": 150,
+        "medida": "5 claras"
+      },
+      {
+        "alimento": "Espinacas cocidas",
+        "gramos": 100,
+        "medida": "1 puñado"
+      },
+      {
+        "alimento": "Queso fresco batido 0 %",
+        "gramos": 50,
+        "medida": "2 cucharadas"
+      }
+    ],
+    "pasos": [
+      "Saltea las espinacas.",
+      "Añade las claras batidas y cuaja a fuego suave.",
+      "Sirve con el queso batido."
+    ]
+  },
+  {
+    "nombre": "Merluza al vapor con verduras",
+    "descripcion": "Pescado blanco con verdura al vapor.",
+    "categoria": "Cenas ligeras",
+    "raciones": 1,
+    "tiempoPreparacionMin": 20,
+    "dificultad": "FACIL",
+    "franjasAptas": [
+      "CENA"
+    ],
+    "etiquetas": [
+      "ligera",
+      "alta-proteina"
+    ],
+    "ingredientes": [
+      {
+        "alimento": "Merluza al vapor",
+        "gramos": 180,
+        "medida": "1 lomo"
+      },
+      {
+        "alimento": "Calabacín a la plancha",
+        "gramos": 150,
+        "medida": "medio calabacín"
+      },
+      {
+        "alimento": "Zanahoria cocida",
+        "gramos": 100,
+        "medida": "1 zanahoria"
+      },
+      {
+        "alimento": "Aceite de oliva virgen extra",
+        "gramos": 10,
+        "medida": "1 cucharada"
+      }
+    ],
+    "pasos": [
+      "Cuece la merluza y la zanahoria al vapor.",
+      "Haz el calabacín a la plancha.",
+      "Aliña con el aceite."
+    ]
+  },
+  {
+    "nombre": "Hamburguesa de ternera con boniato asado",
+    "descripcion": "Carne roja magra con hidratos de boniato.",
+    "categoria": "Ternera",
+    "raciones": 1,
+    "tiempoPreparacionMin": 30,
+    "dificultad": "FACIL",
+    "franjasAptas": [
+      "COMIDA",
+      "POST_ENTRENO"
+    ],
+    "etiquetas": [
+      "alta-proteina",
+      "post-entreno"
+    ],
+    "ingredientes": [
+      {
+        "alimento": "Hamburguesa de ternera a la plancha",
+        "gramos": 150,
+        "medida": "1 hamburguesa"
+      },
+      {
+        "alimento": "Boniato asado",
+        "gramos": 200,
+        "medida": "1 boniato mediano"
+      },
+      {
+        "alimento": "Lechuga",
+        "gramos": 50,
+        "medida": "unas hojas"
+      },
+      {
+        "alimento": "Tomate",
+        "gramos": 80,
+        "medida": "medio tomate"
+      }
+    ],
+    "pasos": [
+      "Asa el boniato 30 minutos a 200 grados.",
+      "Haz la hamburguesa a la plancha.",
+      "Sirve con la ensalada."
+    ]
+  },
+  {
+    "nombre": "Lomo de cerdo con pimientos asados",
+    "descripcion": "Carne magra de cerdo con verdura asada.",
+    "categoria": "Cerdo",
+    "raciones": 1,
+    "tiempoPreparacionMin": 20,
+    "dificultad": "FACIL",
+    "franjasAptas": [
+      "COMIDA",
+      "CENA"
+    ],
+    "etiquetas": [
+      "alta-proteina"
+    ],
+    "ingredientes": [
+      {
+        "alimento": "Lomo de cerdo a la plancha",
+        "gramos": 150,
+        "medida": "2 filetes"
+      },
+      {
+        "alimento": "Pimientos asados",
+        "gramos": 150,
+        "medida": "1 ración"
+      },
+      {
+        "alimento": "Pan integral",
+        "gramos": 40,
+        "medida": "1 rebanada"
+      }
+    ],
+    "pasos": [
+      "Haz el lomo a la plancha.",
+      "Sirve con los pimientos asados y el pan."
+    ]
+  },
+  {
+    "nombre": "Tofu salteado con arroz integral",
+    "descripcion": "Salteado vegetal con proteína de soja.",
+    "categoria": "Vegana",
+    "raciones": 1,
+    "tiempoPreparacionMin": 20,
+    "dificultad": "MEDIA",
+    "franjasAptas": [
+      "COMIDA",
+      "CENA"
+    ],
+    "etiquetas": [
+      "vegana",
+      "alta-proteina"
+    ],
+    "ingredientes": [
+      {
+        "alimento": "Tofu firme",
+        "gramos": 150,
+        "medida": "media pastilla"
+      },
+      {
+        "alimento": "Arroz integral cocido",
+        "gramos": 180,
+        "medida": "1 taza"
+      },
+      {
+        "alimento": "Brócoli cocido",
+        "gramos": 100,
+        "medida": "1 puñado"
+      },
+      {
+        "alimento": "Salsa de soja",
+        "gramos": 15,
+        "medida": "1 cucharada"
+      },
+      {
+        "alimento": "Aceite de oliva",
+        "gramos": 10,
+        "medida": "1 cucharada"
+      }
+    ],
+    "pasos": [
+      "Dora el tofu en dados con el aceite.",
+      "Añade el brócoli y la salsa de soja.",
+      "Sirve sobre el arroz."
+    ]
+  },
+  {
+    "nombre": "Hummus con crudités",
+    "descripcion": "Tentempié de legumbre y verdura cruda.",
+    "categoria": "Snacks",
+    "raciones": 1,
+    "tiempoPreparacionMin": 5,
+    "dificultad": "FACIL",
+    "franjasAptas": [
+      "MERIENDA",
+      "MEDIA_MANANA"
+    ],
+    "etiquetas": [
+      "vegana",
+      "snack"
+    ],
+    "ingredientes": [
+      {
+        "alimento": "Hummus",
+        "gramos": 60,
+        "medida": "3 cucharadas"
+      },
+      {
+        "alimento": "Zanahoria cruda",
+        "gramos": 80,
+        "medida": "1 zanahoria"
+      },
+      {
+        "alimento": "Pepino",
+        "gramos": 80,
+        "medida": "medio pepino"
+      },
+      {
+        "alimento": "Pimiento rojo",
+        "gramos": 60,
+        "medida": "medio pimiento"
+      }
+    ],
+    "pasos": [
+      "Corta las verduras en bastones.",
+      "Sirve con el hummus."
+    ]
+  },
+  {
+    "nombre": "Tortitas de arroz con pavo y queso fresco",
+    "descripcion": "Snack rápido y ligero.",
+    "categoria": "Snacks",
+    "raciones": 1,
+    "tiempoPreparacionMin": 5,
+    "dificultad": "FACIL",
+    "franjasAptas": [
+      "MERIENDA",
+      "MEDIA_MANANA"
+    ],
+    "etiquetas": [
+      "snack",
+      "alta-proteina"
+    ],
+    "ingredientes": [
+      {
+        "alimento": "Tortitas de arroz",
+        "gramos": 30,
+        "medida": "3 tortitas"
+      },
+      {
+        "alimento": "Fiambre de pechuga de pavo",
+        "gramos": 60,
+        "medida": "4 lonchas"
+      },
+      {
+        "alimento": "Queso fresco de Burgos",
+        "gramos": 50,
+        "medida": "2 lonchas finas"
+      }
+    ],
+    "pasos": [
+      "Monta el pavo y el queso sobre las tortitas."
+    ]
+  },
+  {
+    "nombre": "Tostada de miel y plátano antes de entrenar",
+    "descripcion": "Hidratos de absorción rápida entre 30 y 60 minutos antes del entrenamiento.",
+    "categoria": "Pre-entreno",
+    "raciones": 1,
+    "tiempoPreparacionMin": 5,
+    "dificultad": "FACIL",
+    "franjasAptas": [
+      "PRE_ENTRENO",
+      "MEDIA_MANANA"
+    ],
+    "etiquetas": [
+      "pre-entreno",
+      "alta-energia"
+    ],
+    "ingredientes": [
+      {
+        "alimento": "Pan blanco de barra",
+        "gramos": 60,
+        "medida": "un trozo"
+      },
+      {
+        "alimento": "Miel",
+        "gramos": 15,
+        "medida": "1 cucharada"
+      },
+      {
+        "alimento": "Plátano",
+        "gramos": 120,
+        "medida": "1 unidad mediana"
+      }
+    ],
+    "pasos": [
+      "Tuesta el pan.",
+      "Unta la miel y añade el plátano en rodajas."
+    ]
+  },
+  {
+    "nombre": "Skyr con nueces y miel",
+    "descripcion": "Postre lácteo con proteína.",
+    "categoria": "Postres",
+    "raciones": 1,
+    "tiempoPreparacionMin": 5,
+    "dificultad": "FACIL",
+    "franjasAptas": [
+      "MERIENDA",
+      "CENA"
+    ],
+    "etiquetas": [
+      "alta-proteina"
+    ],
+    "ingredientes": [
+      {
+        "alimento": "Skyr natural",
+        "gramos": 150,
+        "medida": "1 envase"
+      },
+      {
+        "alimento": "Nueces",
+        "gramos": 15,
+        "medida": "3 nueces"
+      },
+      {
+        "alimento": "Miel",
+        "gramos": 10,
+        "medida": "1 cucharadita"
+      }
+    ],
+    "pasos": [
+      "Sirve el skyr con las nueces troceadas y la miel."
+    ]
+  },
+  {
+    "nombre": "Chuletas de cordero con cuscús y verduras",
+    "descripcion": "Cordero a la plancha con cuscús.",
+    "categoria": "Cordero",
+    "raciones": 2,
+    "tiempoPreparacionMin": 25,
+    "dificultad": "MEDIA",
+    "franjasAptas": [
+      "COMIDA"
+    ],
+    "etiquetas": [
+      "alta-proteina"
+    ],
+    "ingredientes": [
+      {
+        "alimento": "Chuletas de cordero a la plancha",
+        "gramos": 300,
+        "medida": "6 chuletas"
+      },
+      {
+        "alimento": "Cuscús cocido",
+        "gramos": 300,
+        "medida": "2 tazas"
+      },
+      {
+        "alimento": "Calabacín a la plancha",
+        "gramos": 200,
+        "medida": "1 calabacín"
+      },
+      {
+        "alimento": "Cebolla",
+        "gramos": 60,
+        "medida": "media cebolla"
+      },
+      {
+        "alimento": "Aceite de oliva virgen extra",
+        "gramos": 15,
+        "medida": "1 cucharada"
+      }
+    ],
+    "pasos": [
+      "Hidrata el cuscús con agua caliente.",
+      "Saltea el calabacín y la cebolla.",
+      "Haz las chuletas a la plancha y sirve todo junto."
+    ]
+  }
+]

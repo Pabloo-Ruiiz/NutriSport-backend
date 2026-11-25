@@ -5,6 +5,9 @@ import com.nutrisport.catalogo.entidad.FuenteDato;
 import com.nutrisport.catalogo.repositorio.AlimentoRepositorio;
 import com.nutrisport.catalogo.servicio.ImportadorAlimentosCsv;
 import com.nutrisport.comun.dto.ErrorCampo;
+import com.nutrisport.recetas.entidad.OrigenReceta;
+import com.nutrisport.recetas.repositorio.RecetaRepositorio;
+import com.nutrisport.recetas.servicio.ImportadorRecetasJson;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
@@ -17,31 +20,47 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
 /**
- * Solo en el perfil {@code local}: si el catálogo está vacío, carga los alimentos genéricos de
- * {@code datos/alimentos_desarrollo.csv} para poder probar la aplicación. Nunca se ejecuta en
- * producción ni en los tests.
+ * Solo en el perfil {@code local}: carga los datos de desarrollo para poder probar la aplicación. Nunca se
+ * ejecuta en producción ni en los tests. Cada parte se carga solo si aún no hay datos de ese tipo:
+ * <ol>
+ * <li>los alimentos genéricos de {@code datos/alimentos_desarrollo.csv}, si el catálogo está vacío;</li>
+ * <li>después, las recetas propias de {@code datos/recetas_desarrollo.json}, que referencian esos alimentos por
+ * su nombre, si aún no hay ninguna receta propia.</li>
+ * </ol>
+ * Los datos no son oficiales (valores aproximados): ver el README.
  */
 @Component
 @Profile("local")
 public class CargadorDatosDesarrollo implements ApplicationRunner {
 
     static final String FICHERO = "datos/alimentos_desarrollo.csv";
+    static final String FICHERO_RECETAS = "datos/recetas_desarrollo.json";
     static final String REFERENCIA = "DEV";
 
     private static final Logger LOG = LoggerFactory.getLogger(CargadorDatosDesarrollo.class);
 
     private final AlimentoRepositorio alimentoRepositorio;
     private final ImportadorAlimentosCsv importador;
+    private final RecetaRepositorio recetaRepositorio;
+    private final ImportadorRecetasJson importadorRecetas;
 
-    public CargadorDatosDesarrollo(AlimentoRepositorio alimentoRepositorio, ImportadorAlimentosCsv importador) {
+    public CargadorDatosDesarrollo(AlimentoRepositorio alimentoRepositorio, ImportadorAlimentosCsv importador,
+            RecetaRepositorio recetaRepositorio, ImportadorRecetasJson importadorRecetas) {
         this.alimentoRepositorio = alimentoRepositorio;
         this.importador = importador;
+        this.recetaRepositorio = recetaRepositorio;
+        this.importadorRecetas = importadorRecetas;
     }
 
     @Override
     public void run(ApplicationArguments argumentos) {
+        cargarAlimentos();
+        cargarRecetas();
+    }
+
+    private void cargarAlimentos() {
         if (alimentoRepositorio.count() > 0) {
-            LOG.debug("El catálogo ya tiene alimentos: no se cargan los datos de desarrollo");
+            LOG.debug("El catálogo ya tiene alimentos: no se cargan los alimentos de desarrollo");
             return;
         }
         try (InputStream entrada = new ClassPathResource(FICHERO).getInputStream()) {
@@ -49,13 +68,29 @@ public class CargadorDatosDesarrollo implements ApplicationRunner {
             // entorno real los alérgenos los revisa un administrador antes de darlos por buenos (§6.3),
             // y un alimento sin revisar se excluye de los menús de usuarios con alergias estrictas.
             ResultadoImportacion resultado = importador.importar(entrada, FuenteDato.ADMIN, REFERENCIA, true);
-            LOG.info("Datos de desarrollo cargados desde {}: {} alimentos creados, {} actualizados, {} filas con errores",
-                    FICHERO, resultado.creados(), resultado.actualizados(), resultado.errores().size());
-            for (ErrorCampo error : resultado.errores()) {
-                LOG.warn("{} ({}): {}", FICHERO, error.campo(), error.mensaje());
-            }
+            informar(FICHERO, "alimentos", resultado);
         } catch (IOException e) {
             throw new UncheckedIOException("No se ha podido leer " + FICHERO, e);
+        }
+    }
+
+    private void cargarRecetas() {
+        if (recetaRepositorio.existsByOrigen(OrigenReceta.PROPIA)) {
+            LOG.debug("Ya hay recetas propias: no se cargan las recetas de desarrollo");
+            return;
+        }
+        try (InputStream entrada = new ClassPathResource(FICHERO_RECETAS).getInputStream()) {
+            informar(FICHERO_RECETAS, "recetas", importadorRecetas.importar(entrada));
+        } catch (IOException e) {
+            throw new UncheckedIOException("No se ha podido leer " + FICHERO_RECETAS, e);
+        }
+    }
+
+    private static void informar(String fichero, String que, ResultadoImportacion resultado) {
+        LOG.info("Datos de desarrollo cargados desde {}: {} {} creados, {} actualizados, {} errores", fichero,
+                resultado.creados(), que, resultado.actualizados(), resultado.errores().size());
+        for (ErrorCampo error : resultado.errores()) {
+            LOG.warn("{} ({}): {}", fichero, error.campo(), error.mensaje());
         }
     }
 }

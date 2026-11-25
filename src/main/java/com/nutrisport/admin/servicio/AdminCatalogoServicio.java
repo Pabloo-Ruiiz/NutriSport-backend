@@ -18,7 +18,7 @@ import com.nutrisport.catalogo.repositorio.AlimentoRepositorio;
 import com.nutrisport.catalogo.repositorio.CategoriaRepositorio;
 import com.nutrisport.catalogo.servicio.AlimentoServicio;
 import com.nutrisport.catalogo.servicio.ImportadorAlimentosCsv;
-import com.nutrisport.catalogo.servicio.UsoAlimento;
+import com.nutrisport.catalogo.servicio.UsosAlimento;
 import com.nutrisport.comun.dto.ErrorCampo;
 import com.nutrisport.comun.dto.PaginaResponse;
 import com.nutrisport.comun.excepcion.ConflictoException;
@@ -57,14 +57,14 @@ public class AdminCatalogoServicio {
     private final CategoriaRepositorio categoriaRepositorio;
     private final AlimentoServicio alimentoServicio;
     private final ImportadorAlimentosCsv importador;
-    private final UsoAlimento usoAlimento;
+    private final UsosAlimento usoAlimento;
     private final AuditoriaServicio auditoriaServicio;
     private final SeguridadUtils seguridadUtils;
     private final AlimentoMapper alimentoMapper;
     private final CategoriaMapper categoriaMapper;
 
     public AdminCatalogoServicio(AlimentoRepositorio alimentoRepositorio, CategoriaRepositorio categoriaRepositorio,
-            AlimentoServicio alimentoServicio, ImportadorAlimentosCsv importador, UsoAlimento usoAlimento,
+            AlimentoServicio alimentoServicio, ImportadorAlimentosCsv importador, UsosAlimento usoAlimento,
             AuditoriaServicio auditoriaServicio, SeguridadUtils seguridadUtils, AlimentoMapper alimentoMapper,
             CategoriaMapper categoriaMapper) {
         this.alimentoRepositorio = alimentoRepositorio;

@@ -10,5 +10,6 @@ public record CategoriaResponse(
         TipoCategoria tipo,
         UUID padreId,
         String seccionCompra,
+        String codigoExterno,
         int orden) {
 }

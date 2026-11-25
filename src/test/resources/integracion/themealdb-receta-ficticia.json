@@ -1,0 +1,24 @@
+{
+  "meals": [
+    {
+      "idMeal": "99999",
+      "strMeal": "Receta ficticia (datos de prueba)",
+      "strCategory": "Categoría Desconocida",
+      "strArea": "Spanish",
+      "strInstructions": "Paso 1.\r\nPaso 2.",
+      "strMealThumb": "https://www.themealdb.com/images/media/meals/ficticia.jpg",
+      "strTags": "Meat, Casserole ,,",
+      "strYoutube": "https://www.youtube.com/watch?v=ficticio",
+      "strIngredient1": "  Rice ",
+      "strMeasure1": "  2 cups ",
+      "strIngredient2": "Salt",
+      "strMeasure2": null,
+      "strIngredient3": "",
+      "strMeasure3": "1 cup",
+      "strIngredient4": null,
+      "strMeasure4": null,
+      "strIngredient5": "Peas",
+      "strMeasure5": "  "
+    }
+  ]
+}

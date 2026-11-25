@@ -50,12 +50,12 @@ public class AlimentoServicio {
     private final UsuarioRepositorio usuarioRepositorio;
     private final SeguridadUtils seguridadUtils;
     private final AlimentoMapper alimentoMapper;
-    private final UsoAlimento usoAlimento;
+    private final UsosAlimento usoAlimento;
     private final Clock reloj;
 
     public AlimentoServicio(AlimentoRepositorio alimentoRepositorio, CategoriaRepositorio categoriaRepositorio,
             UsuarioRepositorio usuarioRepositorio, SeguridadUtils seguridadUtils, AlimentoMapper alimentoMapper,
-            UsoAlimento usoAlimento, Clock reloj) {
+            UsosAlimento usoAlimento, Clock reloj) {
         this.alimentoRepositorio = alimentoRepositorio;
         this.categoriaRepositorio = categoriaRepositorio;
         this.usuarioRepositorio = usuarioRepositorio;

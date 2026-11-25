@@ -20,6 +20,9 @@ public interface AlimentoRepositorio extends JpaRepository<Alimento, UUID> {
 
     boolean existsByCategoriaId(UUID categoriaId);
 
+    /** Un alimento activo por su nombre exacto y visibilidad (datos semilla que se referencian por nombre). */
+    Optional<Alimento> findFirstByNombreAndVisibilidadAndActivoTrue(String nombre, Visibilidad visibilidad);
+
     /** El alimento con ese código de barras (único si existe). */
     Optional<Alimento> findByCodigoBarras(String codigoBarras);
 

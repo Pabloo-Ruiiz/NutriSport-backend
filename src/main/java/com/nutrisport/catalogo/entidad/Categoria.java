@@ -33,6 +33,10 @@ public class Categoria extends EntidadBase {
     @Column(name = "seccion_compra", length = 40)
     private String seccionCompra;
 
+    /** strCategory equivalente de TheMealDB (solo categorías de recetas, V12); p. ej. "Chicken" para Pollo. */
+    @Column(name = "codigo_externo", length = 40)
+    private String codigoExterno;
+
     @Column(name = "orden", nullable = false)
     private short orden;
 
@@ -69,6 +73,14 @@ public class Categoria extends EntidadBase {
 
     public void setSeccionCompra(String seccionCompra) {
         this.seccionCompra = seccionCompra;
+    }
+
+    public String getCodigoExterno() {
+        return codigoExterno;
+    }
+
+    public void setCodigoExterno(String codigoExterno) {
+        this.codigoExterno = codigoExterno;
     }
 
     public short getOrden() {
