@@ -34,4 +34,7 @@ public interface AnalisisImagenRepositorio extends JpaRepository<AnalisisImagen,
     List<AnalisisImagen> buscarParaLimpieza(@Param("limiteRetencion") OffsetDateTime limiteRetencion,
             @Param("limiteTerminal") OffsetDateTime limiteTerminal,
             @Param("estadosTerminales") Collection<EstadoAnalisis> estadosTerminales, Pageable pageable);
+
+    /** Todos los análisis del usuario, del más antiguo al más reciente (exportación de datos). */
+    List<AnalisisImagen> findByUsuarioIdOrderByCreadoEnAsc(UUID usuarioId);
 }

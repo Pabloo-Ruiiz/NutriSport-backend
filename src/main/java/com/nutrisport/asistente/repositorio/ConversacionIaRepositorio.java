@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import java.util.List;
 
 /** Conversaciones con el asistente (§6.1). Todas las consultas filtran por el usuario: las de otro no existen. */
 public interface ConversacionIaRepositorio extends JpaRepository<ConversacionIa, UUID> {
@@ -29,4 +30,7 @@ public interface ConversacionIaRepositorio extends JpaRepository<ConversacionIa,
             """)
     Page<ConversacionIa> buscar(@Param("usuarioId") UUID usuarioId, @Param("archivada") Boolean archivada,
             Pageable pageable);
+
+    /** Todas las conversaciones del usuario, de la más antigua a la más reciente (exportación de datos). */
+    List<ConversacionIa> findByUsuarioIdOrderByCreadoEnAsc(UUID usuarioId);
 }

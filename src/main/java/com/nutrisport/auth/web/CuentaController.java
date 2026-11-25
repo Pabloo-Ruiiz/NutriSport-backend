@@ -5,8 +5,10 @@ import com.nutrisport.auth.dto.CambiarEmailRequest;
 import com.nutrisport.auth.dto.CambiarPasswordRequest;
 import com.nutrisport.auth.dto.CuentaResponse;
 import com.nutrisport.auth.dto.EliminarCuentaRequest;
+import com.nutrisport.auth.dto.ExportacionDatos;
 import com.nutrisport.auth.servicio.CuentaServicio;
 import com.nutrisport.auth.servicio.EliminacionCuentaServicio;
+import com.nutrisport.auth.servicio.ExportacionServicio;
 import com.nutrisport.comun.documentacion.RespuestasApi;
 import com.nutrisport.comun.dto.MensajeResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,6 +16,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.time.Clock;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.MediaType;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -44,12 +51,16 @@ public class CuentaController {
     private final CuentaServicio cuentaServicio;
     private final EliminacionCuentaServicio eliminacionCuentaServicio;
     private final CookieRefresh cookieRefresh;
+    private final ExportacionServicio exportacionServicio;
+    private final Clock reloj;
 
     public CuentaController(CuentaServicio cuentaServicio, EliminacionCuentaServicio eliminacionCuentaServicio,
-            CookieRefresh cookieRefresh) {
+            CookieRefresh cookieRefresh, ExportacionServicio exportacionServicio, Clock reloj) {
         this.cuentaServicio = cuentaServicio;
         this.eliminacionCuentaServicio = eliminacionCuentaServicio;
         this.cookieRefresh = cookieRefresh;
+        this.exportacionServicio = exportacionServicio;
+        this.reloj = reloj;
     }
 
     @GetMapping
@@ -90,6 +101,29 @@ public class CuentaController {
     public ResponseEntity<MensajeResponse> cambiarEmail(@Valid @RequestBody CambiarEmailRequest peticion) {
         cuentaServicio.solicitarCambioEmail(peticion);
         return ResponseEntity.accepted().body(MENSAJE_CAMBIO_EMAIL);
+    }
+
+    @GetMapping("/exportacion")
+    @PreAuthorize("hasRole('DEPORTISTA')")
+    @Operation(summary = "Exportar todos mis datos",
+            description = "Derecho de acceso y portabilidad (§8.3): un JSON descargable "
+                    + "(nutrisport-datos-AAAAMMDD.json) con la cuenta y sus consentimientos, el perfil, las "
+                    + "preferencias, los objetivos diarios, las comidas con sus alimentos, los entrenamientos, los "
+                    + "pesajes, los menús, las listas de la compra, las recetas favoritas, las conversaciones con el "
+                    + "asistente, los análisis de fotos (metadatos y candidatos, sin imágenes) y los insights. Nunca "
+                    + "incluye la contraseña ni los tokens. Se puede usar aunque el consentimiento de salud esté "
+                    + "revocado. 403 EMAIL_NO_VERIFICADO si el email no está verificado.")
+    @ApiResponse(responseCode = "200", description = "Fichero JSON con todos los datos")
+    @ApiResponse(responseCode = "403", ref = RespuestasApi.SIN_PERMISO)
+    public ResponseEntity<ExportacionDatos> exportar() {
+        ExportacionDatos datos = exportacionServicio.exportar();
+        String fichero = "nutrisport-datos-" + LocalDate.now(reloj).format(DateTimeFormatter.BASIC_ISO_DATE)
+                + ".json";
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        ContentDisposition.attachment().filename(fichero).build().toString())
+                .body(datos);
     }
 
     @DeleteMapping("/consentimiento-salud")

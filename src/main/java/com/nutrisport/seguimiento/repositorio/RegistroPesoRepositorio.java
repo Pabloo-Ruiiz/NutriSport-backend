@@ -19,4 +19,7 @@ public interface RegistroPesoRepositorio extends JpaRepository<RegistroPeso, UUI
 
     /** Pesajes entre dos fechas (ambas incluidas), en orden cronológico. */
     List<RegistroPeso> findByUsuarioIdAndFechaBetweenOrderByFechaAsc(UUID usuarioId, LocalDate desde, LocalDate hasta);
+
+    /** Todos los pesajes del usuario en orden cronológico (exportación de datos). */
+    List<RegistroPeso> findByUsuarioIdOrderByFechaAsc(UUID usuarioId);
 }

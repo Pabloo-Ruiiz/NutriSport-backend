@@ -69,4 +69,8 @@ public interface EntrenamientoRepositorio extends JpaRepository<Entrenamiento, U
             """, nativeQuery = true)
     List<ActividadDia> actividadPorFecha(@Param("usuarioId") UUID usuarioId, @Param("desde") OffsetDateTime desde,
             @Param("hasta") OffsetDateTime hasta, @Param("zona") String zona);
+
+    /** Todos los entrenamientos del usuario en orden cronológico (exportación de datos). */
+    @EntityGraph(attributePaths = "tipoActividad")
+    List<Entrenamiento> findByUsuarioIdOrderByFechaHoraAsc(UUID usuarioId);
 }
