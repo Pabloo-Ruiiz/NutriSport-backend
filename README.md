@@ -169,7 +169,7 @@ Las migraciones están en `src/main/resources/db/migration`. **Una migración ya
 | `V9` | Análisis de imágenes |
 | `V10` | Auditoría de acciones administrativas |
 
-**Ampliación (previstas):** `V11` fuentes externas, `V12` recetas, `V13` mapeo de ingredientes, `V14` menús, `V15` lista de la compra, `V16` insights y `V17` asistente. Van una versión por detrás de lo que indica la guía, porque `V10` la ocupa la auditoría del MVP.
+**Ampliación:** `V11` fuentes externas, `V12` recetas, `V13` mapeo de ingredientes, `V14` menús y `V15` sugerencias de la IA para los menús. Previstas: `V16` lista de la compra, `V17` insights y `V18` asistente. Van por detrás de lo que indica la guía porque `V10` la ocupa la auditoría del MVP y `V15` las sugerencias de la IA, que la guía no numera.
 
 **Repetibles:** `R__categorias.sql` (categorías iniciales) y `R__tipos_actividad.sql` (catálogo de actividades con su MET). Flyway las vuelve a aplicar cada vez que cambia su contenido.
 

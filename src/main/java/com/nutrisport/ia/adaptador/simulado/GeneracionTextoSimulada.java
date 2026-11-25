@@ -23,4 +23,13 @@ public class GeneracionTextoSimulada implements GeneracionTextoPuerto {
         String texto = "[Respuesta simulada de la plantilla '" + plantilla + "' con " + new TreeMap<>(variables) + "]";
         return new ResultadoIa<>(texto, 0, 0, MODELO);
     }
+
+    /**
+     * Sin proveedor no hay propuesta: devuelve un contenido nulo, que quien llama trata como "la IA no propone
+     * nada". Los tests que necesitan una propuesta concreta simulan el puerto.
+     */
+    @Override
+    public <T> ResultadoIa<T> generarEstructurado(String plantilla, Map<String, Object> variables, Class<T> tipo) {
+        return new ResultadoIa<>(null, 0, 0, MODELO);
+    }
 }

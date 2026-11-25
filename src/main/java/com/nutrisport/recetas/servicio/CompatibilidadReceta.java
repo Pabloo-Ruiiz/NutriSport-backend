@@ -17,13 +17,13 @@ import com.nutrisport.recetas.entidad.RecetaIngrediente;
  * generan avisos de dieta o lactosa: hasta que se emparejen (cálculo nutricional, A3), solo las alergias exigen
  * verificación.
  */
-final class CompatibilidadReceta {
+public final class CompatibilidadReceta {
 
     private CompatibilidadReceta() {
     }
 
     /** Necesita los ingredientes de la receta (dentro de una transacción si son perezosos). */
-    static boolean compatible(Receta receta, RestriccionesUsuario restricciones) {
+    public static boolean compatible(Receta receta, RestriccionesUsuario restricciones) {
         if (sinRestricciones(restricciones)) {
             return true;
         }

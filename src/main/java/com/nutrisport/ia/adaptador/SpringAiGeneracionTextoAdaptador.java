@@ -5,6 +5,7 @@ import com.nutrisport.ia.puerto.GeneracionTextoPuerto;
 import com.nutrisport.ia.puerto.ResultadoIa;
 import java.util.Map;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.ResponseEntity;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -36,5 +37,18 @@ public class SpringAiGeneracionTextoAdaptador implements GeneracionTextoPuerto {
         UsoTokens uso = UsoTokens.de(respuesta);
         return new ResultadoIa<>(respuesta.getResult().getOutput().getText(), uso.entrada(), uso.salida(),
                 uso.modelo());
+    }
+
+    @Override
+    public <T> ResultadoIa<T> generarEstructurado(String plantilla, Map<String, Object> variables, Class<T> tipo) {
+        String peticion = new PromptTemplate(Plantillas.cargar(plantilla)).render(variables);
+        // responseEntity añade al prompt las instrucciones de formato con el esquema JSON del tipo
+        ResponseEntity<ChatResponse, T> respuesta = LlamadaConReintento.ejecutar(
+                () -> chatClient.prompt().user(peticion).call().responseEntity(tipo), "plantilla " + plantilla);
+        if (respuesta == null) {
+            throw new ServicioNoDisponibleException(LlamadaConReintento.NO_DISPONIBLE);
+        }
+        UsoTokens uso = UsoTokens.de(respuesta.response());
+        return new ResultadoIa<>(respuesta.entity(), uso.entrada(), uso.salida(), uso.modelo());
     }
 }

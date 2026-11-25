@@ -125,7 +125,8 @@ public class MenuServicio {
                 .orElseThrow(() -> new RecursoNoEncontradoException(NO_ENCONTRADO));
     }
 
-    private MenuResponse respuesta(MenuSemanal menu, UUID usuarioId) {
+    /** Menú completo con sus días (dentro de una transacción de escritura: puede guardar objetivos). */
+    MenuResponse respuesta(MenuSemanal menu, UUID usuarioId) {
         List<Receta> recetas = menu.getComidas().stream().map(ComidaPlanificada::getReceta).distinct().toList();
         Map<UUID, RecetaResumenResponse> resumenes = recetaServicio.resumenes(usuarioId, recetas);
         Map<LocalDate, List<ComidaPlanificada>> porDia = menu.getComidas().stream()
@@ -186,7 +187,7 @@ public class MenuServicio {
     }
 
     /** Días (en la zona horaria de la aplicación) con entrenamientos planificados o realizados. */
-    private Set<LocalDate> diasDeEntreno(UUID usuarioId, LocalDate desde, LocalDate hasta) {
+    Set<LocalDate> diasDeEntreno(UUID usuarioId, LocalDate desde, LocalDate hasta) {
         ZoneId zona = reloj.getZone();
         return entrenamientoRepositorio.buscarEntre(usuarioId, desde.atStartOfDay(zona).toOffsetDateTime(),
                         hasta.plusDays(1).atStartOfDay(zona).toOffsetDateTime()).stream()

@@ -26,6 +26,18 @@ public interface AlimentoRepositorio extends JpaRepository<Alimento, UUID> {
     /** El alimento con ese código de barras (único si existe). */
     Optional<Alimento> findByCodigoBarras(String codigoBarras);
 
+    /**
+     * Alimentos activos visibles para el usuario (públicos y privados suyos) con ese nombre normalizado exacto (sin
+     * tildes ni mayúsculas): primero los validados.
+     */
+    @Query("""
+            select a from Alimento a left join a.propietario p
+             where a.activo = true and a.nombreNormalizado = :nombre
+               and (a.visibilidad = com.nutrisport.catalogo.entidad.Visibilidad.PUBLICO or p.id = :usuarioId)
+             order by a.validado desc, a.id
+            """)
+    List<Alimento> porNombreVisible(@Param("nombre") String nombre, @Param("usuarioId") UUID usuarioId);
+
     /** Los alimentos con alguno de esos códigos (para saber qué resultados de búsqueda ya están en el catálogo). */
     List<Alimento> findByCodigoBarrasIn(Collection<String> codigosBarras);
 
