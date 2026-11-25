@@ -21,7 +21,6 @@ import com.nutrisport.menus.recomendacion.MotorRecomendacion;
 import com.nutrisport.menus.recomendacion.SeleccionFranja;
 import com.nutrisport.menus.repositorio.MenuSemanalRepositorio;
 import com.nutrisport.perfil.dto.ObjetivoDiarioResponse;
-import com.nutrisport.perfil.entidad.Dieta;
 import com.nutrisport.perfil.entidad.PerfilDeportivo;
 import com.nutrisport.perfil.entidad.PreferenciaAlimentaria;
 import com.nutrisport.perfil.entidad.TipoPreferencia;
@@ -344,20 +343,7 @@ public class GeneradorMenuServicio {
 
     /** Restricciones en palabras ("alergia a gluten, dieta vegana…") o "ninguna". */
     static String describir(RestriccionesUsuario restricciones) {
-        List<String> partes = new ArrayList<>();
-        restricciones.alergenos().stream().sorted()
-                .forEach(alergeno -> partes.add("alergia a " + alergeno.toLowerCase(Locale.ROOT).replace('_', ' ')));
-        if (restricciones.intoleranciaLactosa()) {
-            partes.add("sin lactosa");
-        }
-        restricciones.dietas().stream().sorted()
-                .filter(dieta -> dieta != Dieta.HALAL && dieta != Dieta.KOSHER)
-                .forEach(dieta -> partes.add("dieta " + dieta.name().toLowerCase(Locale.ROOT)));
-        int rechazos = restricciones.alimentosRechazados().size() + restricciones.categoriasRechazadas().size();
-        if (rechazos > 0) {
-            partes.add(rechazos + (rechazos == 1 ? " alimento o categoría rechazados" : " alimentos o categorías rechazados"));
-        }
-        return partes.isEmpty() ? "ninguna" : String.join(", ", partes);
+        return restricciones.descripcion();
     }
 
     // ---------------------------------------------------------------------------------------------

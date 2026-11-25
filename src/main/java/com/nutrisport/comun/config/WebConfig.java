@@ -18,7 +18,8 @@ public class WebConfig implements WebMvcConfigurer {
         "/api/v1/analisis/**",
         "/api/v1/entrenamientos/**",
         "/api/v1/seguimiento/**",
-        "/api/v1/menus/**"
+        "/api/v1/menus/**",
+        "/api/v1/asistente/**"
     };
 
     private final InterceptorConsentimiento interceptorConsentimiento;

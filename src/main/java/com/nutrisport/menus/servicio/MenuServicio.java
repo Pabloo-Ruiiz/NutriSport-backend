@@ -138,6 +138,22 @@ public class MenuServicio {
                 .toList();
     }
 
+    /**
+     * Comidas planificadas de ese día en los menús ACTIVO del usuario, consumidas o no (herramienta del asistente).
+     * No depende del contexto de seguridad.
+     */
+    @Transactional(readOnly = true)
+    public List<ComidaPlanificadaResponse> comidasDelDia(UUID usuarioId, LocalDate fecha) {
+        List<ComidaPlanificada> comidas = comidaRepositorio.delDia(usuarioId, fecha);
+        Map<UUID, RecetaResumenResponse> resumenes = recetaServicio.resumenes(usuarioId,
+                comidas.stream().map(ComidaPlanificada::getReceta).distinct().toList());
+        return comidas.stream()
+                .map(comida -> new ComidaPlanificadaResponse(comida.getId(), comida.getFecha(),
+                        comida.getTipoComida(), resumenes.get(comida.getReceta().getId()), comida.getRaciones(),
+                        nutrientes(comida), comida.isBloqueada(), comida.isConsumida()))
+                .toList();
+    }
+
     // ---------------------------------------------------------------------------------------------
 
     MenuSemanal propio(UUID id, UUID usuarioId) {

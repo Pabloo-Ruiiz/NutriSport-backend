@@ -29,6 +29,16 @@ public interface ComidaPlanificadaRepositorio extends JpaRepository<ComidaPlanif
             """)
     List<ComidaPlanificada> pendientesDelDia(@Param("usuarioId") UUID usuarioId, @Param("fecha") LocalDate fecha);
 
+    /** Comidas de ese día (consumidas o no) en los menús ACTIVO del usuario, con su menú y su receta. */
+    @EntityGraph(attributePaths = {"menu", "receta"})
+    @Query("""
+            select c from ComidaPlanificada c
+             where c.menu.usuario.id = :usuarioId and c.fecha = :fecha
+               and c.menu.estado = com.nutrisport.menus.entidad.EstadoMenu.ACTIVO
+             order by c.menu.fechaInicio, c.menu.id, c.orden
+            """)
+    List<ComidaPlanificada> delDia(@Param("usuarioId") UUID usuarioId, @Param("fecha") LocalDate fecha);
+
     /** Si alguna comida planificada usa la receta (entonces no se puede borrar). */
     @Query("select count(c) > 0 from ComidaPlanificada c where c.receta.id = :recetaId")
     boolean recetaPlanificada(@Param("recetaId") UUID recetaId);

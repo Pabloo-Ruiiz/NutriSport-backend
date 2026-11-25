@@ -134,6 +134,16 @@ public class EntrenamientoServicio {
      */
     @Transactional(readOnly = true)
     public List<EntrenamientoResponse> listar(LocalDate desde, LocalDate hasta, EstadoEntrenamiento estado) {
+        return listar(seguridadUtils.usuarioActualId(), desde, hasta, estado);
+    }
+
+    /**
+     * Como {@link #listar(LocalDate, LocalDate, EstadoEntrenamiento)} para un usuario dado, sin depender del contexto
+     * de seguridad (herramientas del asistente, que pueden ejecutarse en otro hilo).
+     */
+    @Transactional(readOnly = true)
+    public List<EntrenamientoResponse> listar(UUID usuarioId, LocalDate desde, LocalDate hasta,
+            EstadoEntrenamiento estado) {
         if (hasta.isBefore(desde)) {
             throw invalida("hasta", "Debe ser igual o posterior a desde");
         }
@@ -142,7 +152,7 @@ public class EntrenamientoServicio {
         }
         ZoneId zona = reloj.getZone();
         return entrenamientoRepositorio
-                .buscarEntre(seguridadUtils.usuarioActualId(), desde.atStartOfDay(zona).toOffsetDateTime(),
+                .buscarEntre(usuarioId, desde.atStartOfDay(zona).toOffsetDateTime(),
                         hasta.plusDays(1).atStartOfDay(zona).toOffsetDateTime())
                 .stream()
                 .filter(entrenamiento -> estado == null || entrenamiento.getEstado() == estado)

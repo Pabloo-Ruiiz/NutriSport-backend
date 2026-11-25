@@ -52,11 +52,18 @@ public class ResumenDiarioServicio {
 
     /** Resumen del día indicado o, si es nulo, de hoy (en la zona horaria de la aplicación). */
     public ResumenDiarioResponse de(LocalDate fecha) {
+        return de(seguridadUtils.usuarioActualId(), fecha);
+    }
+
+    /**
+     * Como {@link #de(LocalDate)} para un usuario dado, sin depender del contexto de seguridad (herramientas del
+     * asistente). Igual que la consulta del resumen, guarda el objetivo del día si aún no existe.
+     */
+    public ResumenDiarioResponse de(UUID usuarioId, LocalDate fecha) {
         LocalDate dia = fecha != null ? fecha : LocalDate.now(reloj);
-        UUID usuarioId = seguridadUtils.usuarioActualId();
         ObjetivoDiarioResponse objetivoDiario = objetivoDiarioServicio.obtener(usuarioId, dia);
-        ComidasDiaResponse comidas = comidaServicio.dia(dia);
-        List<EntrenamientoResponse> entrenamientos = entrenamientoServicio.listar(dia, dia, null);
+        ComidasDiaResponse comidas = comidaServicio.dia(usuarioId, dia);
+        List<EntrenamientoResponse> entrenamientos = entrenamientoServicio.listar(usuarioId, dia, dia, null);
 
         Nutrientes objetivo = objetivoDiario.total();
         Nutrientes consumido = comidas.totales();
