@@ -10,8 +10,10 @@ import com.nutrisport.catalogo.entidad.Visibilidad;
 import com.nutrisport.catalogo.repositorio.AlimentoRepositorio;
 import com.nutrisport.catalogo.repositorio.CategoriaRepositorio;
 import com.nutrisport.comun.dto.ErrorCampo;
+import com.nutrisport.comun.excepcion.ConflictoException;
 import com.nutrisport.comun.excepcion.PeticionInvalidaException;
 import com.nutrisport.comun.excepcion.RecursoNoEncontradoException;
+import com.nutrisport.menus.repositorio.ComidaPlanificadaRepositorio;
 import com.nutrisport.recetas.dto.RecetaResponse;
 import com.nutrisport.recetas.entidad.EstadoConversion;
 import com.nutrisport.recetas.entidad.OrigenReceta;
@@ -49,17 +51,20 @@ public class AdminRecetaServicio {
     private final CalculoNutricionalServicio calculo;
     private final RecetaServicio recetaServicio;
     private final AuditoriaServicio auditoriaServicio;
+    private final ComidaPlanificadaRepositorio comidaPlanificadaRepositorio;
     private final TransactionTemplate escritura;
 
     public AdminRecetaServicio(RecetaRepositorio recetaRepositorio, CategoriaRepositorio categoriaRepositorio,
             AlimentoRepositorio alimentoRepositorio, CalculoNutricionalServicio calculo, RecetaServicio recetaServicio,
-            AuditoriaServicio auditoriaServicio, PlatformTransactionManager transacciones) {
+            AuditoriaServicio auditoriaServicio, ComidaPlanificadaRepositorio comidaPlanificadaRepositorio,
+            PlatformTransactionManager transacciones) {
         this.recetaRepositorio = recetaRepositorio;
         this.categoriaRepositorio = categoriaRepositorio;
         this.alimentoRepositorio = alimentoRepositorio;
         this.calculo = calculo;
         this.recetaServicio = recetaServicio;
         this.auditoriaServicio = auditoriaServicio;
+        this.comidaPlanificadaRepositorio = comidaPlanificadaRepositorio;
         this.escritura = new TransactionTemplate(transacciones);
     }
 
@@ -94,10 +99,17 @@ public class AdminRecetaServicio {
         return recetaServicio.detalle(id, null);
     }
 
-    /** Borra una receta propia pública (y sus favoritas). 404 si no lo es. */
+    /**
+     * Borra una receta propia pública (y sus favoritas). 404 si no lo es; 409 RECETA_PLANIFICADA si está en algún
+     * menú (la FK lo impediría al confirmar la transacción).
+     */
     public void eliminar(UUID id) {
         escritura.executeWithoutResult(estado -> {
             Receta receta = propiaPublica(id);
+            if (comidaPlanificadaRepositorio.recetaPlanificada(id)) {
+                throw new ConflictoException("RECETA_PLANIFICADA",
+                        "La receta está en algún menú: despublícala en lugar de borrarla");
+            }
             auditoriaServicio.registrar("ELIMINAR_RECETA", "receta", id.toString(), Map.of("nombre", receta.getNombre()));
             recetaRepositorio.delete(receta);
         });

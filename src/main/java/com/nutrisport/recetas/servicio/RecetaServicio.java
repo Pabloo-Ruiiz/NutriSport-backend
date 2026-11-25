@@ -411,6 +411,17 @@ public class RecetaServicio {
     // Respuestas
     // ---------------------------------------------------------------------------------------------
 
+    /**
+     * Resúmenes de varias recetas para el usuario (favorita, compatible, nutrientes por ración...), consultando las
+     * favoritas y las restricciones una sola vez. Hay que llamarlo dentro de una transacción (ingredientes perezosos).
+     */
+    public Map<UUID, RecetaResumenResponse> resumenes(UUID usuarioId, List<Receta> recetas) {
+        Function<Receta, RecetaResumenResponse> resumir = resumidor(usuarioId, recetas);
+        Map<UUID, RecetaResumenResponse> resultado = new java.util.LinkedHashMap<>();
+        recetas.forEach(receta -> resultado.putIfAbsent(receta.getId(), resumir.apply(receta)));
+        return resultado;
+    }
+
     /** Convierte recetas de un mismo listado consultando las favoritas y las restricciones una sola vez. */
     private Function<Receta, RecetaResumenResponse> resumidor(UUID usuarioId, List<Receta> recetas) {
         RestriccionesUsuario restricciones = restriccionesServicio.estrictasDe(usuarioId);
