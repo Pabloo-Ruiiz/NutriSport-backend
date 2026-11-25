@@ -3,6 +3,7 @@ package com.nutrisport.actividad.repositorio;
 import com.nutrisport.actividad.entidad.EstadoEntrenamiento;
 import com.nutrisport.actividad.entidad.Entrenamiento;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -44,4 +45,28 @@ public interface EntrenamientoRepositorio extends JpaRepository<Entrenamiento, U
 
     /** Para la tarea nocturna: entrenamientos de todos los usuarios en un estado y anteriores a un instante. */
     List<Entrenamiento> findByEstadoAndFechaHoraBefore(EstadoEntrenamiento estado, OffsetDateTime antesDe);
+    /** Gasto neto y número de sesiones de un día. */
+    interface ActividadDia {
+        LocalDate getFecha();
+
+        BigDecimal getKcal();
+
+        Long getSesiones();
+    }
+
+    /**
+     * Gasto neto y sesiones por fecha (en la zona horaria {@code zona}, p. ej. "Europe/Madrid") de los entrenamientos
+     * que cuentan (planificados y realizados) en [desde, hasta); solo los días con alguno, en orden.
+     */
+    @Query(value = """
+            SELECT CAST(e.fecha_hora AT TIME ZONE :zona AS date) AS "fecha", sum(e.kcal_estimadas) AS "kcal",
+                   count(*) AS "sesiones"
+              FROM entrenamiento e
+             WHERE e.usuario_id = :usuarioId AND e.fecha_hora >= :desde AND e.fecha_hora < :hasta
+               AND e.estado IN ('PLANIFICADO', 'REALIZADO')
+             GROUP BY 1
+             ORDER BY 1
+            """, nativeQuery = true)
+    List<ActividadDia> actividadPorFecha(@Param("usuarioId") UUID usuarioId, @Param("desde") OffsetDateTime desde,
+            @Param("hasta") OffsetDateTime hasta, @Param("zona") String zona);
 }

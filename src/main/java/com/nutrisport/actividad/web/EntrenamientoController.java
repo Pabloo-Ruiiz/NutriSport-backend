@@ -6,6 +6,8 @@ import com.nutrisport.actividad.dto.TipoActividadResponse;
 import com.nutrisport.actividad.entidad.EstadoEntrenamiento;
 import com.nutrisport.actividad.servicio.EntrenamientoServicio;
 import com.nutrisport.comun.documentacion.RespuestasApi;
+import com.nutrisport.seguimiento.dto.RelacionNutricionResponse;
+import com.nutrisport.seguimiento.servicio.RelacionNutricionActividadServicio;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -61,8 +63,12 @@ public class EntrenamientoController {
 
     private final EntrenamientoServicio entrenamientoServicio;
 
-    public EntrenamientoController(EntrenamientoServicio entrenamientoServicio) {
+    private final RelacionNutricionActividadServicio relacionNutricionServicio;
+
+    public EntrenamientoController(EntrenamientoServicio entrenamientoServicio,
+            RelacionNutricionActividadServicio relacionNutricionServicio) {
         this.entrenamientoServicio = entrenamientoServicio;
+        this.relacionNutricionServicio = relacionNutricionServicio;
     }
 
     @GetMapping
@@ -80,6 +86,23 @@ public class EntrenamientoController {
             @Parameter(description = "Solo los entrenamientos en este estado")
             @RequestParam(required = false) EstadoEntrenamiento estado) {
         return entrenamientoServicio.listar(desde, hasta, estado);
+    }
+
+    @GetMapping("/relacion-nutricion")
+    @PreAuthorize("hasRole('DEPORTISTA')")
+    @Operation(summary = "Alimentación en días de entreno frente a descanso",
+            description = "Media diaria consumida y objetivo medio en los días con algún entrenamiento planificado o "
+                    + "realizado frente a los días sin entrenamiento (solo los días con alguna comida registrada), "
+                    + "y cuántas sesiones tienen al menos 25 g de proteína en las comidas con hora de las 2 h "
+                    + "siguientes al final del entreno. Rango de como mucho 366 días.")
+    @ApiResponse(responseCode = "200", description = "Relación entre alimentación y actividad")
+    @ApiResponse(responseCode = "400", ref = RespuestasApi.VALIDACION)
+    public RelacionNutricionResponse relacionNutricion(
+            @Parameter(description = "Primer día (incluido)", example = "2026-10-26")
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate desde,
+            @Parameter(description = "Último día (incluido); como mucho 366 días contando desde", example = "2026-11-22")
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate hasta) {
+        return relacionNutricionServicio.calcular(desde, hasta);
     }
 
     @GetMapping("/tipos")
