@@ -3,6 +3,7 @@ package com.nutrisport.seguimiento.dto;
 import com.nutrisport.actividad.dto.EntrenamientoResponse;
 import com.nutrisport.comidas.dto.RegistroComidaResponse;
 import com.nutrisport.comun.dto.Nutrientes;
+import com.nutrisport.menus.dto.ComidaPendienteResponse;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
@@ -20,8 +21,8 @@ import java.util.List;
  * @param porcentajes                   consumido / objetivo × 100 por nutriente, entero (puede pasar de 100)
  * @param comidas                       comidas del día en orden cronológico
  * @param entrenamientos                entrenamientos del día en orden cronológico
- * @param comidasPlanificadasPendientes comidas del menú aún no registradas; vacía en el MVP (se completa
- *                                      con el planificador de la Ampliación)
+ * @param comidasPlanificadasPendientes comidas planificadas de ese día aún no consumidas en los menús ACTIVO
+ *                                      (Ampliación), en el orden de sus menús
  */
 public record ResumenDiarioResponse(
         LocalDate fecha,
@@ -33,7 +34,7 @@ public record ResumenDiarioResponse(
         Porcentajes porcentajes,
         List<RegistroComidaResponse> comidas,
         List<EntrenamientoResponse> entrenamientos,
-        List<Object> comidasPlanificadasPendientes) {
+        List<ComidaPendienteResponse> comidasPlanificadasPendientes) {
 
     public ResumenDiarioResponse {
         comidas = List.copyOf(comidas);

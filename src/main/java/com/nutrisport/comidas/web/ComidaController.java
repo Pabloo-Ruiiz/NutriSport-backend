@@ -8,6 +8,7 @@ import com.nutrisport.comidas.entidad.OrigenRegistro;
 import com.nutrisport.comidas.entidad.TipoComida;
 import com.nutrisport.comidas.servicio.ComidaServicio;
 import com.nutrisport.comun.documentacion.RespuestasApi;
+import com.nutrisport.menus.dto.RegistrarRecetaRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -59,6 +60,14 @@ public class ComidaController {
                 {"alimentoId": "3f8b2c1e-6a4d-4e2b-9c7a-1d2e3f4a5b6c", "cantidad": 150, "unidad": "g"},
                 {"alimentoId": "7a1c9e2d-4b3f-4a6e-8d2c-5e6f7a8b9c0d", "cantidad": 1, "unidad": "plato"}
               ]
+            }""";
+
+    private static final String EJEMPLO_DESDE_RECETA = """
+            {
+              "recetaId": "0195f3a2-7c1e-7b8a-9d40-2f6a1c3e5b70",
+              "raciones": 1.5,
+              "fecha": "2026-11-24",
+              "tipoComida": "COMIDA"
             }""";
 
     private final ComidaServicio comidaServicio;
@@ -117,6 +126,28 @@ public class ComidaController {
     @ApiResponse(responseCode = "400", ref = RespuestasApi.VALIDACION)
     public ResponseEntity<RegistroComidaResponse> crear(@Valid @RequestBody RegistroComidaRequest peticion) {
         RegistroComidaResponse creada = comidaServicio.crear(peticion, OrigenRegistro.MANUAL);
+        return ResponseEntity.created(URI.create("/api/v1/comidas/" + creada.id())).body(creada);
+    }
+
+    @PostMapping("/desde-receta")
+    @Operation(summary = "Registrar una receta como comida",
+            description = "Crea una comida con origen RECETA con los ingredientes de la receta emparejados con el "
+                    + "catálogo, con los gramos escalados a raciones / raciones de la receta. Se admiten fechas "
+                    + "pasadas y hasta mañana. 404 si la receta no existe o es privada de otro usuario; 422 "
+                    + "NUTRICION_INCOMPLETA si su cálculo es INCOMPLETO o no tiene ingredientes emparejados.",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = RegistrarRecetaRequest.class),
+                    examples = @ExampleObject(name = "Receta", summary = "Ración y media de una receta",
+                            value = EJEMPLO_DESDE_RECETA))))
+    @ApiResponse(responseCode = "201", description = "Comida registrada; Location apunta a ella")
+    @ApiResponse(responseCode = "400", ref = RespuestasApi.VALIDACION)
+    @ApiResponse(responseCode = "404", ref = RespuestasApi.NO_ENCONTRADO)
+    @ApiResponse(responseCode = "422", ref = RespuestasApi.REGLA_NEGOCIO)
+    public ResponseEntity<RegistroComidaResponse> registrarDesdeReceta(
+            @Valid @RequestBody RegistrarRecetaRequest peticion) {
+        RegistroComidaResponse creada = comidaServicio.registrarDesdeReceta(peticion.recetaId(), peticion.raciones(),
+                peticion.fecha(), peticion.tipoComida());
         return ResponseEntity.created(URI.create("/api/v1/comidas/" + creada.id())).body(creada);
     }
 

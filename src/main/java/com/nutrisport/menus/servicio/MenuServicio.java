@@ -9,12 +9,14 @@ import com.nutrisport.comun.dto.PaginaResponse;
 import com.nutrisport.comun.excepcion.PeticionInvalidaException;
 import com.nutrisport.comun.excepcion.RecursoNoEncontradoException;
 import com.nutrisport.menus.dto.ActualizarMenuRequest;
+import com.nutrisport.menus.dto.ComidaPendienteResponse;
 import com.nutrisport.menus.dto.ComidaPlanificadaResponse;
 import com.nutrisport.menus.dto.DiaMenuResponse;
 import com.nutrisport.menus.dto.MenuResponse;
 import com.nutrisport.menus.dto.MenuResumenResponse;
 import com.nutrisport.menus.entidad.ComidaPlanificada;
 import com.nutrisport.menus.entidad.MenuSemanal;
+import com.nutrisport.menus.repositorio.ComidaPlanificadaRepositorio;
 import com.nutrisport.menus.repositorio.MenuSemanalRepositorio;
 import com.nutrisport.perfil.dto.ObjetivoDiarioResponse;
 import com.nutrisport.perfil.repositorio.PerfilDeportivoRepositorio;
@@ -55,6 +57,7 @@ public class MenuServicio {
     private static final String NO_ENCONTRADO = "El menú no existe";
 
     private final MenuSemanalRepositorio menuRepositorio;
+    private final ComidaPlanificadaRepositorio comidaRepositorio;
     private final ObjetivoDiarioServicio objetivoDiarioServicio;
     private final PerfilDeportivoRepositorio perfilRepositorio;
     private final EntrenamientoRepositorio entrenamientoRepositorio;
@@ -62,10 +65,12 @@ public class MenuServicio {
     private final SeguridadUtils seguridadUtils;
     private final Clock reloj;
 
-    public MenuServicio(MenuSemanalRepositorio menuRepositorio, ObjetivoDiarioServicio objetivoDiarioServicio,
+    public MenuServicio(MenuSemanalRepositorio menuRepositorio, ComidaPlanificadaRepositorio comidaRepositorio,
+            ObjetivoDiarioServicio objetivoDiarioServicio,
             PerfilDeportivoRepositorio perfilRepositorio, EntrenamientoRepositorio entrenamientoRepositorio,
             RecetaServicio recetaServicio, SeguridadUtils seguridadUtils, Clock reloj) {
         this.menuRepositorio = menuRepositorio;
+        this.comidaRepositorio = comidaRepositorio;
         this.objetivoDiarioServicio = objetivoDiarioServicio;
         this.perfilRepositorio = perfilRepositorio;
         this.entrenamientoRepositorio = entrenamientoRepositorio;
@@ -118,9 +123,24 @@ public class MenuServicio {
         menuRepositorio.delete(propio(id, seguridadUtils.usuarioActualId()));
     }
 
+    /**
+     * Comidas planificadas aún no consumidas de ese día en los menús ACTIVO del usuario (resumen diario, §3.F).
+     */
+    @Transactional(readOnly = true)
+    public List<ComidaPendienteResponse> pendientesDelDia(UUID usuarioId, LocalDate fecha) {
+        List<ComidaPlanificada> pendientes = comidaRepositorio.pendientesDelDia(usuarioId, fecha);
+        Map<UUID, RecetaResumenResponse> resumenes = recetaServicio.resumenes(usuarioId,
+                pendientes.stream().map(ComidaPlanificada::getReceta).distinct().toList());
+        return pendientes.stream()
+                .map(comida -> new ComidaPendienteResponse(comida.getMenu().getId(), comida.getMenu().getNombre(),
+                        comida.getId(), comida.getFecha(), comida.getTipoComida(),
+                        resumenes.get(comida.getReceta().getId()), comida.getRaciones(), nutrientes(comida)))
+                .toList();
+    }
+
     // ---------------------------------------------------------------------------------------------
 
-    private MenuSemanal propio(UUID id, UUID usuarioId) {
+    MenuSemanal propio(UUID id, UUID usuarioId) {
         return menuRepositorio.findByIdAndUsuarioId(id, usuarioId)
                 .orElseThrow(() -> new RecursoNoEncontradoException(NO_ENCONTRADO));
     }
