@@ -29,9 +29,9 @@ import org.springframework.test.web.servlet.MockMvc;
 @TestPropertySource(properties = "springdoc.api-docs.enabled=true")
 class DocumentacionOpenApiTest extends IntegracionBase {
 
-    /** Grupos del MVP y de la Ampliación ya implementados (issue de documentación); faltan Compra y Asistente. */
+    /** Grupos del MVP y de la Ampliación ya implementados (issue de documentación); falta Asistente. */
     private static final Set<String> GRUPOS = Set.of("Auth", "Cuenta", "Perfil", "Catálogo", "Comidas", "Análisis",
-            "Actividad", "Seguimiento", "Admin", "Productos", "Recetas", "Menús");
+            "Actividad", "Seguimiento", "Admin", "Productos", "Recetas", "Menús", "Compra");
 
     /** Rutas de autenticación que no piden JWT (todas las de /auth salvo /logout-todas). */
     private static final Set<String> RUTAS_PUBLICAS = Set.of("/api/v1/auth/registro", "/api/v1/auth/verificar-email",
