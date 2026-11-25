@@ -15,5 +15,6 @@ public record CuentaResponse(
         EstadoUsuario estado,
         boolean emailVerificado,
         boolean consentimientoSaludVigente,
-        Unidades unidades) {
+        Unidades unidades,
+        boolean insightsActivos) {
 }

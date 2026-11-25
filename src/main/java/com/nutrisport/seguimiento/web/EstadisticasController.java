@@ -3,15 +3,18 @@ package com.nutrisport.seguimiento.web;
 import com.nutrisport.comun.documentacion.RespuestasApi;
 import com.nutrisport.seguimiento.dto.ComparativaResponse;
 import com.nutrisport.seguimiento.dto.EstadisticasResponse;
+import com.nutrisport.seguimiento.dto.InsightResponse;
 import com.nutrisport.seguimiento.entidad.Agrupacion;
 import com.nutrisport.seguimiento.servicio.ComparativaServicio;
 import com.nutrisport.seguimiento.servicio.EstadisticasServicio;
+import com.nutrisport.seguimiento.servicio.InsightServicio;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.time.LocalDate;
+import java.util.List;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Estadísticas y comparativas del deportista autenticado (§3.F y §7.7, Ampliación). Son datos de salud: con el
+ * Estadísticas, comparativas y patrones detectados (insights) del deportista autenticado (§3.F y §7.7, Ampliación). Son datos de salud: con el
  * consentimiento revocado responden 403 CONSENTIMIENTO_REVOCADO (WebConfig).
  */
 @RestController
@@ -34,10 +37,25 @@ public class EstadisticasController {
 
     private final EstadisticasServicio estadisticasServicio;
     private final ComparativaServicio comparativaServicio;
+    private final InsightServicio insightServicio;
 
-    public EstadisticasController(EstadisticasServicio estadisticasServicio, ComparativaServicio comparativaServicio) {
+    public EstadisticasController(EstadisticasServicio estadisticasServicio, ComparativaServicio comparativaServicio,
+            InsightServicio insightServicio) {
         this.estadisticasServicio = estadisticasServicio;
         this.comparativaServicio = comparativaServicio;
+        this.insightServicio = insightServicio;
+    }
+
+    @GetMapping("/insights")
+    @Operation(summary = "Patrones detectados",
+            description = "Insights vigentes, los más recientes primero. Los calcula cada noche una tarea con reglas "
+                    + "estadísticas sobre los últimos 28 días (proteína baja, carbohidratos bajos en días de entreno, "
+                    + "buen reparto de la proteína, días de la semana con menos registros y tendencia del peso "
+                    + "contraria al objetivo); el texto lleva esas cifras y, como mucho, un consejo redactado por la "
+                    + "IA sin cifras nuevas. Vacía si el usuario los tiene desactivados en su cuenta.")
+    @ApiResponse(responseCode = "200", description = "Insights vigentes")
+    public List<InsightResponse> insights() {
+        return insightServicio.vigentes();
     }
 
     @GetMapping("/estadisticas")

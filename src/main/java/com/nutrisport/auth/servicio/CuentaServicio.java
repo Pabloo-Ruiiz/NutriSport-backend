@@ -15,6 +15,7 @@ import com.nutrisport.comun.correo.CorreoServicio;
 import com.nutrisport.comun.dto.ErrorCampo;
 import com.nutrisport.comun.excepcion.PeticionInvalidaException;
 import com.nutrisport.comun.excepcion.RecursoNoEncontradoException;
+import com.nutrisport.seguimiento.repositorio.InsightRepositorio;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -44,11 +45,13 @@ public class CuentaServicio {
     private final CorreoServicio correoServicio;
     private final CuentaMapper cuentaMapper;
     private final String versionConsentimiento;
+    private final InsightRepositorio insightRepositorio;
 
     public CuentaServicio(UsuarioRepositorio usuarioRepositorio, SeguridadUtils seguridadUtils,
             PasswordEncoder passwordEncoder, RefreshTokenServicio refreshTokenServicio,
             TokenUsuarioServicio tokenUsuarioServicio, CorreoServicio correoServicio, CuentaMapper cuentaMapper,
-            @Value("${app.consentimiento.version}") String versionConsentimiento) {
+            @Value("${app.consentimiento.version}") String versionConsentimiento,
+            InsightRepositorio insightRepositorio) {
         this.usuarioRepositorio = usuarioRepositorio;
         this.seguridadUtils = seguridadUtils;
         this.passwordEncoder = passwordEncoder;
@@ -57,6 +60,7 @@ public class CuentaServicio {
         this.correoServicio = correoServicio;
         this.cuentaMapper = cuentaMapper;
         this.versionConsentimiento = versionConsentimiento;
+        this.insightRepositorio = insightRepositorio;
     }
 
     @Transactional(readOnly = true)
@@ -72,6 +76,13 @@ public class CuentaServicio {
         }
         if (peticion.unidades() != null) {
             usuario.setUnidades(peticion.unidades());
+        }
+        if (peticion.insightsActivos() != null) {
+            usuario.setInsightsActivos(peticion.insightsActivos());
+            if (!peticion.insightsActivos()) {
+                // Guarda antes los cambios de la cuenta: el borrado vacía el contexto de persistencia
+                insightRepositorio.borrarDelUsuario(usuario.getId());
+            }
         }
         return cuentaMapper.aRespuesta(usuario);
     }

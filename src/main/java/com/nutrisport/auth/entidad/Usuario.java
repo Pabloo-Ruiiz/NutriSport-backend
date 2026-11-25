@@ -61,6 +61,10 @@ public class Usuario extends EntidadBase {
     @Column(name = "eliminado_en")
     private OffsetDateTime eliminadoEn;
 
+    /** Si la tarea nocturna detecta patrones (insights) para este usuario (V17). */
+    @Column(name = "insights_activos", nullable = false)
+    private boolean insightsActivos = true;
+
     /** Se cargan siempre: el filtro JWT los necesita en cada petición. */
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "usuario_rol", joinColumns = @JoinColumn(name = "usuario_id"))
@@ -197,6 +201,14 @@ public class Usuario extends EntidadBase {
 
     public void setEliminadoEn(OffsetDateTime eliminadoEn) {
         this.eliminadoEn = eliminadoEn;
+    }
+
+    public boolean isInsightsActivos() {
+        return insightsActivos;
+    }
+
+    public void setInsightsActivos(boolean insightsActivos) {
+        this.insightsActivos = insightsActivos;
     }
 
     /** Vista de solo lectura; para cambiarlos usa {@link #anadirRol}, {@link #quitarRol} o {@link #setRoles}. */
